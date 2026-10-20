@@ -1,4 +1,3 @@
-"""Create a labelled layout reconstruction, not an Android device screenshot."""
 from pathlib import Path
 import html
 import math
@@ -12,7 +11,6 @@ strings = {s.attrib['name']: s.text or '' for s in ET.parse(RES / 'values/string
 
 def text(key):
     value = strings[key]
-    # The reference device for this layout reconstruction is Phone (3).
     if key == 'device_label':
         value = value.replace('%1$s', 'NOTHING PHONE (3)')
     return html.escape(value.replace('\\n', '\n').replace("\\'", "'")).replace('\n', '<br>')

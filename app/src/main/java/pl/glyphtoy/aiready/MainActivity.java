@@ -80,7 +80,6 @@ public final class MainActivity extends Activity {
         root.addView(sections);
         sourceCard = buildSources();
         animationCard = buildAnimations();
-        // Configuration comes first until access and at least one source are selected.
         sections.addView(sourceCard);
         sections.addView(animationCard);
         configuredOrder = false;
@@ -335,7 +334,6 @@ public final class MainActivity extends Activity {
             if (AiAppCatalog.GOOGLE.equals(name)) {
                 TextView help = text(R.string.gemini_google_help, 12, MUTED);
                 list.addView(help);
-                // Keep this explanation visible when searching for Gemini or Google.
                 option.setTag(R.id.gemini_source_help, help);
             }
         }

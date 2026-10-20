@@ -1,6 +1,5 @@
 package pl.glyphtoy.aiready;
 
-/** Native LED frames from the user-supplied Claude GIF. See artwork/README.md. */
 final class ClaudeFrames {
     static final int[] DELAYS = {130, 140, 130, 70, 60, 70, 70, 60, 70, 70, 60, 70};
     private static final String[] DATA = {

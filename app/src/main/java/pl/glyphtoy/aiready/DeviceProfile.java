@@ -3,7 +3,6 @@ package pl.glyphtoy.aiready;
 import android.os.Build;
 import java.util.Locale;
 
-/** Public build identity only; no unique device IDs or additional permissions. */
 final class DeviceProfile {
     private enum Model {
         PHONE_1("Phone (1)", "A063", 0),
@@ -70,7 +69,6 @@ final class DeviceProfile {
 
     boolean hasGlyphMatrix() { return matrixLength > 0; }
 
-    // The current artwork and Glyph Button Toy target the 25x25 Phone (3) matrix.
     boolean supportsAnimations() { return model == Model.PHONE_3; }
 
     String matrixTarget() { return supportsAnimations() ? model.code : null; }

@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.Locale;
 import javax.imageio.ImageIO;
 
-/** Generates the original vector icon and its preview from one dot layout. */
 public final class BuildAppIcon {
     private static boolean check(int x, int y) {
         return (x == 2 && y == 4) || (x == 3 && y == 5) || (x == 4 && y == 6)
@@ -53,7 +52,6 @@ public final class BuildAppIcon {
             if (Math.hypot(x - 4, y - 4) > 4.25) continue;
             double cx = 30 + x * 6, cy = 30 + y * 6;
             boolean lit = check(x, y);
-            // Leave space for the red notification dot in the upper right.
             if (Math.hypot(cx - 75, cy - 33) < 7) continue;
             (lit ? mark : dots).append(circle(cx, cy, lit ? 2.5 : 1.65));
             String color = lit ? "#F5F5F5" : "#3A3A3A";

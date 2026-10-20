@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** One alert per notification lifecycle, with bounded in-memory history. */
 final class NotificationGate {
     private final Map<String, Boolean> delivered = new LinkedHashMap<>();
     void seed(String key) { remember(key, true); }

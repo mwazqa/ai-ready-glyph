@@ -1,6 +1,5 @@
 package pl.glyphtoy.aiready;
 
-/** Monochrome symbols designed for a circular 25x25 LED matrix. */
 final class ReadyAnimation {
     static final int SIZE = 25;
     static final long DURATION_MS = 6000;

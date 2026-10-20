@@ -1,6 +1,5 @@
 package pl.glyphtoy.aiready;
 
-/** OpenAI Blossom, sampled from OpenAI's official SVG. See artwork/README.md. */
 final class ChatGptSymbol {
     private static final String[] ROWS = {
         "0000000000000000000000000",

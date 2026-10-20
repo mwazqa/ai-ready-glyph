@@ -9,9 +9,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import com.nothing.ketchum.GlyphMatrixManager;
 
-/** One owner for Nothing's process-wide manager, shared by alerts and the toy. */
 final class MatrixController {
-    // Only the application context is retained; activities and services are not retained.
     @SuppressLint("StaticFieldLeak")
     private static MatrixController instance;
     static MatrixController get(Context context) {

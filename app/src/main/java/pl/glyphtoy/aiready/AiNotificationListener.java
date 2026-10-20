@@ -12,7 +12,6 @@ public final class AiNotificationListener extends NotificationListenerService {
 
     @Override public void onListenerConnected() {
         LocalStatus.listenerConnected = true;
-        // Existing notifications are a baseline, never replayed as new completions.
         StatusBarNotification[] existing = getActiveNotifications();
         if (existing != null) for (StatusBarNotification item : existing) {
             if (!item.isOngoing() && !hasProgress(item.getNotification())) gate.seed(item.getKey());

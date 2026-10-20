@@ -7,7 +7,6 @@ import javax.imageio.*;
 import javax.imageio.stream.ImageInputStream;
 import org.w3c.dom.Node;
 
-/** Converts a supplied GIF into native monochrome LED frames, without modifying it. */
 public class BuildClaudeFrames {
     static Node find(Node node, String name) {
         if (node.getNodeName().equals(name)) return node;
@@ -55,7 +54,7 @@ public class BuildClaudeFrames {
             }
             reader.dispose();
         }
-        StringBuilder source = new StringBuilder("package pl.glyphtoy.aiready;\n\n/** Native LED frames from the user-supplied Claude GIF. See artwork/README.md. */\nfinal class ClaudeFrames {\n    static final int[] DELAYS = {");
+        StringBuilder source = new StringBuilder("package pl.glyphtoy.aiready;\n\nfinal class ClaudeFrames {\n    static final int[] DELAYS = {");
         for (int i = 0; i < delays.size(); i++) source.append(i == 0 ? "" : ", ").append(delays.get(i));
         source.append("};\n    private static final String[] DATA = {\n");
         for (String frame : frames) source.append("        \"").append(frame).append("\",\n");

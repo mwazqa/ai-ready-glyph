@@ -4,7 +4,6 @@ import java.text.Normalizer;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-/** Heuristic only: third-party apps do not expose a universal completion event. */
 final class CompletionPolicy {
     private static final String[] READY = {
         "response is ready", "response ready", "answer is ready", "answer ready",

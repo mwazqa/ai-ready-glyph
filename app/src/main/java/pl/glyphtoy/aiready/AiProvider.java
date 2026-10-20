@@ -1,6 +1,5 @@
 package pl.glyphtoy.aiready;
 
-/** Package identity, never notification text or a look-alike app label. */
 enum AiProvider {
     CHATGPT("chatgpt", "ChatGPT", "The knot draws from its inner junctions outwards."),
     CLAUDE("claude", "Claude", "The symbol blooms and folds back in."),

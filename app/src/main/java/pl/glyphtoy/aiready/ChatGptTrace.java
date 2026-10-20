@@ -2,7 +2,6 @@ package pl.glyphtoy.aiready;
 
 import java.util.Arrays;
 
-/** Strokes start at the inner junctions and grow outward along the ink of the logo. */
 final class ChatGptTrace {
     private static final double[] ARRIVAL = build();
     static double arrival(int x, int y) { return ARRIVAL[y * 25 + x]; }
@@ -27,7 +26,6 @@ final class ChatGptTrace {
                 nearest = distance[p]; current = p;
             }
             if (current < 0) {
-                // A disconnected antialiased tip is drawn after its neighboring strokes.
                 for (int p = 0; p < 625; p++) if (!visited[p] && ChatGptSymbol.coverage(p % 25, p / 25) > 0) {
                     current = p; distance[p] = furthest + .5; break;
                 }
