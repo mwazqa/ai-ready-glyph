@@ -1,0 +1,37 @@
+name: Bug report
+description: Report a reproducible app, notification or Glyph problem.
+body:
+  - type: markdown
+    attributes:
+      value: Do not include private notifications, credentials or conversations.
+  - type: input
+    id: version
+    attributes:
+      label: App version
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Phone model and Android / Nothing OS version
+    validations:
+      required: true
+  - type: dropdown
+    id: path
+    attributes:
+      label: Affected path
+      options:
+        - On-screen preview
+        - Manual Glyph test
+        - Real AI notification
+        - Device recognition
+        - Build or other
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps, expected result and actual result
+      description: Include the source app and detection mode if relevant. Redact personal text.
+    validations:
+      required: true

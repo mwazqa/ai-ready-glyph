@@ -1,0 +1,516 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-10-21",
+  "scope": "Official Android conversational assistants, research tools and agents published by model providers or their product subsidiaries. Third-party wrappers, general browsers, social messengers, roleplay-first products and single-purpose media or medical apps are excluded.",
+  "verification": "Primary publisher/store/source identity checks only. Package matching is not signature verification and does not establish support for completion notifications. Source-only identities may appear for existing installations; no current binary availability is implied.",
+  "apps": [
+    {
+      "name": "ChatGPT",
+      "provider": "OpenAI",
+      "package": "com.openai.chatgpt",
+      "publisher": "OpenAI",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.openai.chatgpt"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Claude",
+      "provider": "Anthropic",
+      "package": "com.anthropic.claude",
+      "publisher": "Anthropic PBC",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.anthropic.claude"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Gemini",
+      "provider": "Google",
+      "package": "com.google.android.apps.bard",
+      "publisher": "Google LLC",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.google.android.apps.bard"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Gemini Notebook / NotebookLM",
+      "provider": "Google",
+      "package": "com.google.android.apps.labs.language.tailwind",
+      "publisher": "Google LLC",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.google.android.apps.labs.language.tailwind"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Google AI Edge Gallery",
+      "provider": "Google",
+      "package": "com.google.aiedge.gallery",
+      "publisher": "Google LLC",
+      "region": "global",
+      "distribution": "GitHub releases",
+      "sources": [
+        "https://github.com/google-ai-edge/gallery/blob/1.0.20/Android/src/app/build.gradle.kts",
+        "https://github.com/google-ai-edge/gallery/releases/tag/1.0.20"
+      ],
+      "notes": "applicationId is com.google.aiedge.gallery; the Kotlin namespace com.google.ai.edge.gallery is not the installed package. On-device chat; completion notifications unverified."
+    },
+    {
+      "name": "Perplexity",
+      "provider": "Perplexity",
+      "package": "ai.perplexity.app.android",
+      "publisher": "PerplexityAI",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ai.perplexity.app.android",
+        "https://www.perplexity.ai/en-GB/hub/blog/meet-new-sonar"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Microsoft Copilot",
+      "provider": "Microsoft",
+      "package": "com.microsoft.copilot",
+      "publisher": "Microsoft Corporation",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.microsoft.copilot",
+        "https://microsoft.ai/models/"
+      ],
+      "notes": "Legacy identity retained from the previous test catalog for existing installations. Direct Google Play requests returned 404 in this review; current distribution is not confirmed. Completion notifications are unverified."
+    },
+    {
+      "name": "Microsoft 365 Copilot",
+      "provider": "Microsoft",
+      "package": "com.microsoft.office.officehubrow",
+      "publisher": "Microsoft Corporation",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.microsoft.office.officehubrow",
+        "https://microsoft.ai/models/"
+      ],
+      "notes": "Former Microsoft 365 Copilot package; the reviewed Google Play listing is now titled Microsoft Copilot. Completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Grok",
+      "provider": "xAI",
+      "package": "ai.x.grok",
+      "publisher": "xAI",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ai.x.grok"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "DeepSeek",
+      "provider": "DeepSeek",
+      "package": "com.deepseek.chat",
+      "publisher": "DeepSeek",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.deepseek.chat"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Mistral / Le Chat / Vibe",
+      "provider": "Mistral AI",
+      "package": "ai.mistral.chat",
+      "publisher": "Mistral AI",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ai.mistral.chat"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Kimi",
+      "provider": "Moonshot AI",
+      "package": "com.moonshot.kimichat",
+      "publisher": "Moonshot AI",
+      "region": "global / China",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.moonshot.kimichat",
+        "https://www.kimi.com/products/download"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Qwen",
+      "provider": "Alibaba",
+      "package": "com.tongyi.intl",
+      "publisher": "Qwen Team",
+      "region": "international",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.tongyi.intl"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Qwen Studio",
+      "provider": "Alibaba",
+      "package": "ai.qwenlm.chat.android",
+      "publisher": "Alibaba Cloud",
+      "region": "international",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ai.qwenlm.chat.android"
+      ],
+      "notes": "Separate Alibaba package retained for existing installations. Store visibility and availability vary."
+    },
+    {
+      "name": "Qwen / Tongyi (China)",
+      "provider": "Alibaba",
+      "package": "com.aliyun.tongyi",
+      "publisher": "上海智信普惠科技有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.aliyun.tongyi"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Meta AI",
+      "provider": "Meta",
+      "package": "com.facebook.stella",
+      "publisher": "Meta Platforms, Inc.",
+      "region": "regional rollout",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.facebook.stella",
+        "https://about.fb.com/news/2025/04/introducing-meta-ai-app-new-way-access-ai-assistant/"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "MiniMax Agent",
+      "provider": "MiniMax",
+      "package": "com.minimax.ai",
+      "publisher": "MiniMax AI",
+      "region": "international",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.minimax.ai",
+        "https://agent.minimax.io/download"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Pi",
+      "provider": "Inflection AI",
+      "package": "ai.inflection.pi",
+      "publisher": "Inflection AI",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ai.inflection.pi",
+        "https://inflection.ai/"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Tencent Yuanbao",
+      "provider": "Tencent",
+      "package": "com.tencent.hunyuan.app.chat",
+      "publisher": "Tencent Mobility Limited",
+      "region": "China / international",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.tencent.hunyuan.app.chat"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "ima",
+      "provider": "Tencent",
+      "package": "com.tencent.ima",
+      "publisher": "深圳市腾讯计算机系统有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.tencent.ima",
+        "https://ima.qq.com/"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Dola / Cici",
+      "provider": "ByteDance",
+      "package": "com.larus.wolf",
+      "publisher": "SPRING (SG) PTE. LTD.",
+      "region": "international",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?gl=JP&hl=JA&id=com.larus.wolf",
+        "https://seed.bytedance.com/en/"
+      ],
+      "notes": "Dola, formerly Cici. The Japanese store listing was readable; the unqualified store URL returned 404. Completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Doubao",
+      "provider": "ByteDance",
+      "package": "com.larus.nova",
+      "publisher": "北京春田知韵科技有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.larus.nova",
+        "https://www.doubao.com/"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "StepFun / Yuewen",
+      "provider": "StepFun",
+      "package": "cn.yuewen.ywapp",
+      "publisher": "上海阶跃星辰智能科技股份有限公司",
+      "region": "China",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=cn.yuewen.ywapp"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Indus by Sarvam",
+      "provider": "Sarvam AI",
+      "package": "ai.sarvam.indus",
+      "publisher": "Sarvam AI",
+      "region": "India",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ai.sarvam.indus",
+        "https://www.sarvam.ai/app"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Alice AI",
+      "provider": "Yandex",
+      "package": "com.yandex.aliceapp",
+      "publisher": "Direct Cursus Computer Systems Trading LLC",
+      "region": "regional",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.yandex.aliceapp"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "GigaChat",
+      "provider": "Sber",
+      "package": "com.sdkit.search.app",
+      "publisher": "ПАО Сбербанк",
+      "region": "Russia",
+      "distribution": "RuStore",
+      "sources": [
+        "https://www.rustore.ru/catalog/app/com.sdkit.search.app"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Qingyan / ChatGLM",
+      "provider": "Zhipu AI",
+      "package": "com.zhipuai.qingyan",
+      "publisher": "北京智谱华章科技股份有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.zhipuai.qingyan",
+        "https://chatglm.cn/"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "AutoGLM",
+      "provider": "Zhipu AI",
+      "package": "com.zhipu.agent",
+      "publisher": "北京智谱华章科技股份有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.zhipu.agent",
+        "https://autoglm.zhipuai.cn/"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "iFlytek Spark",
+      "provider": "iFlytek",
+      "package": "com.iflytek.spark",
+      "publisher": "科大讯飞股份有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.iflytek.spark",
+        "https://xinghuo.xfyun.cn/doc/spark-guide/spark.html"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Wenxin / ERNIE / Wenxiaoyan",
+      "provider": "Baidu",
+      "package": "com.baidu.newapp",
+      "publisher": "北京百度网讯科技有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.baidu.newapp"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Tiangong",
+      "provider": "Kunlun / Skywork",
+      "package": "com.singularity.tiangong",
+      "publisher": "昆仑万维科技股份有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.singularity.tiangong",
+        "https://www.kunlun.com/en/index.html"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Skywork",
+      "provider": "Kunlun / Skywork",
+      "package": "ai.skywork.app.android",
+      "publisher": "Skywork AI PTE.LTD.",
+      "region": "international",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ai.skywork.app.android",
+        "https://www.kunlun.com/en/index.html"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Nami AI",
+      "provider": "360",
+      "package": "com.qihoo.namiso",
+      "publisher": "天津三六零快看科技有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.qihoo.namiso",
+        "https://browser.360.cn/ai/agreement/nami_agreement.html"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Liquid Apollo",
+      "provider": "Liquid AI",
+      "package": "ai.liquid.chatapp",
+      "publisher": "Liquid AI",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ai.liquid.chatapp",
+        "https://www.liquid.ai/apollo"
+      ],
+      "notes": "On-device chat. Completion notifications unverified."
+    },
+    {
+      "name": "A.dot",
+      "provider": "SK Telecom",
+      "package": "com.skt.nugu.apollo",
+      "publisher": "SKTelecom",
+      "region": "South Korea",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.skt.nugu.apollo",
+        "https://news.sktelecom.com/218051"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "ChatSUTRA",
+      "provider": "TWO AI",
+      "package": "com.two.chatsutra",
+      "publisher": "Numeric Machines",
+      "region": "global",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.two.chatsutra",
+        "https://www.two.ai/chatsutra/download",
+        "https://www.two.ai/blog/introducing-sutra"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Falcon.AI",
+      "provider": "TII",
+      "package": "ae.tii.falcon.assistant",
+      "publisher": "TII-AIDRC",
+      "region": "regional rollout",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=ae.tii.falcon.assistant",
+        "https://falconllm.tii.ae/falcon-terms-and-conditions.html"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Lingguang",
+      "provider": "Ant Group",
+      "package": "com.antgroup.leopard.android",
+      "publisher": "支付宝（杭州）数字服务技术有限公司",
+      "region": "China",
+      "distribution": "Xiaomi app store",
+      "sources": [
+        "https://app.mi.com/details?id=com.antgroup.leopard.android",
+        "https://www.antgroup.com/technology/new-tech-Technology-Antfocuses-Tabcomnent-detail/20241028003",
+        "https://www.antgroup.com/technology/new-tech-Technology-Antfocuses-Tabcomnent-detail/20241028001"
+      ],
+      "notes": "Identity verified; completion notifications and availability in Poland are unverified."
+    },
+    {
+      "name": "Amazon Alexa / Alexa+",
+      "provider": "Amazon",
+      "package": "com.amazon.dee.app",
+      "publisher": "Amazon Mobile LLC",
+      "region": "Alexa+ availability varies by region",
+      "distribution": "Google Play",
+      "sources": [
+        "https://play.google.com/store/apps/details?id=com.amazon.dee.app",
+        "https://alexa.amazon.com/about"
+      ],
+      "notes": "Eligible as Amazon's conversational assistant. Device and shopping notifications may also match broad detection mode."
+    },
+    {
+      "name": "HuggingChat (official Android source)",
+      "provider": "Hugging Face",
+      "package": "co.huggingface.chat_ui_android",
+      "publisher": "Hugging Face (official GitHub organization)",
+      "region": "Source-based / existing installations",
+      "distribution": "Official GitHub source",
+      "sources": [
+        "https://github.com/huggingface/chat-ui-android/blob/main/app/build.gradle.kts",
+        "https://github.com/huggingface/chat-ui-android/releases/tag/v1.4",
+        "https://huggingface.co/blog/smollm"
+      ],
+      "notes": "Package ID verified from official source. The inspected v1.4 release has no APK assets. Current store distribution, server compatibility and completion notifications are unverified."
+    }
+  ]
+}
