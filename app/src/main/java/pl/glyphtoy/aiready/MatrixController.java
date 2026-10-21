@@ -41,7 +41,7 @@ final class MatrixController {
         pending = true;
         animating = false;
         acquireWakeLock();
-        LocalStatus.matrix = "Connecting to Glyph Matrix…";
+        LocalStatus.glyph("Connecting to Glyph Matrix…");
         if (connected) begin(); else {
             connect();
             if (pending && manager != null) handler.postDelayed(timeout, 4000);
@@ -108,7 +108,7 @@ final class MatrixController {
         animating = true;
         start = SystemClock.uptimeMillis();
         acquireWakeLock();
-        LocalStatus.matrix = provider.label + " animation sent to Glyph. Check the matrix on the back of your phone.";
+        LocalStatus.glyph(provider.label + " animation sent to Glyph. Check the matrix on the back of your phone.");
         handler.post(tick);
     }
 
@@ -135,7 +135,7 @@ final class MatrixController {
     }
 
     private void fail(String message) {
-        LocalStatus.matrix = message;
+        LocalStatus.glyph(message);
         pending = false;
         animating = false;
         handler.removeCallbacks(tick);

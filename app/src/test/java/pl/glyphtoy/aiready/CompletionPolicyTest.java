@@ -26,4 +26,24 @@ public class CompletionPolicyTest {
         assertTrue(CompletionPolicy.matches("New message", false, false, false, true, ""));
         assertFalse(CompletionPolicy.matches("New message", false, false, false, false, "; \n"));
     }
+
+    @Test public void distinguishesStructuralReasonsForSkippingNotifications() {
+        assertEquals(CompletionPolicy.Result.ONGOING,
+                CompletionPolicy.evaluate("response ready", true, false, false, true, ""));
+        assertEquals(CompletionPolicy.Result.GROUP_SUMMARY,
+                CompletionPolicy.evaluate("response ready", false, true, false, true, ""));
+        assertEquals(CompletionPolicy.Result.ACTIVE_PROGRESS,
+                CompletionPolicy.evaluate("response ready", false, false, true, true, ""));
+    }
+
+    @Test public void distinguishesBusyTextFromMissingCompletionPhrase() {
+        assertEquals(CompletionPolicy.Result.BUSY_TEXT,
+                CompletionPolicy.evaluate("Generating your response", false, false, false, true, ""));
+        assertEquals(CompletionPolicy.Result.NO_READY_PHRASE,
+                CompletionPolicy.evaluate("New message", false, false, false, false, ""));
+        assertEquals(CompletionPolicy.Result.READY,
+                CompletionPolicy.evaluate("New message", false, false, false, true, ""));
+        assertEquals(CompletionPolicy.Result.READY,
+                CompletionPolicy.evaluate("Claude finished", false, false, false, false, "Claude finished"));
+    }
 }

@@ -2,7 +2,7 @@
 
 An experimental notification companion for **Nothing Phone (3)**. A matching notification from a selected AI app triggers a six-second animation on the rear Glyph Matrix.
 
-**Current version: 0.6.6.** Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google or other AI providers.
+**Current version: 0.6.7.** Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google or other AI providers.
 
 The app reads Android notifications. It does not connect to AI accounts or observe an AI app's internal task state. An app that sends no completion notification provides no signal to detect.
 
@@ -78,6 +78,8 @@ Default rules match phrases such as `response is ready`, `task completed` and `o
 
 **Every regular notification** also accepts answer-only notifications, but may react to unrelated alerts. Neither mode interprets answers semantically. Ongoing work, active progress, group summaries and recognized busy phrases are skipped. Existing notifications are not replayed when the listener connects. A notification key alerts once until removed or new progress appears.
 
+Details reports whether a notification was ongoing, a group summary, actively progressing, contained a busy phrase or lacked a completion phrase. Notification events and Glyph actions have independent timestamps including seconds. A previous manual test's Glyph status does not confirm that a later notification triggered an animation. These diagnostics do not store notification text. If a ChatGPT / Codex alert is skipped, check the reported reason and its fixed completion wording; catalog inclusion alone does not prove that the default phrases match it.
+
 Automatic alerts respect Do Not Disturb. Manual tests run on demand. Every animation lasts six seconds including a final fade. Other apps use generic AI lettering unless assigned another style.
 
 For the optional Toy, use Open Glyph Toys and add AI Ready Glyph. A short Glyph Button press cycles toys; holding it tests the selected style. Idle shows two dim dots. Automatic alerts also work without selecting the Toy. System effects and higher-priority Toys can override frames. An SDK call is not a physical LED reading.
@@ -90,7 +92,7 @@ Preferences store selected packages, custom phrases, assignments and settings. D
 
 ## Verification and development
 
-Local 0.6.6 verification: **27 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Current recognition, native UI, Toy-list rendering and real LED output still need physical-device checks. [Verification record](docs/verification.md).
+Local 0.6.7 verification: **29 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Current recognition, native UI, Toy-list rendering and real LED output still need physical-device checks. The reported Codex alert's exact rejection cause and its end-to-end behavior remain unverified. [Verification record](docs/verification.md).
 
 GitHub Actions checks the catalog, wrapper, tests, build and lint. It retrieves the SDK from Nothing and does not upload APK artifacts.
 

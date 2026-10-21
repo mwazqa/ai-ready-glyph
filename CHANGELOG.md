@@ -2,6 +2,13 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.6.7 - 2026-10-21
+
+- Show the exact reason a notification is skipped instead of a combined message.
+- Timestamp Glyph actions separately from notification events, including seconds.
+- Preserve detection rules and add two notification-decision tests.
+- This diagnostic update does not establish why the reported Codex alert was skipped or confirm a physical-device fix.
+
 ## 0.6.6 - 2026-10-21
 
 - Restore the red notification dot in the circular Glyph Toys preview.

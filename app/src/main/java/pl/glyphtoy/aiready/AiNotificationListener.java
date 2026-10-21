@@ -31,11 +31,14 @@ public final class AiNotificationListener extends NotificationListenerService {
         boolean progress = hasProgress(notification);
         if (progress || item.isOngoing()) gate.progress(item.getKey());
         String text = notificationText(extras);
-        boolean complete = CompletionPolicy.matches(text, item.isOngoing(),
+        CompletionPolicy.Result result = CompletionPolicy.evaluate(text, item.isOngoing(),
                 (notification.flags & Notification.FLAG_GROUP_SUMMARY) != 0,
                 progress, settings.relaxed(), settings.phrases());
         String label = label(item.getPackageName());
-        if (!complete) { LocalStatus.event(label + " · skipped: no ready signal or work still in progress."); return; }
+        if (result != CompletionPolicy.Result.READY) {
+            LocalStatus.event(label + " · skipped: " + result.reason + ".");
+            return;
+        }
         if (!gate.accept(item.getKey(), true)) return;
         NotificationManager system = getSystemService(NotificationManager.class);
         if (system.getCurrentInterruptionFilter() != NotificationManager.INTERRUPTION_FILTER_ALL) {

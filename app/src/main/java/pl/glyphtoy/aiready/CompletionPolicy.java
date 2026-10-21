@@ -5,6 +5,18 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 final class CompletionPolicy {
+    enum Result {
+        READY("completion detected"),
+        ONGOING("ongoing notification"),
+        GROUP_SUMMARY("notification group summary"),
+        ACTIVE_PROGRESS("work still in progress"),
+        BUSY_TEXT("notification contains a busy phrase"),
+        NO_READY_PHRASE("no completion phrase matched");
+
+        final String reason;
+        Result(String reason) { this.reason = reason; }
+    }
+
     private static final String[] READY = {
         "response is ready", "response ready", "answer is ready", "answer ready",
         "reply is ready", "finished responding", "has responded", "has replied", "task complete",
@@ -22,16 +34,23 @@ final class CompletionPolicy {
 
     static boolean matches(String text, boolean ongoing, boolean summary, boolean progress,
                            boolean relaxed, String customPhrases) {
-        if (ongoing || summary || progress) return false;
+        return evaluate(text, ongoing, summary, progress, relaxed, customPhrases) == Result.READY;
+    }
+
+    static Result evaluate(String text, boolean ongoing, boolean summary, boolean progress,
+                           boolean relaxed, String customPhrases) {
+        if (ongoing) return Result.ONGOING;
+        if (summary) return Result.GROUP_SUMMARY;
+        if (progress) return Result.ACTIVE_PROGRESS;
         String value = normalize(text);
-        for (String phrase : BUSY) if (containsPhrase(value, normalize(phrase))) return false;
-        if (relaxed) return true;
-        for (String phrase : READY) if (containsPhrase(value, phrase)) return true;
+        for (String phrase : BUSY) if (containsPhrase(value, normalize(phrase))) return Result.BUSY_TEXT;
+        if (relaxed) return Result.READY;
+        for (String phrase : READY) if (containsPhrase(value, phrase)) return Result.READY;
         for (String phrase : customPhrases.split("[;\\n]")) {
             String normalized = normalize(phrase).trim();
-            if (!normalized.isEmpty() && containsPhrase(value, normalized)) return true;
+            if (!normalized.isEmpty() && containsPhrase(value, normalized)) return Result.READY;
         }
-        return false;
+        return Result.NO_READY_PHRASE;
     }
 
     private static boolean containsPhrase(String text, String phrase) {

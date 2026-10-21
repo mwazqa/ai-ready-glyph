@@ -1,6 +1,6 @@
 # Verification record
 
-Date: 21 October 2026. Latest verified app build: 0.6.6, versionCode 12.
+Date: 21 October 2026. Latest verified app build: 0.6.7, versionCode 13.
 
 ## Clean public-source build 0.6.4
 
@@ -43,6 +43,17 @@ Restored the red notification dot in the upper right of the circular Toy preview
 - APK assembly, 27 unit tests and lint passed, with the same two existing lint warnings.
 - Verified the red colour in the packaged Toy vector and the APK signature matching 0.6.5.
 - Appearance in Nothing OS has not been checked on a phone for this build.
+
+## Notification diagnostics 0.6.7
+
+The combined skip message could not distinguish an ongoing notification, a group summary, active progress, busy text or a missing completion phrase. Details now reports these reasons separately. Glyph actions receive their own timestamps, including seconds, so a prior manual test can be distinguished from a later skipped notification.
+
+- Existing completion rules, selected packages and opt-in relaxed mode are preserved.
+- Added two tests covering structural rejection reasons and the distinction between busy text, a missing phrase and an accepted notification.
+- Ran `gradlew.bat --no-daemon testDebugUnitTest assembleDebug lintDebug`: assembly passed, 29 tests passed, 0 lint errors and the same two existing warnings.
+- Verified the diagnostic reason strings in the packaged DEX and the APK signature matching 0.6.6.
+- Toy artwork, launcher assets, catalog identities and animation frames are unchanged.
+- ADB reported no connected device. The exact cause of the reported Codex alert being skipped remains unknown without its fixed completion wording or the new diagnostic result. This build is a diagnostic improvement, not a confirmed physical-device fix.
 
 ## Physical-device boundary
 
