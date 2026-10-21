@@ -2,6 +2,8 @@
 
 The original app icon is a circular dot matrix, white ready check and red notification dot. Android adaptive colour and monochrome variants are included. BuildAppIcon.java regenerates these assets. The small dot alphabet and generic AI lettering are original project work, covered by MIT. No proprietary Nothing font is bundled.
 
+The separate Glyph Toys preview uses a circular black background, a 25 x 25 grid of square pixels and a large white ready check. Pixels outside the circle are transparent. It is original project artwork covered by MIT and does not include Nothing's Toy badge, which the system adds. Run `java scripts/BuildToyPreview.java` with JDK 17 or 21 from the project root to regenerate artwork/glyph-toy-preview.svg, app/src/main/res/drawable/ic_glyph_toy_preview.xml and an ignored PNG preview in dist/. The launcher icon is generated separately.
+
 The ChatGPT pixel symbol derives from the official Blossom SVG in [OpenAI's 2025 logo pack](https://cdn.openai.com/brand/OpenAI-Logos-2025.zip). ChatGptSymbol.java stores 25 x 25 coverage; ChatGptTrace.java orders drawing from the inner junctions. The raw SVG is excluded from Git. [OpenAI guidelines](https://openai.com/brand/) apply; separate approval for this adaptation is not claimed.
 
 ClaudeFrames.java contains 12 monochrome frames from a GIF supplied during personal development, preserving its one-second cycle. The raw GIF is excluded because its upstream author and redistribution licence were not established. BuildClaudeFrames.java can convert a locally supplied input; it grants no rights to that input.

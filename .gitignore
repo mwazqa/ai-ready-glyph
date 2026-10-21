@@ -1,5 +1,6 @@
 .tooling/
 .codex/
+.codex-remote-attachments/
 .agents/
 local.properties
 .gradle/

@@ -69,8 +69,6 @@ public final class BuildAppIcon {
         String body = paths(dots.toString(), "#3A3A3A", false)
                 + paths(mark.toString(), "#F5F5F5", false) + paths(signal, "#D71920", false);
         Files.writeString(drawables.resolve("ic_ready_foreground.xml"), header + body + "</vector>\n");
-        Files.writeString(drawables.resolve("ic_ready.xml"), header
-                + "    <path android:fillColor=\"#080808\" android:pathData=\"M0,0 H108 V108 H0 Z\" />\n" + body + "</vector>\n");
         Files.writeString(drawables.resolve("ic_ready_monochrome.xml"), header
                 + paths(dots.toString(), "#FFFFFF", true)
                 + paths(mark.toString() + signal, "#FFFFFF", false) + "</vector>\n");

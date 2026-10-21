@@ -2,6 +2,12 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.6.5 - 2026-10-21
+
+- Give Glyph Toys a dedicated circular 25 x 25 pixel preview with a white ready check.
+- Replace the square launcher artwork in the Toy list and enlarge the symbol.
+- Add a reproducible SVG and Android vector generator for the Toy preview.
+
 ## 0.6.4 - 2026-10-21
 
 - Detect known Nothing models and update the device label.
