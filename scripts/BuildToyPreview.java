@@ -66,11 +66,18 @@ public final class BuildToyPreview {
             g.setColor(Color.decode(color));
             g.fill(new Rectangle2D.Double(left, top, PIXEL, PIXEL));
         }
+        g.setColor(Color.BLACK);
+        g.fill(new Ellipse2D.Double(194, 34, 28, 28));
+        g.setColor(Color.decode("#D71920"));
+        g.fill(new Ellipse2D.Double(198, 38, 20, 20));
         g.dispose();
+        svg.append("<circle cx=\"208\" cy=\"48\" r=\"14\" fill=\"#000000\"/><circle cx=\"208\" cy=\"48\" r=\"10\" fill=\"#D71920\"/>");
         svg.append("</svg>\n");
         String vector = "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\" android:width=\"128dp\" android:height=\"128dp\" android:viewportWidth=\"256\" android:viewportHeight=\"256\">\n"
                 + path("M128,0a128,128 0,1 0,0,256a128,128 0,1 0,0,-256Z", "#000000")
-                + paths(dim.toString(), "#1C1C1C") + paths(bright.toString(), "#FFFFFF") + "</vector>\n";
+                + paths(dim.toString(), "#1C1C1C") + paths(bright.toString(), "#FFFFFF")
+                + path("M208,34a14,14 0,1 0,0,28a14,14 0,1 0,0,-28Z", "#000000")
+                + path("M208,38a10,10 0,1 0,0,20a10,10 0,1 0,0,-20Z", "#D71920") + "</vector>\n";
         Path drawables = root.resolve("app/src/main/res/drawable");
         Files.createDirectories(drawables);
         Files.createDirectories(root.resolve("artwork"));

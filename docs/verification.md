@@ -1,6 +1,6 @@
 # Verification record
 
-Date: 21 October 2026. Latest verified app build: 0.6.5, versionCode 11.
+Date: 21 October 2026. Latest verified app build: 0.6.6, versionCode 12.
 
 ## Clean public-source build 0.6.4
 
@@ -34,6 +34,15 @@ The Toy image metadata now references a dedicated Android vector rather than the
 - Catalog consistency passed: 40 package identities from 31 model providers.
 - Ran `gradlew.bat --no-daemon testDebugUnitTest assembleDebug lintDebug`: assembly passed, 27 tests passed, 0 lint errors and the same two existing warnings.
 - ADB reported no connected device. Appearance in the phone's Glyph Toys list still requires confirmation after installing this build.
+
+## Red notification dot 0.6.6
+
+Restored the red notification dot in the upper right of the circular Toy preview. The underlying grid and white ready check have identical geometry to 0.6.5. The dot and its black clearance stay entirely within the circular background.
+
+- Regenerated and visually inspected the asset preview; repeat generation produced identical files.
+- APK assembly, 27 unit tests and lint passed, with the same two existing lint warnings.
+- Verified the red colour in the packaged Toy vector and the APK signature matching 0.6.5.
+- Appearance in Nothing OS has not been checked on a phone for this build.
 
 ## Physical-device boundary
 

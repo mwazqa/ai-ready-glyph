@@ -2,6 +2,10 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.6.6 - 2026-10-21
+
+- Restore the red notification dot in the circular Glyph Toys preview.
+
 ## 0.6.5 - 2026-10-21
 
 - Give Glyph Toys a dedicated circular 25 x 25 pixel preview with a white ready check.

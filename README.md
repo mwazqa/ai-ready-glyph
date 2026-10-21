@@ -2,7 +2,7 @@
 
 An experimental notification companion for **Nothing Phone (3)**. A matching notification from a selected AI app triggers a six-second animation on the rear Glyph Matrix.
 
-**Current version: 0.6.5.** Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google or other AI providers.
+**Current version: 0.6.6.** Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google or other AI providers.
 
 The app reads Android notifications. It does not connect to AI accounts or observe an AI app's internal task state. An app that sends no completion notification provides no signal to detect.
 
@@ -15,7 +15,7 @@ The app reads Android notifications. It does not connect to AI accounts or obser
 - A picker of 40 package identities from 31 model providers, including regional and legacy identities.
 - Automatic recognition of known Nothing models and a dynamic device label.
 - An English interface, original dot lettering and an original adaptive launcher icon.
-- A separate circular, monochrome 25 x 25 pixel preview for the Glyph Toys list.
+- A separate circular 25 x 25 pixel preview with a red notification dot for the Glyph Toys list.
 
 Catalog inclusion is **not confirmation of working completion notifications**. Read the [catalog research](docs/ai-app-catalog-research.md) and [exact identities](docs/ai-app-catalog.json).
 
@@ -90,7 +90,7 @@ Preferences store selected packages, custom phrases, assignments and settings. D
 
 ## Verification and development
 
-Local 0.6.5 verification: **27 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Current recognition, native UI, Toy-list rendering and real LED output still need physical-device checks. [Verification record](docs/verification.md).
+Local 0.6.6 verification: **27 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Current recognition, native UI, Toy-list rendering and real LED output still need physical-device checks. [Verification record](docs/verification.md).
 
 GitHub Actions checks the catalog, wrapper, tests, build and lint. It retrieves the SDK from Nothing and does not upload APK artifacts.
 
