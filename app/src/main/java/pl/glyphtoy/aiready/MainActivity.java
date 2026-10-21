@@ -11,6 +11,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -140,8 +145,7 @@ public final class MainActivity extends Activity {
         select.setOnClickListener(view -> showAppPicker());
         Button grant = button(R.string.notification_access, false);
         spaced(card, grant, 10);
-        grant.setOnClickListener(view -> new AlertDialog.Builder(this)
-                .setTitle(R.string.notification_access)
+        grant.setOnClickListener(view -> showDialog(dialog(R.string.notification_access)
                 .setMessage(R.string.access_explanation)
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.open_settings, (dialog, which) -> {
@@ -150,7 +154,7 @@ public final class MainActivity extends Activity {
                                     new ComponentName(this, AiNotificationListener.class).flattenToString());
                     try { startActivity(intent); }
                     catch (ActivityNotFoundException error) { startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)); }
-                }).show());
+                })));
         accessHelp = text(R.string.access_help, 12, MUTED);
         spaced(card, accessHelp, 12);
         return card;
@@ -228,8 +232,8 @@ public final class MainActivity extends Activity {
                     "com.nothing.thirdparty.matrix.toys.manager.ToysManagerActivity"));
             try { startActivity(intent); }
             catch (ActivityNotFoundException | SecurityException error) {
-                new AlertDialog.Builder(this).setMessage(R.string.toy_fallback)
-                        .setPositiveButton(R.string.ok, null).show();
+                showDialog(dialog(R.string.toy_title).setMessage(R.string.toy_fallback)
+                        .setPositiveButton(R.string.ok, null));
             }
         });
         manage.setEnabled(device.supportsAnimations());
@@ -290,16 +294,24 @@ public final class MainActivity extends Activity {
             if (AiAppCatalog.supports(name, geminiInstalled) && seen.add(name)) unique.add(info);
         }
         LinearLayout container = column();
-        container.setPadding(dp(20), 0, dp(20), 0);
+        container.setPadding(dp(24), 0, dp(24), dp(8));
         container.addView(text(R.string.ai_picker_help, 13, MUTED));
         EditText search = new EditText(this);
         search.setSingleLine(true);
         search.setHint(R.string.search_apps);
-        container.addView(search);
+        search.setTextSize(15);
+        search.setTextColor(TEXT);
+        search.setHintTextColor(MUTED);
+        search.setMinHeight(dp(52));
+        search.setPadding(dp(16), dp(12), dp(16), dp(12));
+        search.setBackgroundTintList(null);
+        search.setBackground(shape(Color.rgb(34, 34, 34), LINE, 18));
+        spaced(container, search, 16);
         ScrollView scroll = new ScrollView(this);
         LinearLayout list = column();
         scroll.addView(list);
-        container.addView(scroll, new LinearLayout.LayoutParams(-1, dp(350)));
+        spaced(container, scroll, 8, Math.min(dp(350), getWindowManager()
+                .getCurrentWindowMetrics().getBounds().height() / 3));
         List<Switch> switches = new ArrayList<>();
         for (ResolveInfo info : unique) {
             String name = info.activityInfo.packageName;
@@ -335,17 +347,17 @@ public final class MainActivity extends Activity {
             }
             @Override public void afterTextChanged(Editable value) { }
         });
-        new AlertDialog.Builder(this).setTitle(R.string.choose_apps)
+        showDialog(dialog(R.string.choose_apps)
                 .setView(container).setPositiveButton(R.string.done, (dialog, which) -> refreshStatus())
-                .setOnDismissListener(dialog -> refreshStatus()).show();
+                .setOnDismissListener(dialog -> refreshStatus()));
     }
 
     private void showAnimationAssignments() {
         List<String> packages = new ArrayList<>(settings.packages());
         packages.sort(Comparator.comparing(this::applicationLabel, String.CASE_INSENSITIVE_ORDER));
         if (packages.isEmpty()) {
-            new AlertDialog.Builder(this).setMessage(R.string.select_apps_first)
-                    .setPositiveButton(R.string.ok, null).show();
+            showDialog(dialog(R.string.assign_animations).setMessage(R.string.select_apps_first)
+                    .setPositiveButton(R.string.ok, null));
             return;
         }
         String[] labels = new String[packages.size()];
@@ -353,20 +365,20 @@ public final class MainActivity extends Activity {
             String name = packages.get(i);
             labels[i] = applicationLabel(name) + " · " + settings.providerFor(name).label;
         }
-        new AlertDialog.Builder(this).setTitle(R.string.assign_animations)
+        showDialog(dialog(R.string.assign_animations)
                 .setItems(labels, (dialog, which) -> {
                     String packageName = packages.get(which);
                     String[] choices = new String[AiProvider.values().length + 1];
                     choices[0] = getString(R.string.automatic_assignment, AiProvider.fromPackage(packageName).label);
                     for (AiProvider provider : AiProvider.values()) choices[provider.ordinal() + 1] = provider.label;
-                    new AlertDialog.Builder(this).setTitle(applicationLabel(packageName))
+                    showDialog(dialog(applicationLabel(packageName))
                             .setItems(choices, (picker, selection) -> {
                                 settings.setProvider(packageName, selection == 0 ? null : AiProvider.values()[selection - 1]);
                                 LocalStatus.event(getString(R.string.assignment_saved, settings.providerFor(packageName).label,
                                         applicationLabel(packageName)));
                                 refreshStatus();
-                            }).setNegativeButton(R.string.cancel, null).show();
-                }).setNegativeButton(R.string.close, null).show();
+                            }).setNegativeButton(R.string.cancel, null));
+                }).setNegativeButton(R.string.close, null));
     }
 
     private String applicationLabel(String packageName) {
@@ -374,6 +386,68 @@ public final class MainActivity extends Activity {
         try { return getPackageManager().getApplicationLabel(
                 getPackageManager().getApplicationInfo(packageName, 0)).toString(); }
         catch (android.content.pm.PackageManager.NameNotFoundException ignored) { return packageName; }
+    }
+
+    private AlertDialog.Builder dialog(int title) { return dialog(getString(title)); }
+    private AlertDialog.Builder dialog(String title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppDialogTheme);
+        TextView heading = new TextView(builder.getContext());
+        heading.setText(title);
+        heading.setTextSize(23);
+        heading.setTextColor(TEXT);
+        heading.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        heading.setPadding(dp(24), dp(24), dp(24), dp(12));
+        heading.setAccessibilityHeading(true);
+        return builder.setCustomTitle(heading);
+    }
+
+    private void showDialog(AlertDialog.Builder builder) {
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(shape(SURFACE, LINE, 28));
+            window.getDecorView().setClipToOutline(true);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            window.setDimAmount(.68f);
+            android.view.WindowMetrics metrics = getWindowManager().getCurrentWindowMetrics();
+            android.graphics.Insets bars = metrics.getWindowInsets()
+                    .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
+            window.setLayout(Math.min(dp(520), metrics.getBounds().width() - bars.left - bars.right - dp(40)),
+                    WindowManager.LayoutParams.WRAP_CONTENT);
+        }
+        TextView message = dialog.findViewById(android.R.id.message);
+        if (message != null) {
+            message.setTextColor(MUTED);
+            message.setTextSize(15);
+            message.setLineSpacing(dp(3), 1);
+        }
+        if (dialog.getListView() != null) {
+            dialog.getListView().setDivider(null);
+            dialog.getListView().setPadding(dp(12), 0, dp(12), dp(4));
+            dialog.getListView().setSelector(new RippleDrawable(ColorStateList.valueOf(0x22ffffff),
+                    null, shape(Color.WHITE, Color.WHITE, 16)));
+        }
+        for (int which : new int[]{AlertDialog.BUTTON_NEGATIVE, AlertDialog.BUTTON_POSITIVE}) {
+            Button action = dialog.getButton(which);
+            if (action == null || action.getVisibility() != View.VISIBLE) continue;
+            action.setAllCaps(false);
+            action.setTextSize(14);
+            action.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+            action.setMinHeight(dp(48));
+            action.setMinimumHeight(dp(48));
+            action.setMinWidth(dp(88));
+            action.setMinimumWidth(dp(88));
+            action.setPadding(dp(16), dp(10), dp(16), dp(10));
+            action.setStateListAnimator(null);
+            styleButton(action, which == AlertDialog.BUTTON_POSITIVE, false);
+            if (action.getLayoutParams() instanceof ViewGroup.MarginLayoutParams layout) {
+                layout.setMarginStart(dp(4));
+                layout.setMarginEnd(dp(4));
+                layout.bottomMargin = dp(8);
+                action.setLayoutParams(layout);
+            }
+        }
     }
 
     private LinearLayout column() {
@@ -429,9 +503,26 @@ public final class MainActivity extends Activity {
         control.setTextSize(15);
         control.setChecked(checked);
         control.setMinHeight(dp(56));
-        control.setSwitchPadding(dp(12));
-        control.setThumbTintList(new ColorStateList(new int[][]{{android.R.attr.state_checked}, {}}, new int[]{TEXT, MUTED}));
-        control.setTrackTintList(new ColorStateList(new int[][]{{android.R.attr.state_checked}, {}}, new int[]{RED, LINE}));
+        control.setGravity(Gravity.CENTER_VERTICAL);
+        control.setSwitchPadding(dp(14));
+        control.setSwitchMinWidth(dp(54));
+        control.setShowText(false);
+        control.setSplitTrack(false);
+        control.setThumbTintList(null);
+        control.setTrackTintList(null);
+        GradientDrawable track = new GradientDrawable();
+        track.setSize(dp(54), dp(32));
+        track.setCornerRadius(dp(16));
+        track.setPadding(dp(5), dp(2), dp(5), dp(2));
+        track.setColor(new ColorStateList(new int[][]{{android.R.attr.state_checked}, {}},
+                new int[]{RED, Color.rgb(58, 58, 60)}));
+        control.setTrackDrawable(track);
+        GradientDrawable thumb = new GradientDrawable();
+        thumb.setSize(dp(28), dp(28));
+        thumb.setCornerRadius(dp(14));
+        thumb.setColor(TEXT);
+        thumb.setPadding(dp(3), 0, dp(3), 0);
+        control.setThumbDrawable(new InsetDrawable(thumb, 0, dp(2), 0, dp(2)));
         return control;
     }
 

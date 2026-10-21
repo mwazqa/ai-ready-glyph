@@ -2,7 +2,7 @@
 
 An experimental notification companion for **Nothing Phone (3)**. A regular notification from a selected AI app triggers a six-second animation on the rear Glyph Matrix.
 
-**Current version: 0.6.8.** Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google or other AI providers.
+**Current version: 0.6.9.** Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google or other AI providers.
 
 The app uses Android notification metadata. It does not connect to AI accounts, read notification text or observe an AI app's internal task state. An app that sends no notification provides no signal to detect.
 
@@ -15,6 +15,7 @@ The app uses Android notification metadata. It does not connect to AI accounts, 
 - A picker of 40 package identities from 31 model providers, including regional and legacy identities.
 - Automatic recognition of known Nothing models and a dynamic device label.
 - An English interface, original dot lettering and an original adaptive launcher icon.
+- Rounded dark dialogs, pill buttons and full-height switches in the app's red, black and white palette.
 - A separate circular 25 x 25 pixel preview with a red notification dot for the Glyph Toys list.
 
 Catalog inclusion is **not confirmation of working completion notifications**. Read the [catalog research](docs/ai-app-catalog-research.md) and [exact identities](docs/ai-app-catalog.json).

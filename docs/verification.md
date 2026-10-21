@@ -1,6 +1,6 @@
 # Verification record
 
-Date: 21 October 2026. Latest verified app build: 0.6.8, versionCode 14.
+Date: 21 October 2026. Latest verified app build: 0.6.9, versionCode 15.
 
 ## Clean public-source build 0.6.4
 
@@ -68,6 +68,18 @@ Regular alerts without a stock completion phrase could previously be rejected. A
 - Verified the packaged NotificationPolicy, absence of obsolete phrase-rejection strings and detection controls, and APK signature matching 0.6.7.
 - Toy preview with its red dot, launcher artwork, catalog identities and animation frames are unchanged.
 - Actual notification delivery and physical Glyph output still need a fresh phone-side test after updating. This build removes the confirmed filter failure; it does not prove the phone rendered a frame.
+
+## Dialogs and switches 0.6.9
+
+All six in-app dialog paths use one themed builder and presentation helper. Dialogs have a dark surface, subtle border, clipped 28 dp corners, consistent titles, muted body text and rounded action buttons. The app picker has a rounded search field and a list height capped for smaller windows.
+
+- Replaced thin switch tracks with 54 x 32 dp capsules and 28 dp white thumbs. Enabled tracks are red; disabled tracks are gray. Native Switch handles checked state, dragging, animation, focus and accessibility.
+- Ran `gradlew.bat --no-daemon testDebugUnitTest assembleDebug lintDebug`: assembly passed, 28 tests passed, 0 lint errors and the same two existing warnings.
+- Checked the shared dialog theme in packaged resources and all dialog call sites in source.
+- Visually checked browser reconstructions of notification access, app selection and animation choices. The preview's switch states and search filter were exercised. These checks cover the reconstruction, not Android rendering or app behavior on a phone.
+- Verified that notification handling, saved settings, the catalog, Glyph animations and artwork are unchanged.
+- APK signature matches 0.6.8 for an in-place update; permissions are unchanged.
+- ADB reported no connected device. Native dialog rendering, keyboard resizing, large font sizes and switch interaction on Nothing OS still require a phone-side check.
 
 ## Physical-device boundary
 

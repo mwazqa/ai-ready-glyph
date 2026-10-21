@@ -2,6 +2,13 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.6.9 - 2026-10-21
+
+- Apply one dark dialog style with 28 dp corners, consistent typography and pill-shaped buttons to every in-app dialog.
+- Give the app picker a rounded, filled search field and responsive list height.
+- Replace thin switches with 54 x 32 dp tracks and 28 dp white thumbs, using red for enabled and gray for disabled.
+- Preserve native switch interaction, accessibility, selected apps, notification behavior and Glyph animations.
+
 ## 0.6.8 - 2026-10-21
 
 - Always accept regular notifications from selected apps while Automatic animations is enabled.

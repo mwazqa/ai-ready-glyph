@@ -92,8 +92,8 @@ hr {border:0;height:1px;background:#333;margin:18px 0 14px}.small {font-size:13p
 .button.primary {background:#d71920;border-color:#d71920}.button.selected{background:#f5f5f5;color:#000;border-color:#f5f5f5}
 .row {display:flex;gap:8px;margin-top:16px}.row .button {flex:1;min-width:0;margin-top:0}
 .toggle-row {display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;font-size:15px;margin-top:14px}
-.toggle {flex:none;width:36px;height:16px;background:#333;border-radius:20px;position:relative;display:inline-block}
-.toggle:after{content:"";position:absolute;left:0;top:-3px;width:22px;height:22px;border-radius:50%;background:#aaa}.toggle.on {background:#d71920}.toggle.on:after {left:17px;background:#f5f5f5}
+.toggle {flex:none;width:54px;height:32px;background:#3a3a3c;border:0;padding:0;border-radius:16px;position:relative;display:inline-block}
+.toggle:after{content:"";position:absolute;left:2px;top:2px;width:28px;height:28px;border-radius:50%;background:#f5f5f5;transition:left .25s}.toggle.on {background:#d71920}.toggle.on:after {left:24px}
 .help{font-size:12px!important;margin-top:12px!important}.providers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.providers .button{margin:0}
 .matrix{background:#000;border:1px solid #333;border-radius:24px;height:224px;margin-top:16px;display:flex;justify-content:center;align-items:center}.matrix svg{height:196px;max-width:100%}.footer{margin-top:24px}
 @media(max-width:880px){body{padding:20px}.previews{flex-wrap:wrap}.variant{max-width:100%;width:390px}} @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
@@ -106,3 +106,63 @@ page += '<div class="variant"><div class="label">02 / CONFIGURED</div><div class
 destination = ROOT / f'dist/AI-Ready-Glyph-{version}-ui-design.html'
 destination.write_text(page, encoding='utf-8')
 print(destination)
+
+dialog_css = '''
+.previews {flex-wrap:wrap}.dialog-stage {position:relative;border-radius:28px;overflow:hidden}
+.dialog-stage .screen {height:780px;overflow:hidden;pointer-events:none}
+.overlay {position:absolute;inset:0;background:rgba(0,0,0,.68);display:flex;align-items:center;justify-content:center;padding:20px;color:#f5f5f5}
+.dialog {width:100%;max-width:520px;background:#181818;border:1px solid #333;border-radius:28px;overflow:hidden;box-shadow:0 20px 64px #0006}
+.dialog h2 {font-size:23px;font-weight:500;line-height:1.3;padding:24px 24px 12px;margin:0}
+.dialog p {color:#aaa;font-size:15px;line-height:1.5;margin:0;padding:0 24px 20px}
+.dialog-actions {display:flex;justify-content:flex-end;gap:8px;padding:8px 12px 16px}
+.dialog-actions .button {min-height:48px;min-width:88px;padding:10px 16px;margin:0;font-family:inherit;background:transparent;cursor:pointer}
+.dialog-actions .primary {background:#d71920}.dialog button:focus-visible,.dialog input:focus-visible {outline:2px solid #f5f5f5;outline-offset:3px}
+.picker {padding:0 24px 8px}.picker p {padding:0;font-size:13px;line-height:1.45}
+.picker input {width:100%;height:52px;background:#222;border:1px solid #333;border-radius:18px;color:#f5f5f5;padding:12px 16px;margin:16px 0 8px;font:15px Arial,sans-serif}
+.picker input::placeholder {color:#aaa;opacity:1}.picker .toggle-row {margin:0;gap:14px;min-height:56px;cursor:pointer}
+.picker .toggle {cursor:pointer}.picker-list {height:260px;overflow:auto;scrollbar-width:thin;scrollbar-color:#555 transparent}.picker-list .hidden {display:none}
+.dialog-choices {padding:0 12px 4px}.dialog-choice {min-height:56px;padding:16px;color:#f5f5f5;font-size:16px;display:flex;align-items:center}
+@media(prefers-reduced-motion:reduce){.toggle:after {transition:none}}
+'''
+
+
+def dialog_stage(label, title, content, actions):
+    heading = text(title) if title in strings else html.escape(title)
+    dialog = f'<div class="dialog" role="group" aria-label="{heading}"><h2>{heading}</h2>{content}<div class="dialog-actions">{actions}</div></div>'
+    return f'<div class="variant"><div class="label">{label}</div><div class="dialog-stage"><div class="screen">{screen(True)}</div><div class="overlay">{dialog}</div></div></div>'
+
+
+def dialog_button(key, primary=False):
+    return f'<button type="button" class="button {"primary" if primary else ""}">{text(key)}</button>'
+
+
+dialog_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Ready Glyph {version} - Dialog design preview</title><style>{css}{dialog_css}</style>'
+dialog_page += f'<header><h1>AI Ready Glyph / {version} / Dialogs</h1><p>Design reconstruction from Android source, not a device screenshot.<br>Try the search field and switches in the app picker. Example app selections are illustrative.</p></header><main class="previews">'
+dialog_page += dialog_stage('01 / NOTIFICATION ACCESS', 'notification_access', f'<p>{text("access_explanation")}</p>', dialog_button('cancel') + dialog_button('open_settings', True))
+picker = f'<div class="picker"><p>{text("ai_picker_help")}</p><input type="search" aria-label="Search AI apps" placeholder="{text("search_apps")}"><div class="picker-list">'
+for label, enabled in [('ChatGPT', True), ('Claude', False), ('Gemini', True), ('Kimi', False), ('Qwen', False)]:
+    picker += f'<div class="toggle-row" data-app="{label.lower()}"><span>{label}</span><button class="toggle {"on" if enabled else ""}" type="button" role="switch" aria-label="{label}" aria-checked="{str(enabled).lower()}"></button></div>'
+picker += f'<p class="hidden" id="picker-empty">{text("no_matching_apps")}</p></div></div>'
+dialog_page += dialog_stage('02 / CHOOSE AI APPS', 'choose_apps', picker, dialog_button('done', True))
+choices = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['Automatic (ChatGPT)', 'ChatGPT', 'Claude', 'Gemini', 'Other AI']) + '</div>'
+dialog_page += dialog_stage('03 / ANIMATION CHOICES', 'ChatGPT', choices, dialog_button('cancel'))
+dialog_page += '''</main><script>
+document.querySelectorAll('button.toggle').forEach(control => control.addEventListener('click', () => {
+    const enabled = control.getAttribute('aria-checked') !== 'true';
+    control.setAttribute('aria-checked', String(enabled));
+    control.classList.toggle('on', enabled);
+}));
+document.querySelector('input[type="search"]').addEventListener('input', event => {
+    const query = event.target.value.toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('[data-app]').forEach(row => {
+        const matches = row.dataset.app.includes(query);
+        row.classList.toggle('hidden', !matches);
+        if (matches) visible++;
+    });
+    document.getElementById('picker-empty').classList.toggle('hidden', visible !== 0);
+});
+</script></html>'''
+dialog_destination = ROOT / f'dist/AI-Ready-Glyph-{version}-dialogs-design.html'
+dialog_destination.write_text(dialog_page, encoding='utf-8')
+print(dialog_destination)
