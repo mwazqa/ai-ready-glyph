@@ -83,7 +83,6 @@ public final class MainActivity extends Activity {
         sections.addView(sourceCard);
         sections.addView(animationCard);
         configuredOrder = false;
-        buildDetection(sections);
         buildToy(sections);
         spaced(root, caption(R.string.footer), 24);
     }
@@ -217,27 +216,6 @@ public final class MainActivity extends Activity {
         preview.play();
         MatrixController.get(this).play(settings.previewProvider());
         refreshStatus();
-    }
-
-    private void buildDetection(LinearLayout parent) {
-        LinearLayout card = card(parent, R.string.detection_eyebrow, R.string.detection_title);
-        spaced(card, text(R.string.detection_description, 14, MUTED), 8);
-        Switch relaxed = toggle(R.string.every_notification, settings.relaxed());
-        spaced(card, relaxed, 14);
-        relaxed.setOnCheckedChangeListener((view, checked) -> settings.setRelaxed(checked));
-        spaced(card, text(R.string.every_notification_help, 12, MUTED), 6);
-        Button phrases = button(R.string.custom_phrases, false);
-        spaced(card, phrases, 16);
-        phrases.setOnClickListener(view -> {
-            EditText input = new EditText(this);
-            input.setText(settings.phrases());
-            input.setHint(R.string.phrases_hint);
-            input.setPadding(dp(24), dp(16), dp(24), dp(16));
-            new AlertDialog.Builder(this).setTitle(R.string.custom_phrases)
-                    .setMessage(R.string.phrases_help)
-                    .setView(input).setNegativeButton(R.string.cancel, null)
-                    .setPositiveButton(R.string.save, (dialog, which) -> settings.setPhrases(input.getText().toString())).show();
-        });
     }
 
     private void buildToy(LinearLayout parent) {

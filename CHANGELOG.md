@@ -2,6 +2,14 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.6.8 - 2026-10-21
+
+- Always accept regular notifications from selected apps while Automatic animations is enabled.
+- Remove Ready detection, the Every regular notification switch, custom phrases and text-based matching.
+- Stop extracting notification titles and message bodies.
+- Keep ongoing, progress and group-summary exclusions, duplicate suppression and Do Not Disturb handling.
+- Old phrase and mode preferences no longer affect behavior; source selections and animation assignments are preserved.
+
 ## 0.6.7 - 2026-10-21
 
 - Show the exact reason a notification is skipped instead of a combined message.

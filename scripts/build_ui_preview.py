@@ -74,8 +74,6 @@ def screen(configured):
     content = wordmark + f'<div class="caption device">{text("device_label")}</div><h1>{text("hero_title")}</h1><p class="intro">{text("hero_description")}</p>'
     content += status(configured)
     content += animations() + sources(True) if configured else sources(False) + animations()
-    detection = f'<p>{text("detection_description")}</p><div class="toggle-row">{text("every_notification")}<span class="toggle"></span></div><p class="small">{text("every_notification_help")}</p>' + button('custom_phrases')
-    content += card('detection_eyebrow', 'detection_title', detection)
     content += card('toy_eyebrow', 'toy_title', f'<p>{text("toy_description")}</p>' + button('open_toys'))
     return content + f'<div class="caption footer">{text("footer")}</div>'
 
@@ -100,10 +98,11 @@ hr {border:0;height:1px;background:#333;margin:18px 0 14px}.small {font-size:13p
 .matrix{background:#000;border:1px solid #333;border-radius:24px;height:224px;margin-top:16px;display:flex;justify-content:center;align-items:center}.matrix svg{height:196px;max-width:100%}.footer{margin-top:24px}
 @media(max-width:880px){body{padding:20px}.previews{flex-wrap:wrap}.variant{max-width:100%;width:390px}} @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 '''
-page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Ready Glyph 0.6 - UI layout preview</title><style>' + css + '</style>'
-page += '<header><h1>AI Ready Glyph / 0.6.0</h1><p>Layout reconstruction from the Android source. This is a design preview, not a device screenshot.<br>Scroll each panel to see the complete screen. Settings and controls are illustrative.</p></header><main class="previews">'
+version = strings['footer']
+page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Ready Glyph {version} - UI layout preview</title><style>' + css + '</style>'
+page += f'<header><h1>AI Ready Glyph / {version}</h1><p>Layout reconstruction from the Android source. This is a design preview, not a device screenshot.<br>Scroll each panel to see the complete screen. Settings and controls are illustrative.</p></header><main class="previews">'
 page += '<div class="variant"><div class="label">01 / FIRST LAUNCH</div><div class="screen">' + screen(False) + '</div></div>'
 page += '<div class="variant"><div class="label">02 / CONFIGURED</div><div class="screen">' + screen(True) + '</div></div></main></html>'
-destination = ROOT / 'dist/AI-Ready-Glyph-0.6.0-ui-design.html'
+destination = ROOT / f'dist/AI-Ready-Glyph-{version}-ui-design.html'
 destination.write_text(page, encoding='utf-8')
 print(destination)

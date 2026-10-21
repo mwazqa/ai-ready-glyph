@@ -27,15 +27,12 @@ public final class AiNotificationListener extends NotificationListenerService {
         AppSettings settings = new AppSettings(this);
         if (!settings.enabled() || !settings.packages().contains(item.getPackageName())) return;
         Notification notification = item.getNotification();
-        Bundle extras = notification.extras;
         boolean progress = hasProgress(notification);
         if (progress || item.isOngoing()) gate.progress(item.getKey());
-        String text = notificationText(extras);
-        CompletionPolicy.Result result = CompletionPolicy.evaluate(text, item.isOngoing(),
-                (notification.flags & Notification.FLAG_GROUP_SUMMARY) != 0,
-                progress, settings.relaxed(), settings.phrases());
+        NotificationPolicy.Result result = NotificationPolicy.evaluate(item.isOngoing(),
+                (notification.flags & Notification.FLAG_GROUP_SUMMARY) != 0, progress);
         String label = label(item.getPackageName());
-        if (result != CompletionPolicy.Result.READY) {
+        if (result != NotificationPolicy.Result.ACCEPTED) {
             LocalStatus.event(label + " · skipped: " + result.reason + ".");
             return;
         }
@@ -46,7 +43,7 @@ public final class AiNotificationListener extends NotificationListenerService {
             return;
         }
         AiProvider provider = settings.providerFor(item.getPackageName());
-        LocalStatus.event(label + " · ready · animation: " + provider.label + ".");
+        LocalStatus.event(label + " · notification · animation: " + provider.label + ".");
         MatrixController.get(this).play(provider);
     }
 
@@ -56,18 +53,6 @@ public final class AiNotificationListener extends NotificationListenerService {
         LocalStatus.listenerConnected = false;
         MatrixController.get(this).stop();
         super.onDestroy();
-    }
-
-    private static String notificationText(Bundle extras) {
-        StringBuilder text = new StringBuilder();
-        for (String key : new String[]{Notification.EXTRA_TITLE, Notification.EXTRA_TEXT,
-                Notification.EXTRA_BIG_TEXT, Notification.EXTRA_SUB_TEXT}) {
-            CharSequence value = extras.getCharSequence(key);
-            if (value != null) text.append(value).append('\n');
-        }
-        CharSequence[] lines = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
-        if (lines != null) for (CharSequence line : lines) text.append(line).append('\n');
-        return text.toString();
     }
 
     private static boolean hasProgress(Notification notification) {

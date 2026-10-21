@@ -1,6 +1,6 @@
 # Verification record
 
-Date: 21 October 2026. Latest verified app build: 0.6.7, versionCode 13.
+Date: 21 October 2026. Latest verified app build: 0.6.8, versionCode 14.
 
 ## Clean public-source build 0.6.4
 
@@ -54,6 +54,20 @@ The combined skip message could not distinguish an ongoing notification, a group
 - Verified the diagnostic reason strings in the packaged DEX and the APK signature matching 0.6.6.
 - Toy artwork, launcher assets, catalog identities and animation frames are unchanged.
 - ADB reported no connected device. The exact cause of the reported Codex alert being skipped remains unknown without its fixed completion wording or the new diagnostic result. This build is a diagnostic improvement, not a confirmed physical-device fix.
+
+## Regular notification mode 0.6.8
+
+Regular alerts without a stock completion phrase could previously be rejected. A phone-side diagnostic confirmed the missing-phrase rejection for a ChatGPT / Codex notification. The phrase-dependent decision path is now removed: every regular notification from a selected app is eligible while Automatic animations is enabled.
+
+- Removed the Ready detection card, its mode switch, custom phrases and notification-text extraction.
+- Replaced CompletionPolicy with a metadata-only NotificationPolicy. It accepts regular alerts and separately reports ongoing notifications, group summaries and active progress.
+- Old detection preferences are not read. Source selections, animation assignments, pause control, duplicate suppression, history seeding and Do Not Disturb handling retain their existing behavior.
+- Replaced the obsolete phrase tests with four metadata-decision tests. Total: 28 tests passed, 0 failures and 0 errors.
+- APK assembly passed; Android Lint reported 0 errors and the same two existing warnings.
+- Checked the generated first-launch and configured layout reconstructions in the browser: the detection card is absent and the source, animation and Toy cards remain. This is a reconstruction, not an Android device screenshot.
+- Verified the packaged NotificationPolicy, absence of obsolete phrase-rejection strings and detection controls, and APK signature matching 0.6.7.
+- Toy preview with its red dot, launcher artwork, catalog identities and animation frames are unchanged.
+- Actual notification delivery and physical Glyph output still need a fresh phone-side test after updating. This build removes the confirmed filter failure; it does not prove the phone rendered a frame.
 
 ## Physical-device boundary
 

@@ -16,10 +16,6 @@ final class AppSettings {
         if (selected) names.add(name); else names.remove(name);
         data.edit().putStringSet("packages", names).apply();
     }
-    boolean relaxed() { return data.getBoolean("relaxed", false); }
-    void setRelaxed(boolean value) { data.edit().putBoolean("relaxed", value).apply(); }
-    String phrases() { return data.getString("phrases", ""); }
-    void setPhrases(String value) { data.edit().putString("phrases", value).apply(); }
     AiProvider previewProvider() { return AiProvider.fromId(data.getString("preview_provider", "chatgpt")); }
     void setPreviewProvider(AiProvider provider) { data.edit().putString("preview_provider", provider.id).apply(); }
     AiProvider providerFor(String packageName) {

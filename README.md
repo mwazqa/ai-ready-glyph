@@ -1,17 +1,17 @@
 # AI Ready Glyph
 
-An experimental notification companion for **Nothing Phone (3)**. A matching notification from a selected AI app triggers a six-second animation on the rear Glyph Matrix.
+An experimental notification companion for **Nothing Phone (3)**. A regular notification from a selected AI app triggers a six-second animation on the rear Glyph Matrix.
 
-**Current version: 0.6.7.** Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google or other AI providers.
+**Current version: 0.6.8.** Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google or other AI providers.
 
-The app reads Android notifications. It does not connect to AI accounts or observe an AI app's internal task state. An app that sends no completion notification provides no signal to detect.
+The app uses Android notification metadata. It does not connect to AI accounts, read notification text or observe an AI app's internal task state. An app that sends no notification provides no signal to detect.
 
 ## Features
 
 - ChatGPT strokes drawn from the inner junctions, a Claude bloom, a Gemini star growing from one pixel, and generic AI lettering.
 - Four six-second animations, on-screen previews and manual Glyph tests.
 - Per-app animation overrides and an optional Glyph Toy.
-- English / Polish completion phrases, custom phrases, duplicate suppression and Do Not Disturb handling.
+- Automatic animations for regular notifications from selected apps, duplicate suppression and Do Not Disturb handling.
 - A picker of 40 package identities from 31 model providers, including regional and legacy identities.
 - Automatic recognition of known Nothing models and a dynamic device label.
 - An English interface, original dot lettering and an original adaptive launcher icon.
@@ -70,15 +70,15 @@ AGP 8.10.1, Gradle 8.11.1, its distribution checksum and the Nothing SDK commit 
 6. Run a manual Glyph test.
 7. Start an AI task, leave the AI app and wait for an actual ready notification.
 
-The optional **Gemini via Google** source appears when Gemini is installed and enabled. It covers the Google app as a whole, so unrelated Google alerts can also match. Assign the Gemini style manually if desired.
+The optional **Gemini via Google** source appears when Gemini is installed and enabled. It covers the Google app as a whole, so other regular Google alerts also trigger animations. Assign the Gemini style manually if desired.
 
-## Detection and animations
+## Notifications and animations
 
-Default rules match phrases such as `response is ready`, `task completed` and `odpowiedź jest gotowa`. Enter phrases from a real ready notification under Custom phrases, separated by semicolons or new lines.
+Every regular notification from an app you select is eligible for an animation when Automatic animations is enabled. This is the only notification mode: there is no phrase filter, custom-phrase field or Every regular notification switch. Old phrase and detection-mode preferences no longer affect behavior after an update.
 
-**Every regular notification** also accepts answer-only notifications, but may react to unrelated alerts. Neither mode interprets answers semantically. Ongoing work, active progress, group summaries and recognized busy phrases are skipped. Existing notifications are not replayed when the listener connects. A notification key alerts once until removed or new progress appears.
+Ongoing notifications, active progress and group summaries are skipped using Android metadata. Notification text and language are not analyzed. An ordinary alert unrelated to a completed AI task can also trigger an animation. Existing notifications are not replayed when the listener connects. A notification key alerts once until removed or new progress appears.
 
-Details reports whether a notification was ongoing, a group summary, actively progressing, contained a busy phrase or lacked a completion phrase. Notification events and Glyph actions have independent timestamps including seconds. A previous manual test's Glyph status does not confirm that a later notification triggered an animation. These diagnostics do not store notification text. If a ChatGPT / Codex alert is skipped, check the reported reason and its fixed completion wording; catalog inclusion alone does not prove that the default phrases match it.
+Details reports whether a notification was ongoing, a group summary or actively progressing. Notification events and Glyph actions have independent timestamps including seconds. A previous manual test's Glyph status does not confirm that a later notification triggered an animation. These diagnostics do not store notification text.
 
 Automatic alerts respect Do Not Disturb. Manual tests run on demand. Every animation lasts six seconds including a final fade. Other apps use generic AI lettering unless assigned another style.
 
@@ -86,13 +86,13 @@ For the optional Toy, use Open Glyph Toys and add AI Ready Glyph. A short Glyph 
 
 ## Privacy
 
-No INTERNET permission, backend, analytics or account system. Android grants broad notification access, but unselected packages are rejected before text extraction. Selected text is matched in memory and not stored or sent.
+No INTERNET permission, backend, analytics or account system. Android grants broad notification access, but unselected packages are rejected and the app does not extract notification titles or message bodies. Only flags and progress metadata are used for notification decisions.
 
-Preferences store selected packages, custom phrases, assignments and settings. Diagnostics contain time, an app label and a result. Phone recognition reads public build fields, not unique device identifiers. [Privacy details](PRIVACY.md).
+Preferences store selected packages, assignments and settings. Older unused phrase and mode values may remain from previous builds but are not read. Diagnostics contain time, an app label and a result. Phone recognition reads public build fields, not unique device identifiers. [Privacy details](PRIVACY.md).
 
 ## Verification and development
 
-Local 0.6.7 verification: **29 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Current recognition, native UI, Toy-list rendering and real LED output still need physical-device checks. The reported Codex alert's exact rejection cause and its end-to-end behavior remain unverified. [Verification record](docs/verification.md).
+Local 0.6.8 verification: **28 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. The confirmed missing-phrase rejection path is removed. Current native UI and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
 
 GitHub Actions checks the catalog, wrapper, tests, build and lint. It retrieves the SDK from Nothing and does not upload APK artifacts.
 
