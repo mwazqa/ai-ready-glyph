@@ -49,7 +49,7 @@
     <string name="toy_description">Add Ready Glyph to your Toys carousel. Hold the Glyph Button to test the last selected animation. Automatic alerts also work without selecting this Toy.</string>
     <string name="open_toys">Open Glyph Toys</string>
     <string name="toy_fallback">Open Settings > Glyph Interface > Glyph Toys and add Ready Glyph.</string>
-    <string name="footer">0.7.2</string>
+    <string name="footer">0.7.3</string>
     <string name="search_apps">Search ChatGPT, Claude, Gemini…</string>
     <string name="no_apps">No catalogued AI apps found. Install an official app such as ChatGPT, Claude, Gemini, Kimi or Qwen, then open it at least once.</string>
     <string name="no_matching_apps">No installed AI apps match your search.</string>
@@ -69,7 +69,7 @@
     <string name="messaging_description">Enable the apps you want to see on your Glyph Matrix.</string>
     <string name="messaging_help">Regular notifications and new notification updates trigger an animation. SMS follows your default messaging app, including its other regular alerts.</string>
     <string name="sms_source">SMS (%1$s)</string>
-    <string name="no_default_sms">No enabled default SMS app available.</string>
+    <string name="no_default_sms">Could not detect an enabled SMS app.</string>
     <string name="not_installed">Not installed or disabled.</string>
     <string name="ai_styles">AI APPS</string>
     <string name="messaging_styles">MESSAGING</string>

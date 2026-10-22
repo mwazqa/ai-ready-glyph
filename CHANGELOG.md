@@ -2,6 +2,13 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.7.3 - 2026-10-22
+
+- Fall back to the system-resolved SMS composer when the default SMS package API returns no package.
+- Add targeted SENDTO / smsto package visibility and accept only an enabled handler, excluding the system chooser.
+- Report an SMS detection failure without claiming that no default app exists.
+- Preserve SMS source choices, animation assignments, notification rules and all animation frames. No SMS permissions are added.
+
 ## 0.7.2 - 2026-10-22
 
 - Reserve the full measured height of dialog actions, including padding, to prevent rounded buttons from being clipped.

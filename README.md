@@ -2,7 +2,7 @@
 
 An experimental notification companion for **Nothing Phone (3)**. Selected AI apps, Discord, Messenger, WhatsApp and your default SMS app can trigger six-second animations on the rear Glyph Matrix.
 
-**Current version: 0.7.2.** Previously AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta or other app providers.
+**Current version: 0.7.3.** Previously AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta or other app providers.
 
 The app uses Android notification metadata. It does not connect to AI accounts, read notification text or observe an AI app's internal task state. An app that sends no notification provides no signal to detect.
 
@@ -83,7 +83,7 @@ Every regular notification from an app you select is eligible for an animation w
 
 Ongoing notifications, active progress and group summaries are skipped using Android metadata. Notification text and language are not analyzed. An ordinary alert unrelated to a completed AI task can also trigger an animation. Existing notifications are not replayed when the listener connects. AI sources retain their existing behavior: a notification key alerts once until removed or new progress appears. Messaging sources also accept a different posting timestamp on the same notification key, so later posts for a conversation can trigger another animation. This detects posts, not unique message content; an app can post an update without a new message. Rapid alerts restart the current animation rather than queueing a backlog.
 
-SMS follows the phone's currently enabled default SMS app. Its selection and animation assignment follow the SMS source when the default app changes. This covers that app's regular notifications, including RCS or other alerts; it does not inspect SMS messages or distinguish message transport. No SMS permissions are requested and the default SMS app is not changed. [Messaging sources](docs/messaging-sources.md).
+SMS uses Android's default SMS package API. If that returns no package, the app falls back to the system-resolved SMS composer and checks that it is an enabled SMS handler. A system chooser is rejected; Android can resolve the sole available handler even without an explicit default. Its selection and animation assignment follow the SMS source when the resolved app changes. This covers that app's regular notifications, including RCS or other alerts; it does not inspect SMS messages or distinguish message transport. No SMS permissions are requested and the default SMS app is not changed. [Messaging sources](docs/messaging-sources.md).
 
 Details reports whether a notification was ongoing, a group summary or actively progressing. Notification events and Glyph actions have independent timestamps including seconds. A previous manual test's Glyph status does not confirm that a later notification triggered an animation. These diagnostics do not store notification text.
 
@@ -99,7 +99,7 @@ Preferences store selected packages, assignments and settings. Older unused phra
 
 ## Verification and development
 
-Local 0.7.2 verification: **42 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Existing AI animation sequences match the 0.6.9 baseline at 50 ms samples. Messaging routing, repost handling and animation phases have unit coverage. Current native UI and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
+Local 0.7.3 verification: **46 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Existing AI animation sequences match the 0.6.9 baseline at 50 ms samples. Messaging routing, SMS fallback validation, repost handling and animation phases have unit coverage. Current native UI, SMS resolution and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
 
 GitHub Actions checks the catalog, wrapper, tests, build and lint. It retrieves the SDK from Nothing and does not upload APK artifacts.
 

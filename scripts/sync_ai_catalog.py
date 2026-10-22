@@ -74,7 +74,8 @@ def main():
     queries += f'        <package android:name="{NOTHING}" />\n'
     for name in ('com.discord', 'com.facebook.orca', 'com.whatsapp'):
         queries += f'        <package android:name="{name}" />\n'
-    queries += '        <intent>\n            <action android:name="android.provider.Telephony.SMS_DELIVER" />\n        </intent>\n    </queries>'
+    queries += '        <intent>\n            <action android:name="android.provider.Telephony.SMS_DELIVER" />\n        </intent>\n'
+    queries += '        <intent>\n            <action android:name="android.intent.action.SENDTO" />\n            <data android:scheme="smsto" />\n        </intent>\n    </queries>'
     manifest, count = re.subn(r"    <queries>.*?</queries>", lambda _: queries, manifest, flags=re.S)
     assert count == 1, "Expected one package visibility section"
     for path, expected in ((JAVA, java_source(apps)), (MANIFEST, manifest)):

@@ -118,6 +118,19 @@ A phone screenshot showed the rounded Close button clipped above its label in th
 - Verified the packaged version and APK signature matching 0.7.1. Notification behavior, preferences, artwork and all eight animation sources are unchanged.
 - ADB reported no attached phone. Confirm the Close button on Nothing OS after updating, including with larger text or a longer app list.
 
+## SMS detection fallback 0.7.3
+
+Phone screenshots showed Google Messages selected in Android's default SMS settings while Ready Glyph reported no enabled default SMS app. The manifest already contained the SMS_DELIVER visibility query documented for the Telephony API. The exact failing API or package lookup was not captured on the phone.
+
+- Keep the non-empty Telephony default result authoritative. When it is null or blank, resolve ACTION_SENDTO / smsto and validate that the resulting package belongs to an enabled SMS handler.
+- Add the corresponding targeted package-visibility query to the manifest generator. Do not hardcode Google Messages or choose an arbitrary candidate. Reject the system chooser; Android can resolve a sole handler without an explicit default.
+- Change the unavailable message to describe detection failure rather than assert that no default app exists.
+- Added four tests for Google Messages and other handlers, switching between resolved handlers, chooser rejection and missing or disabled candidates. Total: 46 tests passed, no failures or errors.
+- APK assembly passed; Android Lint reported 0 errors and the same two existing warnings. Catalog consistency passed.
+- Verified the packaged visibility queries, fallback class and unchanged permission set. The APK signature matches 0.7.2.
+- Existing SMS preferences, animation assignments, notification gates, dialog layout and all eight animation sources are unchanged. No SMS read, receive or send permissions are requested.
+- ADB reported no attached phone. The revised detection path and a real SMS notification still require a Phone (3) check after updating; this is not a confirmed device-side result.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.
