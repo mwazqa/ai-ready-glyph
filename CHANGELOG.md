@@ -2,6 +2,12 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.8.1 - 2026-10-22
+
+- Rename the displayed app and Glyph Toy to Notify Glyph, including notification access labels, in-app text and the dot wordmark.
+- Replace the ready check with an original N monogram in adaptive colour, monochrome and circular Glyph Toys artwork. Keep the red notification dot.
+- Preserve Android identity, signing identity, existing settings, notification handling, all twelve animation sequences and the six-second delay followed by full six-second playback.
+
 ## 0.8.0 - 2026-10-22
 
 - Add a separate Social section for the standard Instagram, TikTok, X and Facebook apps. New source switches start disabled.

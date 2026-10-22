@@ -1,6 +1,6 @@
 # Privacy
 
-Ready Glyph has no INTERNET permission, backend, analytics, advertisements or crash-reporting service.
+Notify Glyph has no INTERNET permission, backend, analytics, advertisements or crash-reporting service.
 
 Android grants broad notification-listener access. The listener rejects unselected source packages and examines only notification flags, progress metadata and posting timestamps for the apps you select. It does not extract notification titles, message bodies or conversation text.
 
@@ -8,4 +8,4 @@ SharedPreferences store selected AI packages, messaging and social source IDs, a
 
 Phone recognition reads public manufacturer, brand and model fields. It does not read an IMEI, serial number or Android ID.
 
-Revoke notification access or clear app data in Android Settings. Uninstalling removes app data. These statements describe Ready Glyph, not the apps whose notifications it observes.
+Revoke notification access or clear app data in Android Settings. Uninstalling removes app data. These statements describe Notify Glyph, not the apps whose notifications it observes.

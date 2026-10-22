@@ -1,6 +1,14 @@
-# Naming check for 0.7.0
+# Naming checks
 
-Ready Glyph is the working name for the expansion beyond AI sources. This review checked publicly returned search results, not reservations or exclusive rights.
+## Notify Glyph 0.8.1
+
+Notify Glyph is the displayed app and Glyph Toy name from 0.8.1. It reflects the AI, messaging and social notification sources. The Android application ID, listener component and existing repository URL remain unchanged for compatibility.
+
+Preliminary public web searches for "Notify Glyph" and "notify-glyph" on 2026-10-22 returned no exact matching app or repository among the results. The direct Google Play search and GitHub search pages could not be retrieved through the search tool. This limited check does not establish name availability or exclusive rights. Recheck the [Google Play search](https://play.google.com/store/search?q=Notify%20Glyph&c=apps) and [GitHub repository search](https://github.com/search?q=notify-glyph&type=repositories) before a public store launch.
+
+## Archived review for 0.7.0
+
+Ready Glyph was the working name for the expansion beyond AI sources. This review checked publicly returned search results, not reservations or exclusive rights.
 
 | Candidate | GitHub repository-name search | Google Play search |
 | --- | --- | --- |

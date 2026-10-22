@@ -8,9 +8,8 @@ import java.util.Locale;
 import javax.imageio.ImageIO;
 
 public final class BuildAppIcon {
-    private static boolean check(int x, int y) {
-        return (x == 2 && y == 4) || (x == 3 && y == 5) || (x == 4 && y == 6)
-                || (x == 5 && y == 5) || (x == 6 && y == 4) || (x == 7 && y == 3);
+    private static boolean monogram(int x, int y) {
+        return y >= 1 && y <= 7 && (x == 1 || x == 6 || x == Math.round(1 + (y - 1) * 5f / 6));
     }
 
     private static String circle(double x, double y, double radius) {
@@ -51,7 +50,7 @@ public final class BuildAppIcon {
         for (int y = 0; y < 9; y++) for (int x = 0; x < 9; x++) {
             if (Math.hypot(x - 4, y - 4) > 4.25) continue;
             double cx = 30 + x * 6, cy = 30 + y * 6;
-            boolean lit = check(x, y);
+            boolean lit = monogram(x, y);
             if (Math.hypot(cx - 75, cy - 33) < 7) continue;
             (lit ? mark : dots).append(circle(cx, cy, lit ? 2.5 : 1.65));
             String color = lit ? "#F5F5F5" : "#3A3A3A";
@@ -74,6 +73,6 @@ public final class BuildAppIcon {
                 + paths(mark.toString() + signal, "#FFFFFF", false) + "</vector>\n");
         Files.writeString(root.resolve("artwork/app-icon.svg"), svg);
         Files.createDirectories(root.resolve("dist"));
-        ImageIO.write(preview, "png", root.resolve("dist/AI-Ready-Glyph-0.6.0-icon.png").toFile());
+        ImageIO.write(preview, "png", root.resolve("dist/Notify-Glyph-icon.png").toFile());
     }
 }

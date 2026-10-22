@@ -21,7 +21,9 @@ public final class BuildToyPreview {
     }
 
     private static boolean lit(int x, int y) {
-        return Math.min(distance(x, y, 5, 12, 10, 17), distance(x, y, 10, 17, 20, 7)) <= 1.05;
+        return Math.min(Math.min(distance(x, y, 5.5, 5.5, 5.5, 18.5),
+                distance(x, y, 17.5, 5.5, 17.5, 18.5)),
+                distance(x, y, 5.5, 5.5, 17.5, 18.5)) <= .85;
     }
 
     private static String rectangle(double x, double y) {
@@ -84,6 +86,6 @@ public final class BuildToyPreview {
         Files.createDirectories(root.resolve("dist"));
         Files.writeString(drawables.resolve("ic_glyph_toy_preview.xml"), vector);
         Files.writeString(root.resolve("artwork/glyph-toy-preview.svg"), svg);
-        ImageIO.write(preview, "png", root.resolve("dist/AI-Ready-Glyph-toy-preview.png").toFile());
+        ImageIO.write(preview, "png", root.resolve("dist/Notify-Glyph-toy-preview.png").toFile());
     }
 }

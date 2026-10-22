@@ -37,7 +37,7 @@ for y, row in enumerate(rows):
 matrix = '<svg viewBox="0 0 200 200" role="img" aria-label="ChatGPT Glyph preview">' + ''.join(dots) + '</svg>'
 wordmark_source = (ROOT / 'app/src/main/java/pl/glyphtoy/aiready/DotWordmarkView.java').read_text(encoding='utf-8')
 letters = re.findall(r'"([01]{35})"', wordmark_source)
-wordmark = '<svg class="wordmark" viewBox="0 0 350 32" aria-label="Ready Glyph">'
+wordmark = '<svg class="wordmark" viewBox="0 0 350 32" aria-label="Notify Glyph">'
 for index, letter in enumerate(letters):
     for row in range(7):
         for col in range(5):
@@ -119,11 +119,11 @@ hr {border:0;height:1px;background:#333;margin:18px 0 14px}.small {font-size:13p
 @media(max-width:880px){body{padding:20px}.previews{flex-wrap:wrap}.variant{max-width:100%;width:390px}} @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 '''
 version = strings['footer']
-page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ready Glyph {version} - UI layout preview</title><style>' + css + '</style>'
-page += f'<header><h1>Ready Glyph / {version}</h1><p>Layout reconstruction from the Android source. This is a design preview, not a device screenshot.<br>Scroll each panel to see the complete screen. Settings and controls are illustrative.</p></header><main class="previews">'
+page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notify Glyph {version} - UI layout preview</title><style>' + css + '</style>'
+page += f'<header><h1>Notify Glyph / {version}</h1><p>Layout reconstruction from the Android source. This is a design preview, not a device screenshot.<br>Scroll each panel to see the complete screen. Settings and controls are illustrative.</p></header><main class="previews">'
 page += '<div class="variant"><div class="label">01 / FIRST LAUNCH</div><div class="screen">' + screen(False) + '</div></div>'
 page += '<div class="variant"><div class="label">02 / CONFIGURED</div><div class="screen">' + screen(True) + '</div></div></main></html>'
-destination = ROOT / f'dist/Ready-Glyph-{version}-ui-design.html'
+destination = ROOT / f'dist/Notify-Glyph-{version}-ui-design.html'
 destination.write_text(page, encoding='utf-8')
 print(destination)
 
@@ -156,8 +156,8 @@ def dialog_button(key, primary=False):
     return f'<button type="button" class="button {"primary" if primary else ""}">{text(key)}</button>'
 
 
-dialog_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ready Glyph {version} - Dialog design preview</title><style>{css}{dialog_css}</style>'
-dialog_page += f'<header><h1>Ready Glyph / {version} / Dialogs</h1><p>Design reconstruction from Android source, not a device screenshot.<br>Try the search field and switches in the app picker. Example app selections are illustrative.</p></header><main class="previews">'
+dialog_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notify Glyph {version} - Dialog design preview</title><style>{css}{dialog_css}</style>'
+dialog_page += f'<header><h1>Notify Glyph / {version} / Dialogs</h1><p>Design reconstruction from Android source, not a device screenshot.<br>Try the search field and switches in the app picker. Example app selections are illustrative.</p></header><main class="previews">'
 dialog_page += dialog_stage('01 / NOTIFICATION ACCESS', 'notification_access', f'<p>{text("access_explanation")}</p>', dialog_button('cancel') + dialog_button('open_settings', True))
 picker = f'<div class="picker"><p>{text("ai_picker_help")}</p><input type="search" aria-label="Search AI apps" placeholder="{text("search_apps")}"><div class="picker-list">'
 for label, enabled in [('ChatGPT', True), ('Claude', False), ('Gemini', True), ('Kimi', False), ('Qwen', False)]:
@@ -185,15 +185,15 @@ document.querySelector('input[type="search"]').addEventListener('input', event =
     document.getElementById('picker-empty').classList.toggle('hidden', visible !== 0);
 });
 </script></html>'''
-dialog_destination = ROOT / f'dist/Ready-Glyph-{version}-dialogs-design.html'
+dialog_destination = ROOT / f'dist/Notify-Glyph-{version}-dialogs-design.html'
 dialog_destination.write_text(dialog_page, encoding='utf-8')
 print(dialog_destination)
 
-detail_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ready Glyph {version} - Source sections</title><style>{css}</style>'
-detail_page += f'<header><h1>Ready Glyph / {version}</h1><p>Source-card and animation-card reconstructions. Example selections; not Android screenshots.</p></header><main class="previews">'
+detail_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notify Glyph {version} - Source sections</title><style>{css}</style>'
+detail_page += f'<header><h1>Notify Glyph / {version}</h1><p>Source-card and animation-card reconstructions. Example selections; not Android screenshots.</p></header><main class="previews">'
 detail_page += '<div class="variant"><div class="label">AI APPS + MESSAGES</div><div class="screen">' + wordmark + sources(True) + messaging(True) + '</div></div>'
 detail_page += '<div class="variant"><div class="label">SOCIAL</div><div class="screen">' + wordmark + social(True) + '</div></div>'
 detail_page += '<div class="variant"><div class="label">TWELVE ANIMATION STYLES</div><div class="screen">' + wordmark + animations() + '</div></div></main></html>'
-detail_destination = ROOT / f'dist/Ready-Glyph-{version}-sources-design.html'
+detail_destination = ROOT / f'dist/Notify-Glyph-{version}-sources-design.html'
 detail_destination.write_text(detail_page, encoding='utf-8')
 print(detail_destination)

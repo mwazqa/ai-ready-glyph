@@ -59,7 +59,7 @@ public class BuildSocialSymbols {
         Files.createDirectories(Path.of("dist"));
         Files.writeString(Path.of("app/src/main/java/pl/glyphtoy/aiready/SocialSymbols.java"), java);
         Files.writeString(Path.of("artwork/social-symbols.svg"), svg);
-        ImageIO.write(preview, "png", Path.of("dist/Ready-Glyph-social-symbols.png").toFile());
+        ImageIO.write(preview, "png", Path.of("dist/Notify-Glyph-social-symbols.png").toFile());
         System.out.println("Generated four social symbols, SVG and PNG preview.");
     }
 

@@ -156,6 +156,17 @@ Added a separate Social card for the standard Instagram, TikTok, X and Facebook 
 - Verified packaged version, social classes and queries, unchanged permissions and the APK signature matching 0.7.4 for an in-place update. The source ZIP excludes private references, caches, SDK binaries and signing keys.
 - ADB reported no attached phone. Native layout, settings retention and real social notification-triggered physical output still require a Phone (3) check.
 
+## Notify Glyph identity 0.8.1
+
+The displayed app and Glyph Toy name is now Notify Glyph. The dot wordmark spells NOTIFY GLYPH. Launcher artwork, its monochrome variant and the circular Toys preview use an original N monogram with the red notification dot retained.
+
+- APK assembly and all 55 unit tests passed. Android Lint reported 0 errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- Checked the launcher and circular Toy PNGs generated alongside their Android vectors and SVGs. Both generators reproduce all five committed artwork assets exactly.
+- Visually checked the new wordmark and labels in the browser layout reconstruction. This is not an Android screenshot.
+- Verified the packaged app label, listener label, Toy strings, drawable resources and version. The APK signature matches 0.8.0 for an in-place update.
+- All Java sources except DotWordmarkView, notification handling, source preferences, assignment keys, catalog, Android identity, manifest, theme and all twelve animation implementations are unchanged from 0.8.0. The six-second automatic wait and full six-second playback remain.
+- ADB reported no attached phone. Launcher masking, themed icons, the system Glyph Toys list and retained settings still require a device-side check after updating.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.

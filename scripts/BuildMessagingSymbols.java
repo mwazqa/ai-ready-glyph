@@ -57,7 +57,7 @@ public class BuildMessagingSymbols {
         Files.createDirectories(Path.of("dist"));
         Files.writeString(Path.of("app/src/main/java/pl/glyphtoy/aiready/MessagingSymbols.java"), java);
         Files.writeString(Path.of("artwork/messaging-symbols.svg"), svg);
-        ImageIO.write(preview, "png", Path.of("dist/Ready-Glyph-messaging-symbols.png").toFile());
+        ImageIO.write(preview, "png", Path.of("dist/Notify-Glyph-messaging-symbols.png").toFile());
         System.out.println("Generated four messaging symbols, SVG and PNG preview.");
     }
 

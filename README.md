@@ -1,8 +1,8 @@
-# Ready Glyph
+# Notify Glyph
 
 An experimental notification companion for **Nothing Phone (3)**. Selected AI, messaging and social apps can trigger six-second animations on the rear Glyph Matrix.
 
-**Current version: 0.8.0.** Previously AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta, TikTok, X or other app providers.
+**Current version: 0.8.1.** Previously Ready Glyph and AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta, TikTok, X or other app providers.
 
 The app uses Android notification metadata. It does not connect to AI accounts, read notification text or observe an AI app's internal task state. An app that sends no notification provides no signal to detect.
 
@@ -94,7 +94,7 @@ Details reports whether a notification was ongoing, a group summary or actively 
 
 Automatic alerts wait six seconds before starting, allowing time for the system notification effect. This is a fixed margin, not a measured bell duration or a callback from Nothing OS. The animation clock begins only after the wait and SDK connection, preserving its full six seconds including the final fade. Pause, source selection and Do Not Disturb are checked again before playback. Stopping or disconnecting the listener cancels pending playback. Manual tests and Glyph Button tests start immediately and replace a pending alert. Other AI apps use generic AI lettering unless assigned another style. Messaging and social sources have their own defaults; any selected source can use an animation override.
 
-For the optional Toy, use Open Glyph Toys and add Ready Glyph. A short Glyph Button press cycles toys; holding it tests the selected style. Idle shows two dim dots. Automatic alerts also work without selecting the Toy. System effects and higher-priority Toys can override frames. An SDK call is not a physical LED reading.
+For the optional Toy, use Open Glyph Toys and add Notify Glyph. A short Glyph Button press cycles toys; holding it tests the selected style. Idle shows two dim dots. Automatic alerts also work without selecting the Toy. System effects and higher-priority Toys can override frames. An SDK call is not a physical LED reading.
 
 ## Privacy
 
@@ -104,7 +104,7 @@ Preferences store selected packages, assignments and settings. Older unused phra
 
 ## Verification and development
 
-Local 0.8.0 verification: **55 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. All eight previous animation sequences match 0.7.4 at 50 ms samples. A local JVM simulation of the actual controller passed 11 timing scenarios using simulated Android and Glyph services; it does not verify real service or LED behavior. Source eligibility, SMS fallback, repost handling and animation phases have unit coverage. Browser UI reconstructions and renderer previews are not phone screenshots. Current native UI, SMS resolution, bell timing and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
+Local 0.8.1 verification: **55 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. All twelve animation implementations and notification logic are unchanged from 0.8.0. All eight earlier animation sequences match 0.7.4 at 50 ms samples. The unchanged controller passed 11 local JVM simulation scenarios in 0.8.0 using simulated Android and Glyph services; this does not verify real service or LED behavior. Source eligibility, SMS fallback, repost handling and animation phases have unit coverage. Browser UI reconstructions and renderer previews are not phone screenshots. Native launcher masking, themed icons, the Glyph Toys list, SMS resolution, bell timing and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
 
 GitHub Actions checks the catalog, wrapper, tests, build and lint. It retrieves the SDK from Nothing and does not upload APK artifacts.
 
