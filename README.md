@@ -2,7 +2,7 @@
 
 An experimental notification companion for **Nothing Phone (3)**. Selected AI, messaging and social apps can trigger six-second animations on the rear Glyph Matrix.
 
-**Current version: 0.8.1.** Previously Ready Glyph and AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta, TikTok, X or other app providers.
+**Current version: 0.8.2.** Previously Ready Glyph and AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta, TikTok, X or other app providers.
 
 The app uses Android notification metadata. It does not connect to AI accounts, read notification text or observe an AI app's internal task state. An app that sends no notification provides no signal to detect.
 
@@ -19,7 +19,7 @@ The app uses Android notification metadata. It does not connect to AI accounts, 
 - A six-second pause before automatic playback, followed by the complete six-second animation. Manual tests start immediately.
 - A picker of 40 package identities from 31 model providers, including regional and legacy identities.
 - Automatic recognition of known Nothing models and a dynamic device label.
-- An English interface, original dot lettering and an original adaptive launcher icon.
+- An English interface, original dot lettering and an original adaptive signal icon with three white arcs and a red source dot.
 - Rounded dark dialogs, pill buttons and full-height switches in the app's red, black and white palette.
 - A separate circular 25 x 25 pixel preview with a red notification dot for the Glyph Toys list.
 
@@ -104,7 +104,7 @@ Preferences store selected packages, assignments and settings. Older unused phra
 
 ## Verification and development
 
-Local 0.8.1 verification: **55 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. All twelve animation implementations and notification logic are unchanged from 0.8.0. All eight earlier animation sequences match 0.7.4 at 50 ms samples. The unchanged controller passed 11 local JVM simulation scenarios in 0.8.0 using simulated Android and Glyph services; this does not verify real service or LED behavior. Source eligibility, SMS fallback, repost handling and animation phases have unit coverage. Browser UI reconstructions and renderer previews are not phone screenshots. Native launcher masking, themed icons, the Glyph Toys list, SMS resolution, bell timing and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
+Local 0.8.2 verification: **55 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. All twelve animation implementations and notification logic are unchanged from 0.8.0. All eight earlier animation sequences match 0.7.4 at 50 ms samples. The unchanged controller passed 11 local JVM simulation scenarios in 0.8.0 using simulated Android and Glyph services; this does not verify real service or LED behavior. Source eligibility, SMS fallback, repost handling and animation phases have unit coverage. Browser UI reconstructions and renderer previews are not phone screenshots. Native launcher masking, themed icons, the Glyph Toys list, SMS resolution, bell timing and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
 
 GitHub Actions checks the catalog, wrapper, tests, build and lint. It retrieves the SDK from Nothing and does not upload APK artifacts.
 

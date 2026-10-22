@@ -2,6 +2,12 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.8.2 - 2026-10-22
+
+- Replace the N monogram with a signal symbol: three white arcs spreading from a red source dot.
+- Use smooth strokes for adaptive launcher icons and a matching pixel version in Glyph Toys.
+- Preserve the Notify Glyph name, settings, all twelve animation sequences and notification behavior.
+
 ## 0.8.1 - 2026-10-22
 
 - Rename the displayed app and Glyph Toy to Notify Glyph, including notification access labels, in-app text and the dot wordmark.

@@ -13,17 +13,23 @@ public final class BuildToyPreview {
     private static final int SIZE = 256;
     private static final double PITCH = 9.12;
     private static final double PIXEL = 6.6;
-
-    private static double distance(double x, double y, double ax, double ay, double bx, double by) {
-        double dx = bx - ax, dy = by - ay;
-        double t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)));
-        return Math.hypot(x - ax - t * dx, y - ay - t * dy);
-    }
+    private static final double SOURCE_X = SIZE / 2.0 - 5 * PITCH;
+    private static final double SOURCE_Y = SIZE / 2.0;
+    private static final double DOT_RADIUS = 15.2;
 
     private static boolean lit(int x, int y) {
-        return Math.min(Math.min(distance(x, y, 5.5, 5.5, 5.5, 18.5),
-                distance(x, y, 17.5, 5.5, 17.5, 18.5)),
-                distance(x, y, 5.5, 5.5, 17.5, 18.5)) <= .85;
+        double limit = Math.toRadians(53);
+        double angle = Math.max(-limit, Math.min(limit, Math.atan2(y - 12, x - 7)));
+        for (double radius : new double[]{11, 20, 29}) {
+            double scaled = radius * 11.4 / 29;
+            if (Math.hypot(x - 7 - scaled * Math.cos(angle), y - 12 - scaled * Math.sin(angle)) <= .83) return true;
+        }
+        return false;
+    }
+
+    private static String circle(double radius) {
+        return String.format(Locale.ROOT, "M%.2f,%.2fa%.2f,%.2f 0,1 0,0,%.2fa%.2f,%.2f 0,1 0,0,-%.2fZ",
+                SOURCE_X, SOURCE_Y - radius, radius, radius, radius * 2, radius, radius, radius * 2);
     }
 
     private static String rectangle(double x, double y) {
@@ -69,17 +75,19 @@ public final class BuildToyPreview {
             g.fill(new Rectangle2D.Double(left, top, PIXEL, PIXEL));
         }
         g.setColor(Color.BLACK);
-        g.fill(new Ellipse2D.Double(194, 34, 28, 28));
+        g.fill(new Ellipse2D.Double(SOURCE_X - DOT_RADIUS - 3, SOURCE_Y - DOT_RADIUS - 3,
+                (DOT_RADIUS + 3) * 2, (DOT_RADIUS + 3) * 2));
         g.setColor(Color.decode("#D71920"));
-        g.fill(new Ellipse2D.Double(198, 38, 20, 20));
+        g.fill(new Ellipse2D.Double(SOURCE_X - DOT_RADIUS, SOURCE_Y - DOT_RADIUS, DOT_RADIUS * 2, DOT_RADIUS * 2));
         g.dispose();
-        svg.append("<circle cx=\"208\" cy=\"48\" r=\"14\" fill=\"#000000\"/><circle cx=\"208\" cy=\"48\" r=\"10\" fill=\"#D71920\"/>");
+        svg.append(String.format(Locale.ROOT, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#000000\"/><circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#D71920\"/>",
+                SOURCE_X, SOURCE_Y, DOT_RADIUS + 3, SOURCE_X, SOURCE_Y, DOT_RADIUS));
         svg.append("</svg>\n");
         String vector = "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\" android:width=\"128dp\" android:height=\"128dp\" android:viewportWidth=\"256\" android:viewportHeight=\"256\">\n"
                 + path("M128,0a128,128 0,1 0,0,256a128,128 0,1 0,0,-256Z", "#000000")
                 + paths(dim.toString(), "#1C1C1C") + paths(bright.toString(), "#FFFFFF")
-                + path("M208,34a14,14 0,1 0,0,28a14,14 0,1 0,0,-28Z", "#000000")
-                + path("M208,38a10,10 0,1 0,0,20a10,10 0,1 0,0,-20Z", "#D71920") + "</vector>\n";
+                + path(circle(DOT_RADIUS + 3), "#000000")
+                + path(circle(DOT_RADIUS), "#D71920") + "</vector>\n";
         Path drawables = root.resolve("app/src/main/res/drawable");
         Files.createDirectories(drawables);
         Files.createDirectories(root.resolve("artwork"));

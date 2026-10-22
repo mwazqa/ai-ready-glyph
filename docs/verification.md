@@ -167,6 +167,16 @@ The displayed app and Glyph Toy name is now Notify Glyph. The dot wordmark spell
 - All Java sources except DotWordmarkView, notification handling, source preferences, assignment keys, catalog, Android identity, manifest, theme and all twelve animation implementations are unchanged from 0.8.0. The six-second automatic wait and full six-second playback remain.
 - ADB reported no attached phone. Launcher masking, themed icons, the system Glyph Toys list and retained settings still require a device-side check after updating.
 
+## Signal icon 0.8.2
+
+Replaced the N monogram with three white signal arcs spreading from a red source dot. Adaptive launcher artwork uses smooth rounded strokes; the circular Glyph Toys preview uses a corresponding 25 x 25 pixel symbol. The Notify Glyph name and header remain.
+
+- APK assembly and all 55 existing unit tests passed. Android Lint reported 0 errors and the same AndroidGradlePluginVersion and ExportedService warnings. No icon-specific unit tests were added for this artwork change.
+- Visually checked generated launcher and Toy previews. Both generators reproduce all five committed Android vector and SVG assets exactly.
+- Verified the new vector path data in the packaged APK, adaptive colour and monochrome resources, version and unchanged permission set. The APK signature matches 0.8.1 for an in-place update.
+- All runtime Java sources, manifest, theme, catalog, selected-source logic and all twelve animation implementations remain byte-identical to 0.8.1. The six-second wait and full six-second automatic playback are unchanged.
+- Native launcher masks, themed icons and the system Glyph Toys list still require a device-side visual check.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.
