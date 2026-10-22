@@ -1,6 +1,6 @@
 # Verification record
 
-Date: 21 October 2026. Latest verified app build: 0.6.9, versionCode 15.
+Latest verified app build: 0.7.0, versionCode 16.
 
 ## Clean public-source build 0.6.4
 
@@ -80,6 +80,21 @@ All six in-app dialog paths use one themed builder and presentation helper. Dial
 - Verified that notification handling, saved settings, the catalog, Glyph animations and artwork are unchanged.
 - APK signature matches 0.6.8 for an in-place update; permissions are unchanged.
 - ADB reported no connected device. Native dialog rendering, keyboard resizing, large font sizes and switch interaction on Nothing OS still require a phone-side check.
+
+## Messaging expansion and Ready Glyph 0.7.0
+
+The displayed app and Toy name is now Ready Glyph. Android application ID, notification-listener component, signing identity, AI preferences and existing artwork remain stable. Messaging selections start disabled and are stored separately from AI package selections.
+
+- Added Discord, Messenger, WhatsApp and the current default SMS app, with exact package identities and a targeted SMS_DELIVER visibility query. No SMS permissions or all-packages visibility are requested.
+- SMS selection and overrides follow its logical source ID when the default SMS app changes; unavailable or disabled apps cannot be selected in the Messages card.
+- Messaging posts with different posting timestamps can reuse a notification key. Exact repeated timestamps and seeded history are suppressed; AI key deduplication remains unchanged. No message content is extracted.
+- Added eight tests for source eligibility, source defaults, SMS role changes, initially empty selections, repost handling, clock changes and bounded metadata retention, plus one animation reveal/hold test. Total: 37 tests passed, no failures or errors.
+- APK assembly passed; Android Lint reported 0 errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- Compared all four AI animation sequences against 0.6.9 at 50 ms intervals: sampled pixel frames match exactly.
+- Generated and inspected messaging symbol coverage and animation stages from the Java renderer. The symbol generator reproduces its Java coverage data and SVG atlas.
+- Checked browser reconstructions of source cards, first-launch/configured layouts and animation choices. They are design reconstructions, not Android screenshots.
+- Verified packaged version, app label, unchanged permission set, source visibility and APK signature matching 0.6.9.
+- ADB reported no attached phone. Native rendering, retained settings/access on upgrade and real notification-triggered physical output still require device-side checks. Posting timestamps identify posts, not unique message contents.
 
 ## Physical-device boundary
 

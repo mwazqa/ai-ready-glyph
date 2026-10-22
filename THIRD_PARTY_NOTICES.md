@@ -16,6 +16,8 @@ The Gradle wrapper uses Apache License 2.0; its embedded licence is reproduced i
 
 Provider names and marks belong to their owners. They identify notification sources; no affiliation, sponsorship or endorsement is claimed.
 
+The stylized Discord, Messenger and WhatsApp identifiers in MessagingSymbols.java and artwork/messaging-symbols.svg also identify their respective apps. They are project-drawn pixel adaptations; third-party visual expression and marks are excluded from MIT to the extent those rights apply. No brand approval is claimed. The generic SMS bubble and generator control code are original MIT project work.
+
 Third-party visual expression is excluded from MIT, including OpenAI-derived coverage in ChatGptSymbol.java, Claude reference-derived data in ClaudeFrames.java, and the provider-identifying Gemini motif to the extent third-party rights apply. Original control code remains MIT. Source inclusion does not establish permission to redistribute the underlying artwork.
 
 The ChatGPT symbol derives from OpenAI's official Blossom SVG. The raw SVG is not committed. [OpenAI's guidelines](https://openai.com/brand/) apply; this project asserts no separate approval for the pixel adaptation.

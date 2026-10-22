@@ -6,8 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 final class AppSettings {
+    private final Context context;
     private final SharedPreferences data;
-    AppSettings(Context context) { data = context.getSharedPreferences("settings", Context.MODE_PRIVATE); }
+    AppSettings(Context context) {
+        this.context = context.getApplicationContext();
+        data = this.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+    }
     boolean enabled() { return data.getBoolean("enabled", true); }
     void setEnabled(boolean value) { data.edit().putBoolean("enabled", value).apply(); }
     Set<String> packages() { return new HashSet<>(data.getStringSet("packages", Set.of())); }
@@ -16,14 +20,42 @@ final class AppSettings {
         if (selected) names.add(name); else names.remove(name);
         data.edit().putStringSet("packages", names).apply();
     }
-    AiProvider previewProvider() { return AiProvider.fromId(data.getString("preview_provider", "chatgpt")); }
-    void setPreviewProvider(AiProvider provider) { data.edit().putString("preview_provider", provider.id).apply(); }
-    AiProvider providerFor(String packageName) {
-        String override = data.getString("provider:" + packageName, null);
-        return override == null ? AiProvider.fromPackage(packageName) : AiProvider.fromId(override);
+    Set<String> messagingSources() { return new HashSet<>(data.getStringSet("messaging_sources", Set.of())); }
+    boolean messagingSelected(MessagingSource source) { return messagingSources().contains(source.id); }
+    void selectMessaging(MessagingSource source, boolean selected) {
+        Set<String> ids = messagingSources();
+        if (selected) ids.add(source.id); else ids.remove(source.id);
+        data.edit().putStringSet("messaging_sources", ids).apply();
     }
-    void setProvider(String packageName, AiProvider provider) {
-        if (provider == null) data.edit().remove("provider:" + packageName).apply();
-        else data.edit().putString("provider:" + packageName, provider.id).apply();
+    Set<String> monitoredPackages() {
+        Set<String> names = packages();
+        for (MessagingApps.Entry entry : MessagingApps.installed(context))
+            if (messagingSelected(entry.source())) names.add(entry.packageName());
+        return names;
+    }
+    MessagingSource messagingSource(String packageName) {
+        return MessagingSource.fromPackage(packageName, MessagingApps.defaultSmsPackage(context));
+    }
+    boolean monitors(String packageName) {
+        if (packages().contains(packageName)) return true;
+        return MessagingSource.selectedPackages(messagingSources(), MessagingApps.defaultSmsPackage(context)).contains(packageName);
+    }
+    AnimationStyle defaultStyle(String packageName) {
+        MessagingSource source = messagingSource(packageName);
+        return source == null ? AnimationStyle.fromPackage(packageName) : source.style;
+    }
+    AnimationStyle previewProvider() { return AnimationStyle.fromId(data.getString("preview_provider", "chatgpt")); }
+    void setPreviewProvider(AnimationStyle provider) { data.edit().putString("preview_provider", provider.id).apply(); }
+    AnimationStyle providerFor(String packageName) {
+        String override = data.getString(assignmentKey(packageName), null);
+        return override == null ? defaultStyle(packageName) : AnimationStyle.fromId(override);
+    }
+    void setProvider(String packageName, AnimationStyle provider) {
+        if (provider == null) data.edit().remove(assignmentKey(packageName)).apply();
+        else data.edit().putString(assignmentKey(packageName), provider.id).apply();
+    }
+    private String assignmentKey(String packageName) {
+        MessagingSource source = messagingSource(packageName);
+        return "provider:" + (source == null ? packageName : "messaging:" + source.id);
     }
 }

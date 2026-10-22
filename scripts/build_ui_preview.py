@@ -37,7 +37,7 @@ for y, row in enumerate(rows):
 matrix = '<svg viewBox="0 0 200 200" role="img" aria-label="ChatGPT Glyph preview">' + ''.join(dots) + '</svg>'
 wordmark_source = (ROOT / 'app/src/main/java/pl/glyphtoy/aiready/DotWordmarkView.java').read_text(encoding='utf-8')
 letters = re.findall(r'"([01]{35})"', wordmark_source)
-wordmark = '<svg class="wordmark" viewBox="0 0 350 32" aria-label="AI Ready Glyph">'
+wordmark = '<svg class="wordmark" viewBox="0 0 350 32" aria-label="Ready Glyph">'
 for index, letter in enumerate(letters):
     for row in range(7):
         for col in range(5):
@@ -49,22 +49,32 @@ wordmark += '<circle cx="342" cy="16" r="4.6" fill="#D71920"/></svg>'
 def status(configured):
     title = 'ready' if configured else 'setup_needed'
     detail = 'ready_detail' if configured else 'setup_choose_apps'
-    content = f'<h2>{text(title)}</h2><p>{text(detail)}</p><hr><div class="small bright">AI apps selected: {3 if configured else 0}</div>'
+    selected = text('selected_apps').replace('%1$d', str(1 if configured else 0)).replace('%2$d', str(2 if configured else 0))
+    content = f'<h2>{text(title)}</h2><p>{text(detail)}</p><hr><div class="small bright">{selected}</div>'
     content += f'<div class="small">{text("access_on" if configured else "access_off")}</div>'
     content += '<div class="row">' + button('quick_test', True, 'Test ChatGPT') + button('activity_details') + '</div>'
+    content += f'<div class="toggle-row">{text("automatic_animations")}<span class="toggle on"></span></div>' + button('notification_access')
+    if not configured:
+        content += f'<p class="small help">{text("access_help")}</p>'
     return card('status_eyebrow', None, content)
 
 
 def sources(configured):
-    content = f'<p>{text("sources_description")}</p><div class="toggle-row">{text("automatic_animations")}<span class="toggle on"></span></div>'
-    content += button('choose_apps', True) + button('notification_access')
-    if not configured:
-        content += f'<p class="small help">{text("access_help")}</p>'
+    content = f'<p>{text("sources_description")}</p>' + button('choose_apps', True)
     return card('sources_eyebrow', 'sources_title', content)
 
 
+def messaging(configured):
+    content = f'<p>{text("messaging_description")}</p><div class="messaging-options">'
+    for label, enabled in [('Discord', configured), ('Messenger', False), ('WhatsApp', configured), ('SMS (Messages)', False)]:
+        content += f'<div class="toggle-row"><span>{label}</span><span class="toggle {"on" if enabled else ""}"></span></div>'
+    content += f'</div><p class="small help">{text("messaging_help")}</p>'
+    return card('messaging_eyebrow', 'messaging_title', content)
+
+
 def animations():
-    content = f'<p>{text("animations_description")}</p><div class="providers"><div class="button selected">ChatGPT</div><div class="button">Claude</div><div class="button">Gemini</div><div class="button">Other AI</div></div>'
+    content = f'<p>{text("animations_description")}</p><div class="caption style-group">{text("ai_styles")}</div><div class="providers"><div class="button selected">ChatGPT</div><div class="button">Claude</div><div class="button">Gemini</div><div class="button">Other AI</div></div>'
+    content += f'<div class="caption style-group">{text("messaging_styles")}</div><div class="providers"><div class="button">Discord</div><div class="button">Messenger</div><div class="button">WhatsApp</div><div class="button">SMS</div></div>'
     content += f'<div class="matrix">{matrix}</div><p class="small">The knot draws from its inner junctions outwards.</p>'
     content += '<div class="row">' + button('preview') + button('test_on_glyph', True) + '</div>' + button('assign_animations')
     return card('animations_eyebrow', 'animations_title', content)
@@ -73,7 +83,7 @@ def animations():
 def screen(configured):
     content = wordmark + f'<div class="caption device">{text("device_label")}</div><h1>{text("hero_title")}</h1><p class="intro">{text("hero_description")}</p>'
     content += status(configured)
-    content += animations() + sources(True) if configured else sources(False) + animations()
+    content += animations() + sources(True) + messaging(True) if configured else sources(False) + messaging(False) + animations()
     content += card('toy_eyebrow', 'toy_title', f'<p>{text("toy_description")}</p>' + button('open_toys'))
     return content + f'<div class="caption footer">{text("footer")}</div>'
 
@@ -92,18 +102,19 @@ hr {border:0;height:1px;background:#333;margin:18px 0 14px}.small {font-size:13p
 .button.primary {background:#d71920;border-color:#d71920}.button.selected{background:#f5f5f5;color:#000;border-color:#f5f5f5}
 .row {display:flex;gap:8px;margin-top:16px}.row .button {flex:1;min-width:0;margin-top:0}
 .toggle-row {display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;font-size:15px;margin-top:14px}
+.messaging-options{margin-top:12px}.messaging-options .toggle-row{margin-top:0}
 .toggle {flex:none;width:54px;height:32px;background:#3a3a3c;border:0;padding:0;border-radius:16px;position:relative;display:inline-block}
 .toggle:after{content:"";position:absolute;left:2px;top:2px;width:28px;height:28px;border-radius:50%;background:#f5f5f5;transition:left .25s}.toggle.on {background:#d71920}.toggle.on:after {left:24px}
-.help{font-size:12px!important;margin-top:12px!important}.providers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.providers .button{margin:0}
+.help{font-size:12px!important;margin-top:12px!important}.style-group{margin-top:16px}.providers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.providers .button{margin:0}
 .matrix{background:#000;border:1px solid #333;border-radius:24px;height:224px;margin-top:16px;display:flex;justify-content:center;align-items:center}.matrix svg{height:196px;max-width:100%}.footer{margin-top:24px}
 @media(max-width:880px){body{padding:20px}.previews{flex-wrap:wrap}.variant{max-width:100%;width:390px}} @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 '''
 version = strings['footer']
-page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Ready Glyph {version} - UI layout preview</title><style>' + css + '</style>'
-page += f'<header><h1>AI Ready Glyph / {version}</h1><p>Layout reconstruction from the Android source. This is a design preview, not a device screenshot.<br>Scroll each panel to see the complete screen. Settings and controls are illustrative.</p></header><main class="previews">'
+page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ready Glyph {version} - UI layout preview</title><style>' + css + '</style>'
+page += f'<header><h1>Ready Glyph / {version}</h1><p>Layout reconstruction from the Android source. This is a design preview, not a device screenshot.<br>Scroll each panel to see the complete screen. Settings and controls are illustrative.</p></header><main class="previews">'
 page += '<div class="variant"><div class="label">01 / FIRST LAUNCH</div><div class="screen">' + screen(False) + '</div></div>'
 page += '<div class="variant"><div class="label">02 / CONFIGURED</div><div class="screen">' + screen(True) + '</div></div></main></html>'
-destination = ROOT / f'dist/AI-Ready-Glyph-{version}-ui-design.html'
+destination = ROOT / f'dist/Ready-Glyph-{version}-ui-design.html'
 destination.write_text(page, encoding='utf-8')
 print(destination)
 
@@ -136,16 +147,16 @@ def dialog_button(key, primary=False):
     return f'<button type="button" class="button {"primary" if primary else ""}">{text(key)}</button>'
 
 
-dialog_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Ready Glyph {version} - Dialog design preview</title><style>{css}{dialog_css}</style>'
-dialog_page += f'<header><h1>AI Ready Glyph / {version} / Dialogs</h1><p>Design reconstruction from Android source, not a device screenshot.<br>Try the search field and switches in the app picker. Example app selections are illustrative.</p></header><main class="previews">'
+dialog_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ready Glyph {version} - Dialog design preview</title><style>{css}{dialog_css}</style>'
+dialog_page += f'<header><h1>Ready Glyph / {version} / Dialogs</h1><p>Design reconstruction from Android source, not a device screenshot.<br>Try the search field and switches in the app picker. Example app selections are illustrative.</p></header><main class="previews">'
 dialog_page += dialog_stage('01 / NOTIFICATION ACCESS', 'notification_access', f'<p>{text("access_explanation")}</p>', dialog_button('cancel') + dialog_button('open_settings', True))
 picker = f'<div class="picker"><p>{text("ai_picker_help")}</p><input type="search" aria-label="Search AI apps" placeholder="{text("search_apps")}"><div class="picker-list">'
 for label, enabled in [('ChatGPT', True), ('Claude', False), ('Gemini', True), ('Kimi', False), ('Qwen', False)]:
     picker += f'<div class="toggle-row" data-app="{label.lower()}"><span>{label}</span><button class="toggle {"on" if enabled else ""}" type="button" role="switch" aria-label="{label}" aria-checked="{str(enabled).lower()}"></button></div>'
 picker += f'<p class="hidden" id="picker-empty">{text("no_matching_apps")}</p></div></div>'
 dialog_page += dialog_stage('02 / CHOOSE AI APPS', 'choose_apps', picker, dialog_button('done', True))
-choices = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['Automatic (ChatGPT)', 'ChatGPT', 'Claude', 'Gemini', 'Other AI']) + '</div>'
-dialog_page += dialog_stage('03 / ANIMATION CHOICES', 'ChatGPT', choices, dialog_button('cancel'))
+choices = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['Automatic (Discord)', 'ChatGPT', 'Claude', 'Gemini', 'Other AI', 'Discord', 'Messenger', 'WhatsApp', 'SMS']) + '</div>'
+dialog_page += dialog_stage('03 / ANIMATION CHOICES', 'Discord', choices, dialog_button('cancel'))
 dialog_page += '''</main><script>
 document.querySelectorAll('button.toggle').forEach(control => control.addEventListener('click', () => {
     const enabled = control.getAttribute('aria-checked') !== 'true';
@@ -163,6 +174,14 @@ document.querySelector('input[type="search"]').addEventListener('input', event =
     document.getElementById('picker-empty').classList.toggle('hidden', visible !== 0);
 });
 </script></html>'''
-dialog_destination = ROOT / f'dist/AI-Ready-Glyph-{version}-dialogs-design.html'
+dialog_destination = ROOT / f'dist/Ready-Glyph-{version}-dialogs-design.html'
 dialog_destination.write_text(dialog_page, encoding='utf-8')
 print(dialog_destination)
+
+detail_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ready Glyph {version} - Source sections</title><style>{css}</style>'
+detail_page += f'<header><h1>Ready Glyph / {version}</h1><p>Source-card and animation-card reconstructions. Example selections; not Android screenshots.</p></header><main class="previews">'
+detail_page += '<div class="variant"><div class="label">AI APPS + MESSAGES</div><div class="screen">' + wordmark + sources(True) + messaging(True) + '</div></div>'
+detail_page += '<div class="variant"><div class="label">EIGHT ANIMATION STYLES</div><div class="screen">' + wordmark + animations() + '</div></div></main></html>'
+detail_destination = ROOT / f'dist/Ready-Glyph-{version}-sources-design.html'
+detail_destination.write_text(detail_page, encoding='utf-8')
+print(detail_destination)

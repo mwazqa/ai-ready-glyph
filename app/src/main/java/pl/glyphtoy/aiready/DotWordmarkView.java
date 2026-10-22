@@ -8,26 +8,29 @@ import android.view.View;
 
 final class DotWordmarkView extends View {
     private static final String[] GLYPHS = {
-            "01110100011000111111100011000110001",
-            "11111001000010000100001000010011111",
-            "00000000000000000000000000000000000",
             "11110100011000111110101001001010001",
             "11111100001000011110100001000011111",
             "01110100011000111111100011000110001",
             "11110100011000110001100011000111110",
-            "10001100010101000100001000010000100"
+            "10001100010101000100001000010000100",
+            "00000000000000000000000000000000000",
+            "01110100011000010111100011000101110",
+            "10000100001000010000100001000011111",
+            "10001100010101000100001000010000100",
+            "11110100011000111110100001000010000",
+            "10001100011000111111100011000110001"
     };
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     DotWordmarkView(Context context) {
         super(context);
-        setContentDescription("AI Ready Glyph");
+        setContentDescription(context.getString(R.string.app_name));
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
     }
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float step = Math.min(getHeight() / 8f, getWidth() / 56f);
+        float step = Math.min(getHeight() / 8f, getWidth() / (GLYPHS.length * 6f + 8));
         float top = (getHeight() - step * 6) / 2;
         paint.setColor(Color.WHITE);
         for (int letter = 0; letter < GLYPHS.length; letter++) {

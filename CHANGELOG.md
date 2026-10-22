@@ -2,6 +2,16 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.7.0 - 2026-10-22
+
+- Rename the displayed app and Glyph Toy to Ready Glyph while preserving the application ID, service identities and existing settings.
+- Add a Messages card for Discord, Messenger, WhatsApp and the current default SMS app. New sources start disabled.
+- Add four distinct messaging symbols with six-second centre-out reveal animations, previews and per-app overrides.
+- Follow the current SMS app without reading SMS storage, requesting SMS permissions or changing the default app.
+- Accept new messaging notification posts that reuse a conversation key, using posting timestamps without extracting message text.
+- Preserve the AI catalog, AI notification behavior and existing AI animation frames.
+- Move shared notification controls into Live status and retain the rounded Nothing-inspired theme.
+
 ## 0.6.9 - 2026-10-21
 
 - Apply one dark dialog style with 28 dp corners, consistent typography and pill-shaped buttons to every in-app dialog.

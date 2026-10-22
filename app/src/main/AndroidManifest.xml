@@ -45,6 +45,12 @@
         <package android:name="co.huggingface.chat_ui_android" />
         <package android:name="com.google.android.googlequicksearchbox" />
         <package android:name="com.nothing.thirdparty" />
+        <package android:name="com.discord" />
+        <package android:name="com.facebook.orca" />
+        <package android:name="com.whatsapp" />
+        <intent>
+            <action android:name="android.provider.Telephony.SMS_DELIVER" />
+        </intent>
     </queries>
     <application
         android:allowBackup="false"

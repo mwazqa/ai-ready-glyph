@@ -5,8 +5,17 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 
 public class ReadyAnimationTest {
+    @Test public void messagingSymbolsRevealThenHoldWithoutChangingTheSixSecondDuration() {
+        assertEquals(6000, ReadyAnimation.DURATION_MS);
+        for (AnimationStyle style : AnimationStyle.values()) if (style.messaging()) {
+            assertTrue(Arrays.stream(ReadyAnimation.frame(style, 0)).allMatch(pixel -> pixel == 0));
+            assertTrue(Arrays.stream(ReadyAnimation.frame(style, 300)).sum()
+                    < Arrays.stream(ReadyAnimation.frame(style, 1500)).sum());
+            assertArrayEquals(ReadyAnimation.frame(style, 2500), ReadyAnimation.frame(style, 4000));
+        }
+    }
     @Test public void everyFrameFitsTheCircularMatrixAndBrightnessRange() {
-        for (AiProvider provider : AiProvider.values()) for (long time = 0; time <= ReadyAnimation.DURATION_MS; time += 50) {
+        for (AnimationStyle provider : AnimationStyle.values()) for (long time = 0; time <= ReadyAnimation.DURATION_MS; time += 50) {
             int[] pixels = ReadyAnimation.frame(provider, time);
             assertEquals(625, pixels.length);
             for (int y = 0; y < 25; y++) for (int x = 0; x < 25; x++) {
@@ -16,30 +25,30 @@ public class ReadyAnimationTest {
         }
     }
     @Test public void endsWithAllPixelsOff() {
-        for (AiProvider provider : AiProvider.values()) {
+        for (AnimationStyle provider : AnimationStyle.values()) {
             for (long time : new long[]{-1, ReadyAnimation.DURATION_MS, ReadyAnimation.DURATION_MS + 50})
                 for (int pixel : ReadyAnimation.frame(provider, time)) assertEquals(0, pixel);
-            if (provider == AiProvider.CHATGPT || provider == AiProvider.GENERIC)
+            if (provider == AnimationStyle.CHATGPT || provider == AnimationStyle.GENERIC)
                 for (int pixel : ReadyAnimation.frame(provider, 0)) assertEquals(0, pixel);
         }
     }
     @Test public void eachProviderHasADistinctVisibleSymbolAndMotion() {
-        for (AiProvider provider : AiProvider.values()) {
+        for (AnimationStyle provider : AnimationStyle.values()) {
             int[] settled = ReadyAnimation.frame(provider, 2500);
             assertTrue(Arrays.stream(settled).sum() > 4000);
             assertFalse(Arrays.equals(settled, ReadyAnimation.frame(provider, 150)));
-            for (AiProvider other : AiProvider.values()) if (provider != other)
+            for (AnimationStyle other : AnimationStyle.values()) if (provider != other)
                 assertFalse(Arrays.equals(settled, ReadyAnimation.frame(other, 2500)));
         }
     }
 
     @Test public void geminiStartsAtOnePixelAndGrowsInPlaceWithoutShrinking() {
-        int[] first = ReadyAnimation.frame(AiProvider.GEMINI, 0);
+        int[] first = ReadyAnimation.frame(AnimationStyle.GEMINI, 0);
         assertEquals(1, Arrays.stream(first).filter(pixel -> pixel > 0).count());
         assertTrue(first[12 * 25 + 12] > 0);
         long previousCount = 0;
         for (long time = 0; time <= 1800; time += 100) {
-            int[] frame = ReadyAnimation.frame(AiProvider.GEMINI, time);
+            int[] frame = ReadyAnimation.frame(AnimationStyle.GEMINI, time);
             long count = Arrays.stream(frame).filter(pixel -> pixel > 0).count();
             assertTrue(count >= previousCount);
             previousCount = count;
@@ -57,22 +66,22 @@ public class ReadyAnimationTest {
     @Test public void chatGptDrawsFixedStrokesProgressivelyThenHoldsTheCompleteLogo() {
         int[] previous = new int[625];
         for (long time = 0; time <= 2300; time += 100) {
-            int[] frame = ReadyAnimation.frame(AiProvider.CHATGPT, time);
+            int[] frame = ReadyAnimation.frame(AnimationStyle.CHATGPT, time);
             for (int i = 0; i < frame.length; i++) assertTrue("drawn ink must stay in place", frame[i] >= previous[i]);
             previous = frame;
         }
-        int[] complete = ReadyAnimation.frame(AiProvider.CHATGPT, 2300);
-        long partialCount = Arrays.stream(ReadyAnimation.frame(AiProvider.CHATGPT, 300)).filter(p -> p > 0).count();
+        int[] complete = ReadyAnimation.frame(AnimationStyle.CHATGPT, 2300);
+        long partialCount = Arrays.stream(ReadyAnimation.frame(AnimationStyle.CHATGPT, 300)).filter(p -> p > 0).count();
         long fullCount = Arrays.stream(complete).filter(p -> p > 0).count();
         assertTrue(partialCount > 0 && partialCount < fullCount);
         for (int y = 0; y < 25; y++) for (int x = 0; x < 25; x++)
             assertEquals((int) Math.round(ChatGptSymbol.coverage(x, y) * 225), complete[y * 25 + x]);
-        assertArrayEquals(complete, ReadyAnimation.frame(AiProvider.CHATGPT, 4000));
+        assertArrayEquals(complete, ReadyAnimation.frame(AnimationStyle.CHATGPT, 4000));
     }
 
     @Test public void chatGptStartsAtTheInnerJunctionsAndDrawsOutward() {
-        int[] initial = ReadyAnimation.frame(AiProvider.CHATGPT, 150);
-        int[] complete = ReadyAnimation.frame(AiProvider.CHATGPT, 2300);
+        int[] initial = ReadyAnimation.frame(AnimationStyle.CHATGPT, 150);
+        int[] complete = ReadyAnimation.frame(AnimationStyle.CHATGPT, 2300);
         double initialRadius = 0, initialLight = 0, completeRadius = 0, completeLight = 0;
         for (int y = 0; y < 25; y++) for (int x = 0; x < 25; x++) {
             double radius = Math.hypot(x - 12, y - 12);
@@ -87,12 +96,12 @@ public class ReadyAnimationTest {
 
     @Test public void claudeFollowsTheReferenceGrowthContractionAndOneSecondTiming() {
         assertEquals(1000, Arrays.stream(ClaudeFrames.DELAYS).sum());
-        int initial = Arrays.stream(ReadyAnimation.frame(AiProvider.CLAUDE, 0)).sum();
-        int expanded = Arrays.stream(ReadyAnimation.frame(AiProvider.CLAUDE, 400)).sum();
-        int contracted = Arrays.stream(ReadyAnimation.frame(AiProvider.CLAUDE, 930)).sum();
+        int initial = Arrays.stream(ReadyAnimation.frame(AnimationStyle.CLAUDE, 0)).sum();
+        int expanded = Arrays.stream(ReadyAnimation.frame(AnimationStyle.CLAUDE, 400)).sum();
+        int contracted = Arrays.stream(ReadyAnimation.frame(AnimationStyle.CLAUDE, 930)).sum();
         assertTrue(initial > 0);
         assertTrue(expanded > initial * 2);
         assertTrue(contracted < expanded);
-        assertArrayEquals(ReadyAnimation.frame(AiProvider.CLAUDE, 250), ReadyAnimation.frame(AiProvider.CLAUDE, 1250));
+        assertArrayEquals(ReadyAnimation.frame(AnimationStyle.CLAUDE, 250), ReadyAnimation.frame(AnimationStyle.CLAUDE, 1250));
     }
 }

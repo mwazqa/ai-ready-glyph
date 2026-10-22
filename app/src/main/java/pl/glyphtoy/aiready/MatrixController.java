@@ -24,7 +24,7 @@ final class MatrixController {
     private int generation;
     private long start;
     private PowerManager.WakeLock wakeLock;
-    private AiProvider provider = AiProvider.GENERIC;
+    private AnimationStyle provider = AnimationStyle.GENERIC;
     private final DeviceProfile device = DeviceProfile.current();
 
     private MatrixController(Context context) { this.context = context; }
@@ -33,7 +33,7 @@ final class MatrixController {
         play(new AppSettings(context).previewProvider());
     }
 
-    void play(AiProvider provider) {
+    void play(AnimationStyle provider) {
         if (!checkDevice()) return;
         this.provider = provider;
         handler.removeCallbacks(timeout);

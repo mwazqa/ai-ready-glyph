@@ -10,14 +10,14 @@ import android.view.View;
 final class MatrixPreview extends View {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private long start = -1;
-    private AiProvider provider = AiProvider.CHATGPT;
+    private AnimationStyle provider = AnimationStyle.CHATGPT;
     MatrixPreview(Context context) {
         super(context);
-        setProvider(AiProvider.CHATGPT);
+        setProvider(AnimationStyle.CHATGPT);
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
     }
     void play() { start = SystemClock.uptimeMillis(); invalidate(); }
-    void setProvider(AiProvider provider) {
+    void setProvider(AnimationStyle provider) {
         this.provider = provider;
         start = -1;
         setContentDescription(provider.label + " animation preview. " + provider.description);

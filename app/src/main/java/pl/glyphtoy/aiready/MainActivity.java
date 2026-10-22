@@ -48,7 +48,8 @@ public final class MainActivity extends Activity {
     private final List<Button> providerButtons = new ArrayList<>();
     private AppSettings settings;
     private TextView readinessTitle, readinessDetail, accessStatus, selectedStatus, eventStatus, matrixStatus;
-    private LinearLayout sections, sourceCard, animationCard;
+    private LinearLayout sections, sourceCard, messagingCard, animationCard;
+    private List<MessagingApps.Entry> messagingApps = List.of();
     private MatrixPreview preview;
     private TextView animationDescription;
     private TextView accessHelp;
@@ -84,8 +85,10 @@ public final class MainActivity extends Activity {
         sections = column();
         root.addView(sections);
         sourceCard = buildSources();
+        messagingCard = buildMessaging();
         animationCard = buildAnimations();
         sections.addView(sourceCard);
+        sections.addView(messagingCard);
         sections.addView(animationCard);
         configuredOrder = false;
         buildToy(sections);
@@ -128,11 +131,43 @@ public final class MainActivity extends Activity {
             details.setContentDescription(getString(showing ? R.string.show_activity_description : R.string.hide_activity_description));
         });
         details.setContentDescription(getString(R.string.show_activity_description));
+        buildNotificationControls(card);
     }
 
     private LinearLayout buildSources() {
         LinearLayout card = card(null, R.string.sources_eyebrow, R.string.sources_title);
         spaced(card, text(R.string.sources_description, 14, MUTED), 8);
+        Button select = button(R.string.choose_apps, true);
+        spaced(card, select, 16);
+        select.setOnClickListener(view -> showAppPicker());
+        return card;
+    }
+
+    private LinearLayout buildMessaging() {
+        LinearLayout card = card(null, R.string.messaging_eyebrow, R.string.messaging_title);
+        spaced(card, text(R.string.messaging_description, 14, MUTED), 8);
+        messagingApps = MessagingApps.installed(this);
+        for (MessagingSource source : MessagingSource.values()) {
+            MessagingApps.Entry installed = null;
+            for (MessagingApps.Entry entry : messagingApps) if (entry.source() == source) installed = entry;
+            String label = source == MessagingSource.SMS && installed != null
+                    ? getString(R.string.sms_source, installed.label()) : source.label;
+            Switch option = toggle(label, installed != null && settings.messagingSelected(source));
+            option.setEnabled(installed != null);
+            option.setAlpha(installed == null ? .4f : 1);
+            spaced(card, option, source == MessagingSource.DISCORD ? 12 : 0);
+            if (installed == null) spaced(card, text(source == MessagingSource.SMS
+                    ? R.string.no_default_sms : R.string.not_installed, 12, MUTED), 0);
+            option.setOnCheckedChangeListener((view, checked) -> {
+                settings.selectMessaging(source, checked);
+                refreshStatus();
+            });
+        }
+        spaced(card, text(R.string.messaging_help, 12, MUTED), 12);
+        return card;
+    }
+
+    private void buildNotificationControls(LinearLayout card) {
         Switch enabled = toggle(R.string.automatic_animations, settings.enabled());
         spaced(card, enabled, 14);
         enabled.setOnCheckedChangeListener((view, checked) -> {
@@ -140,9 +175,6 @@ public final class MainActivity extends Activity {
             if (!checked) MatrixController.get(this).stop();
             refreshStatus();
         });
-        Button select = button(R.string.choose_apps, true);
-        spaced(card, select, 12);
-        select.setOnClickListener(view -> showAppPicker());
         Button grant = button(R.string.notification_access, false);
         spaced(card, grant, 10);
         grant.setOnClickListener(view -> showDialog(dialog(R.string.notification_access)
@@ -157,17 +189,18 @@ public final class MainActivity extends Activity {
                 })));
         accessHelp = text(R.string.access_help, 12, MUTED);
         spaced(card, accessHelp, 12);
-        return card;
     }
 
     private LinearLayout buildAnimations() {
         LinearLayout card = card(null, R.string.animations_eyebrow, R.string.animations_title);
         spaced(card, text(R.string.animations_description, 14, MUTED), 8);
-        AiProvider[] providers = AiProvider.values();
-        for (int row = 0; row < 2; row++) {
+        AnimationStyle[] providers = AnimationStyle.values();
+        for (int row = 0; row < providers.length / 2; row++) {
+            if (row == 0 || row == 2) spaced(card,
+                    caption(row == 0 ? R.string.ai_styles : R.string.messaging_styles), 16);
             LinearLayout choices = new LinearLayout(this);
             for (int col = 0; col < 2; col++) {
-                AiProvider provider = providers[row * 2 + col];
+                AnimationStyle provider = providers[row * 2 + col];
                 Button choice = button(provider.label, false);
                 LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(0, -2, 1);
                 if (col > 0) layout.leftMargin = dp(8);
@@ -175,7 +208,7 @@ public final class MainActivity extends Activity {
                 providerButtons.add(choice);
                 choice.setOnClickListener(view -> selectProvider(provider, true));
             }
-            spaced(card, choices, row == 0 ? 16 : 8);
+            spaced(card, choices, 8);
         }
         preview = new MatrixPreview(this);
         preview.setBackground(shape(Color.BLACK, LINE, 24));
@@ -201,12 +234,12 @@ public final class MainActivity extends Activity {
         return card;
     }
 
-    private void selectProvider(AiProvider provider, boolean play) {
+    private void selectProvider(AnimationStyle provider, boolean play) {
         settings.setPreviewProvider(provider);
         quickTest.setText(getString(R.string.quick_test, provider.label));
         preview.setProvider(provider);
         animationDescription.setText(provider.description);
-        for (AiProvider item : AiProvider.values()) {
+        for (AnimationStyle item : AnimationStyle.values()) {
             Button button = providerButtons.get(item.ordinal());
             boolean selected = item == provider;
             styleButton(button, false, selected);
@@ -239,7 +272,15 @@ public final class MainActivity extends Activity {
         manage.setEnabled(device.supportsAnimations());
     }
 
-    @Override public void onResume() { super.onResume(); statusTick.run(); }
+    @Override public void onResume() {
+        super.onResume();
+        int index = sections.indexOfChild(messagingCard);
+        sections.removeView(messagingCard);
+        messagingCard = buildMessaging();
+        sections.addView(messagingCard, index);
+        configuredOrder = null;
+        statusTick.run();
+    }
     @Override public void onPause() { handler.removeCallbacks(statusTick); super.onPause(); }
     private final Runnable statusTick = new Runnable() {
         @Override public void run() { refreshStatus(); handler.postDelayed(this, 1000); }
@@ -248,7 +289,9 @@ public final class MainActivity extends Activity {
     private void refreshStatus() {
         boolean granted = getSystemService(NotificationManager.class).isNotificationListenerAccessGranted(
                 new ComponentName(this, AiNotificationListener.class));
-        boolean hasSources = !settings.packages().isEmpty();
+        int messagingCount = 0;
+        for (MessagingApps.Entry entry : messagingApps) if (settings.messagingSelected(entry.source())) messagingCount++;
+        boolean hasSources = !settings.packages().isEmpty() || messagingCount > 0;
         int title, detail;
         if (!device.supportsAnimations()) { title = R.string.device_unsupported_title; detail = R.string.device_unsupported_detail; }
         else if (!hasSources) { title = R.string.setup_needed; detail = R.string.setup_choose_apps; }
@@ -266,16 +309,18 @@ public final class MainActivity extends Activity {
         accessStatus.setText(!granted ? R.string.access_off
                 : LocalStatus.listenerConnected ? R.string.access_on : R.string.access_connecting);
         accessHelp.setVisibility(granted ? View.GONE : View.VISIBLE);
-        selectedStatus.setText(getString(R.string.selected_apps, settings.packages().size()));
+        selectedStatus.setText(getString(R.string.selected_apps, settings.packages().size(), messagingCount));
         eventStatus.setText(LocalStatus.lastEvent);
         matrixStatus.setText(device.supportsAnimations() ? LocalStatus.matrix
                 : getString(R.string.device_unsupported_detail, device.displayName));
         boolean configured = granted && hasSources;
         if (configuredOrder == null || configuredOrder != configured) {
             sections.removeView(sourceCard);
+            sections.removeView(messagingCard);
             sections.removeView(animationCard);
             sections.addView(configured ? animationCard : sourceCard, 0);
-            sections.addView(configured ? sourceCard : animationCard, 1);
+            sections.addView(configured ? sourceCard : messagingCard, 1);
+            sections.addView(configured ? messagingCard : animationCard, 2);
             configuredOrder = configured;
         }
     }
@@ -353,7 +398,7 @@ public final class MainActivity extends Activity {
     }
 
     private void showAnimationAssignments() {
-        List<String> packages = new ArrayList<>(settings.packages());
+        List<String> packages = new ArrayList<>(settings.monitoredPackages());
         packages.sort(Comparator.comparing(this::applicationLabel, String.CASE_INSENSITIVE_ORDER));
         if (packages.isEmpty()) {
             showDialog(dialog(R.string.assign_animations).setMessage(R.string.select_apps_first)
@@ -368,12 +413,12 @@ public final class MainActivity extends Activity {
         showDialog(dialog(R.string.assign_animations)
                 .setItems(labels, (dialog, which) -> {
                     String packageName = packages.get(which);
-                    String[] choices = new String[AiProvider.values().length + 1];
-                    choices[0] = getString(R.string.automatic_assignment, AiProvider.fromPackage(packageName).label);
-                    for (AiProvider provider : AiProvider.values()) choices[provider.ordinal() + 1] = provider.label;
+                    String[] choices = new String[AnimationStyle.values().length + 1];
+                    choices[0] = getString(R.string.automatic_assignment, settings.defaultStyle(packageName).label);
+                    for (AnimationStyle provider : AnimationStyle.values()) choices[provider.ordinal() + 1] = provider.label;
                     showDialog(dialog(applicationLabel(packageName))
                             .setItems(choices, (picker, selection) -> {
-                                settings.setProvider(packageName, selection == 0 ? null : AiProvider.values()[selection - 1]);
+                                settings.setProvider(packageName, selection == 0 ? null : AnimationStyle.values()[selection - 1]);
                                 LocalStatus.event(getString(R.string.assignment_saved, settings.providerFor(packageName).label,
                                         applicationLabel(packageName)));
                                 refreshStatus();

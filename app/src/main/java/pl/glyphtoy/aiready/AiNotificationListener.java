@@ -9,12 +9,16 @@ import android.service.notification.StatusBarNotification;
 
 public final class AiNotificationListener extends NotificationListenerService {
     private final NotificationGate gate = new NotificationGate();
+    private final PostedNotificationGate messagingGate = new PostedNotificationGate();
 
     @Override public void onListenerConnected() {
         LocalStatus.listenerConnected = true;
         StatusBarNotification[] existing = getActiveNotifications();
         if (existing != null) for (StatusBarNotification item : existing) {
-            if (!item.isOngoing() && !hasProgress(item.getNotification())) gate.seed(item.getKey());
+            if (!item.isOngoing() && !hasProgress(item.getNotification())) {
+                gate.seed(item.getKey());
+                messagingGate.seed(item.getKey(), item.getPostTime());
+            }
         }
     }
 
@@ -25,10 +29,13 @@ public final class AiNotificationListener extends NotificationListenerService {
 
     @Override public void onNotificationPosted(StatusBarNotification item) {
         AppSettings settings = new AppSettings(this);
-        if (!settings.enabled() || !settings.packages().contains(item.getPackageName())) return;
+        if (!settings.enabled() || !settings.monitors(item.getPackageName())) return;
         Notification notification = item.getNotification();
         boolean progress = hasProgress(notification);
-        if (progress || item.isOngoing()) gate.progress(item.getKey());
+        if (progress || item.isOngoing()) {
+            gate.progress(item.getKey());
+            messagingGate.remove(item.getKey());
+        }
         NotificationPolicy.Result result = NotificationPolicy.evaluate(item.isOngoing(),
                 (notification.flags & Notification.FLAG_GROUP_SUMMARY) != 0, progress);
         String label = label(item.getPackageName());
@@ -36,18 +43,22 @@ public final class AiNotificationListener extends NotificationListenerService {
             LocalStatus.event(label + " · skipped: " + result.reason + ".");
             return;
         }
-        if (!gate.accept(item.getKey(), true)) return;
+        boolean messaging = settings.messagingSource(item.getPackageName()) != null;
+        if (messaging ? !messagingGate.accept(item.getKey(), item.getPostTime()) : !gate.accept(item.getKey(), true)) return;
         NotificationManager system = getSystemService(NotificationManager.class);
         if (system.getCurrentInterruptionFilter() != NotificationManager.INTERRUPTION_FILTER_ALL) {
             LocalStatus.event(label + " · skipped: Do Not Disturb.");
             return;
         }
-        AiProvider provider = settings.providerFor(item.getPackageName());
+        AnimationStyle provider = settings.providerFor(item.getPackageName());
         LocalStatus.event(label + " · notification · animation: " + provider.label + ".");
         MatrixController.get(this).play(provider);
     }
 
-    @Override public void onNotificationRemoved(StatusBarNotification item) { gate.remove(item.getKey()); }
+    @Override public void onNotificationRemoved(StatusBarNotification item) {
+        gate.remove(item.getKey());
+        messagingGate.remove(item.getKey());
+    }
 
     @Override public void onDestroy() {
         LocalStatus.listenerConnected = false;
@@ -57,6 +68,7 @@ public final class AiNotificationListener extends NotificationListenerService {
 
     private static boolean hasProgress(Notification notification) {
         Bundle extras = notification.extras;
+        if (extras == null) return false;
         int maximum = extras.getInt(Notification.EXTRA_PROGRESS_MAX, 0);
         return extras.getBoolean(Notification.EXTRA_PROGRESS_INDETERMINATE, false)
                 || (maximum > 0 && extras.getInt(Notification.EXTRA_PROGRESS, 0) < maximum);
