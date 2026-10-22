@@ -11,6 +11,8 @@ Ready Glyph 0.7.0 adds four independent, initially disabled sources alongside th
 
 Official distribution identities: [Discord](https://play.google.com/store/apps/details?id=com.discord), [Messenger](https://play.google.com/store/apps/details?id=com.facebook.orca), [WhatsApp](https://play.google.com/store/apps/details?id=com.whatsapp).
 
+In 0.7.1, Discord joins from two halves and blinks. Messenger draws its bolt before lighting the bubble, then sends a light streak through the bolt. WhatsApp draws its handset, closes the bubble from the bottom upwards and sends two soft signal waves. SMS draws a bubble and introduces three bouncing typing dots. Each sequence settles on its existing symbol and fades within the same six-second duration.
+
 The Messages card shows the four sources. Uninstalled or disabled apps cannot be enabled. SMS displays the current app label; its control is unavailable when no enabled default SMS app can be resolved. SMS selection and animation overrides use a logical source ID and follow a change of default SMS app. Saved source choices remain available after reinstalling a messaging app.
 
 Android's [default SMS package API](https://developer.android.com/reference/android/provider/Telephony.Sms#getDefaultSmsPackage(android.content.Context)) requires an SMS_DELIVER package-visibility query. The manifest contains that query and the three explicit messenger packages. It does not request READ_SMS, RECEIVE_SMS, SEND_SMS or QUERY_ALL_PACKAGES. The app does not change the default SMS app or access SMS storage.

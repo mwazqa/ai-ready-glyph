@@ -5,10 +5,10 @@ enum AnimationStyle {
     CLAUDE("claude", "Claude", "The symbol blooms and folds back in."),
     GEMINI("gemini", "Gemini", "A single pixel grows into the Gemini star."),
     GENERIC("generic", "Other AI", "Pixel lettering with a blinking signal dot."),
-    DISCORD("discord", "Discord", "The Discord symbol reveals from its centre."),
-    MESSENGER("messenger", "Messenger", "The Messenger bubble and bolt reveal from the centre."),
-    WHATSAPP("whatsapp", "WhatsApp", "The WhatsApp phone and bubble reveal from the centre."),
-    SMS("sms", "SMS", "A message bubble and three dots reveal from the centre.");
+    DISCORD("discord", "Discord", "Two halves join, then the Discord eyes blink."),
+    MESSENGER("messenger", "Messenger", "A bolt draws first, then its bubble lights up."),
+    WHATSAPP("whatsapp", "WhatsApp", "The phone draws, its bubble closes and signal waves spread."),
+    SMS("sms", "SMS", "A bubble draws around three bouncing typing dots.");
 
     final String id, label, description;
     AnimationStyle(String id, String label, String description) {

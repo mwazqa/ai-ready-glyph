@@ -96,6 +96,18 @@ The displayed app and Toy name is now Ready Glyph. Android application ID, notif
 - Verified packaged version, app label, unchanged permission set, source visibility and APK signature matching 0.6.9.
 - ADB reported no attached phone. Native rendering, retained settings/access on upgrade and real notification-triggered physical output still require device-side checks. Posting timestamps identify posts, not unique message contents.
 
+## Messaging animation motion 0.7.1
+
+The four messaging styles now use separate motion sequences. Discord halves join and blink, Messenger introduces the bolt before its bubble, WhatsApp draws its handset and sends two waves, and SMS uses staggered bouncing dots. All four settle on the original symbol before the final fade. Duration remains six seconds.
+
+- Added five tests for final symbol fidelity, Discord eye restoration, Messenger bolt timing, WhatsApp waves and SMS dot ordering and movement. Total: 42 tests passed, no failures or errors.
+- APK assembly passed; Android Lint reported 0 errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- Compared all four AI animation sequences against 0.6.9 at 50 ms intervals: sampled pixel frames match exactly.
+- Generated and inspected messaging stages and a GIF from the same Java renderer used by the app. The GIF adds a blank pause between six-second cycles.
+- Verified the packaged version and permission set, with the APK signature matching 0.7.0 for an in-place update.
+- Notification handling, source selection, catalog identities, static symbol coverage and app artwork are unchanged.
+- No phone was attached for this verification. Motion quality and physical LED output still require a Phone (3) check.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.

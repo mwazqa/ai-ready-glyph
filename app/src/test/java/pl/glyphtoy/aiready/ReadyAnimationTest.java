@@ -5,13 +5,13 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 
 public class ReadyAnimationTest {
-    @Test public void messagingSymbolsRevealThenHoldWithoutChangingTheSixSecondDuration() {
+    @Test public void messagingSymbolsAnimateThenHoldWithoutChangingTheSixSecondDuration() {
         assertEquals(6000, ReadyAnimation.DURATION_MS);
         for (AnimationStyle style : AnimationStyle.values()) if (style.messaging()) {
             assertTrue(Arrays.stream(ReadyAnimation.frame(style, 0)).allMatch(pixel -> pixel == 0));
             assertTrue(Arrays.stream(ReadyAnimation.frame(style, 300)).sum()
                     < Arrays.stream(ReadyAnimation.frame(style, 1500)).sum());
-            assertArrayEquals(ReadyAnimation.frame(style, 2500), ReadyAnimation.frame(style, 4000));
+            assertArrayEquals(ReadyAnimation.frame(style, 4000), ReadyAnimation.frame(style, 4500));
         }
     }
     @Test public void everyFrameFitsTheCircularMatrixAndBrightnessRange() {

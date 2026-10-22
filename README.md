@@ -2,7 +2,7 @@
 
 An experimental notification companion for **Nothing Phone (3)**. Selected AI apps, Discord, Messenger, WhatsApp and your default SMS app can trigger six-second animations on the rear Glyph Matrix.
 
-**Current version: 0.7.0.** Previously AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta or other app providers.
+**Current version: 0.7.1.** Previously AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta or other app providers.
 
 The app uses Android notification metadata. It does not connect to AI accounts, read notification text or observe an AI app's internal task state. An app that sends no notification provides no signal to detect.
 
@@ -11,7 +11,7 @@ The app uses Android notification metadata. It does not connect to AI accounts, 
 - ChatGPT strokes drawn from the inner junctions, a Claude bloom, a Gemini star growing from one pixel, and generic AI lettering.
 - Eight six-second animations, on-screen previews and manual Glyph tests.
 - Separate AI apps and Messages sections, with independent opt-in controls for Discord, Messenger, WhatsApp and SMS.
-- Distinct Discord, Messenger, WhatsApp and SMS symbols that reveal from the centre.
+- Discord halves that join and blink, a Messenger bolt that lights its bubble, a WhatsApp phone with signal waves, and bouncing SMS typing dots.
 - Per-app animation overrides and an optional Glyph Toy.
 - Automatic animations for regular notifications from selected apps, duplicate suppression and Do Not Disturb handling.
 - A picker of 40 package identities from 31 model providers, including regional and legacy identities.
@@ -99,7 +99,7 @@ Preferences store selected packages, assignments and settings. Older unused phra
 
 ## Verification and development
 
-Local 0.7.0 verification: **37 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Existing AI animation sequences match the 0.6.9 baseline at 50 ms samples. New messaging routing and repost handling have unit coverage. Current native UI and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
+Local 0.7.1 verification: **42 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. Existing AI animation sequences match the 0.6.9 baseline at 50 ms samples. Messaging routing, repost handling and animation phases have unit coverage. Current native UI and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
 
 GitHub Actions checks the catalog, wrapper, tests, build and lint. It retrieves the SDK from Nothing and does not upload APK artifacts.
 

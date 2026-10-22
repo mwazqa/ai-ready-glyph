@@ -2,6 +2,12 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.7.1 - 2026-10-22
+
+- Give each messaging animation its own motion: joining and blinking Discord halves, a Messenger bolt followed by its bubble, a drawn WhatsApp phone with two signal waves, and bouncing SMS typing dots.
+- Settle on the existing messaging symbols before the final fade and keep the six-second duration.
+- Preserve existing AI animation frames, notification handling, source selections and artwork.
+
 ## 0.7.0 - 2026-10-22
 
 - Rename the displayed app and Glyph Toy to Ready Glyph while preserving the application ID, service identities and existing settings.

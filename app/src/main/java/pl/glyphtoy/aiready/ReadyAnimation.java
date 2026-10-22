@@ -16,17 +16,9 @@ final class ReadyAnimation {
             case CLAUDE -> claudeReference(pixels, elapsed, fadeOut);
             case GEMINI -> star(pixels, elapsed, fadeOut);
             case GENERIC -> letters(pixels, elapsed, fade);
-            case DISCORD, MESSENGER, WHATSAPP, SMS -> messaging(pixels, provider, elapsed, fade);
+            case DISCORD, MESSENGER, WHATSAPP, SMS -> MessagingAnimation.draw(pixels, provider, elapsed, fade);
         }
         return pixels;
-    }
-
-    private static void messaging(int[] pixels, AnimationStyle style, long time, double fade) {
-        double radius = ease(time / 1100.0) * 14;
-        for (int y = 0; y < SIZE; y++) for (int x = 0; x < SIZE; x++) {
-            double reveal = clamp(radius - Math.hypot(x - 12, y - 12));
-            put(pixels, x, y, MessagingSymbols.coverage(style, x, y) * 225 * reveal * fade);
-        }
     }
 
     private static void knot(int[] pixels, long time, double fade) {
