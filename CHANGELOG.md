@@ -2,6 +2,12 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.7.2 - 2026-10-22
+
+- Reserve the full measured height of dialog actions, including padding, to prevent rounded buttons from being clipped.
+- Limit native dialog lists to the space left below the title and above the actions; longer lists remain scrollable.
+- Preserve animation frames, notification handling, source selections and existing dialog styling.
+
 ## 0.7.1 - 2026-10-22
 
 - Give each messaging animation its own motion: joining and blinking Discord halves, a Messenger bolt followed by its bubble, a drawn WhatsApp phone with two signal waves, and bouncing SMS typing dots.

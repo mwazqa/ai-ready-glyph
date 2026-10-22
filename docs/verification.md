@@ -108,6 +108,16 @@ The four messaging styles now use separate motion sequences. Discord halves join
 - Notification handling, source selection, catalog identities, static symbol coverage and app artwork are unchanged.
 - No phone was attached for this verification. Motion quality and physical LED output still require a Phone (3) check.
 
+## Dialog action clipping 0.7.2
+
+A phone screenshot showed the rounded Close button clipped above its label in the animation assignment dialog. Action spacing now belongs to the button bar, and the outer footer reserves the full measured bar height. Native list height is capped using the available screen height, measured title and measured footer, leaving a vertical margin. Longer lists remain scrollable.
+
+- Kept the existing rounded theme, labels, assignment behavior and button actions.
+- Ran `gradlew.bat --no-daemon testDebugUnitTest assembleDebug lintDebug`: assembly passed, 42 tests passed, 0 lint errors and the same two existing warnings.
+- Checked the assignment and animation-choice dialog reconstructions in the browser. Their action outlines and spacing are visible. This verifies the preview layout, not Nothing OS rendering.
+- Verified the packaged version and APK signature matching 0.7.1. Notification behavior, preferences, artwork and all eight animation sources are unchanged.
+- ADB reported no attached phone. Confirm the Close button on Nothing OS after updating, including with larger text or a longer app list.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.

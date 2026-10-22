@@ -437,6 +437,7 @@ public final class MainActivity extends Activity {
     private AlertDialog.Builder dialog(String title) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppDialogTheme);
         TextView heading = new TextView(builder.getContext());
+        heading.setId(R.id.dialog_heading);
         heading.setText(title);
         heading.setTextSize(23);
         heading.setTextColor(TEXT);
@@ -450,6 +451,7 @@ public final class MainActivity extends Activity {
         AlertDialog dialog = builder.create();
         dialog.show();
         Window window = dialog.getWindow();
+        int dialogWidth = 0, availableHeight = 0;
         if (window != null) {
             window.setBackgroundDrawable(shape(SURFACE, LINE, 28));
             window.getDecorView().setClipToOutline(true);
@@ -458,8 +460,9 @@ public final class MainActivity extends Activity {
             android.view.WindowMetrics metrics = getWindowManager().getCurrentWindowMetrics();
             android.graphics.Insets bars = metrics.getWindowInsets()
                     .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
-            window.setLayout(Math.min(dp(520), metrics.getBounds().width() - bars.left - bars.right - dp(40)),
-                    WindowManager.LayoutParams.WRAP_CONTENT);
+            dialogWidth = Math.min(dp(520), metrics.getBounds().width() - bars.left - bars.right - dp(40));
+            availableHeight = metrics.getBounds().height() - bars.top - bars.bottom;
+            window.setLayout(dialogWidth, WindowManager.LayoutParams.WRAP_CONTENT);
         }
         TextView message = dialog.findViewById(android.R.id.message);
         if (message != null) {
@@ -473,6 +476,7 @@ public final class MainActivity extends Activity {
             dialog.getListView().setSelector(new RippleDrawable(ColorStateList.valueOf(0x22ffffff),
                     null, shape(Color.WHITE, Color.WHITE, 16)));
         }
+        ViewGroup actionBar = null;
         for (int which : new int[]{AlertDialog.BUTTON_NEGATIVE, AlertDialog.BUTTON_POSITIVE}) {
             Button action = dialog.getButton(which);
             if (action == null || action.getVisibility() != View.VISIBLE) continue;
@@ -484,14 +488,40 @@ public final class MainActivity extends Activity {
             action.setMinWidth(dp(88));
             action.setMinimumWidth(dp(88));
             action.setPadding(dp(16), dp(10), dp(16), dp(10));
+            action.setGravity(Gravity.CENTER);
             action.setStateListAnimator(null);
             styleButton(action, which == AlertDialog.BUTTON_POSITIVE, false);
             if (action.getLayoutParams() instanceof ViewGroup.MarginLayoutParams layout) {
                 layout.setMarginStart(dp(4));
                 layout.setMarginEnd(dp(4));
-                layout.bottomMargin = dp(8);
+                layout.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                layout.bottomMargin = 0;
                 action.setLayoutParams(layout);
             }
+            if (action.getParent() instanceof ViewGroup parent) actionBar = parent;
+        }
+        int footerHeight = 0;
+        if (actionBar != null && dialogWidth > 0) {
+            actionBar.setPadding(dp(12), dp(8), dp(12), dp(12));
+            View footer = actionBar.getParent() instanceof View parent ? parent : actionBar;
+            int footerWidth = dialogWidth - footer.getPaddingLeft() - footer.getPaddingRight();
+            actionBar.measure(View.MeasureSpec.makeMeasureSpec(Math.max(1, footerWidth), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            footerHeight = actionBar.getMeasuredHeight();
+            if (footer != actionBar) footerHeight += footer.getPaddingTop() + footer.getPaddingBottom();
+            footer.setMinimumHeight(footerHeight);
+        }
+        if (dialog.getListView() != null && dialogWidth > 0) {
+            View heading = dialog.findViewById(R.id.dialog_heading);
+            heading.measure(View.MeasureSpec.makeMeasureSpec(dialogWidth, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            int limit = Math.max(0, Math.min(dp(440), availableHeight - heading.getMeasuredHeight() - footerHeight - dp(48)));
+            android.widget.ListView list = dialog.getListView();
+            list.measure(View.MeasureSpec.makeMeasureSpec(dialogWidth, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(limit, View.MeasureSpec.AT_MOST));
+            ViewGroup.LayoutParams layout = list.getLayoutParams();
+            layout.height = list.getMeasuredHeight();
+            list.setLayoutParams(layout);
         }
     }
 

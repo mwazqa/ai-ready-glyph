@@ -122,17 +122,17 @@ dialog_css = '''
 .previews {flex-wrap:wrap}.dialog-stage {position:relative;border-radius:28px;overflow:hidden}
 .dialog-stage .screen {height:780px;overflow:hidden;pointer-events:none}
 .overlay {position:absolute;inset:0;background:rgba(0,0,0,.68);display:flex;align-items:center;justify-content:center;padding:20px;color:#f5f5f5}
-.dialog {width:100%;max-width:520px;background:#181818;border:1px solid #333;border-radius:28px;overflow:hidden;box-shadow:0 20px 64px #0006}
+.dialog {width:100%;max-width:520px;max-height:100%;display:flex;flex-direction:column;background:#181818;border:1px solid #333;border-radius:28px;overflow:hidden;box-shadow:0 20px 64px #0006}
 .dialog h2 {font-size:23px;font-weight:500;line-height:1.3;padding:24px 24px 12px;margin:0}
 .dialog p {color:#aaa;font-size:15px;line-height:1.5;margin:0;padding:0 24px 20px}
-.dialog-actions {display:flex;justify-content:flex-end;gap:8px;padding:8px 12px 16px}
+.dialog h2,.dialog-actions {flex-shrink:0}.dialog-actions {display:flex;justify-content:flex-end;gap:8px;padding:8px 12px 12px}
 .dialog-actions .button {min-height:48px;min-width:88px;padding:10px 16px;margin:0;font-family:inherit;background:transparent;cursor:pointer}
 .dialog-actions .primary {background:#d71920}.dialog button:focus-visible,.dialog input:focus-visible {outline:2px solid #f5f5f5;outline-offset:3px}
 .picker {padding:0 24px 8px}.picker p {padding:0;font-size:13px;line-height:1.45}
 .picker input {width:100%;height:52px;background:#222;border:1px solid #333;border-radius:18px;color:#f5f5f5;padding:12px 16px;margin:16px 0 8px;font:15px Arial,sans-serif}
 .picker input::placeholder {color:#aaa;opacity:1}.picker .toggle-row {margin:0;gap:14px;min-height:56px;cursor:pointer}
 .picker .toggle {cursor:pointer}.picker-list {height:260px;overflow:auto;scrollbar-width:thin;scrollbar-color:#555 transparent}.picker-list .hidden {display:none}
-.dialog-choices {padding:0 12px 4px}.dialog-choice {min-height:56px;padding:16px;color:#f5f5f5;font-size:16px;display:flex;align-items:center}
+.dialog-choices {min-height:0;max-height:440px;overflow:auto;padding:0 12px 4px}.dialog-choice {min-height:56px;padding:16px;color:#f5f5f5;font-size:16px;display:flex;align-items:center}
 @media(prefers-reduced-motion:reduce){.toggle:after {transition:none}}
 '''
 
@@ -157,6 +157,8 @@ picker += f'<p class="hidden" id="picker-empty">{text("no_matching_apps")}</p></
 dialog_page += dialog_stage('02 / CHOOSE AI APPS', 'choose_apps', picker, dialog_button('done', True))
 choices = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['Automatic (Discord)', 'ChatGPT', 'Claude', 'Gemini', 'Other AI', 'Discord', 'Messenger', 'WhatsApp', 'SMS']) + '</div>'
 dialog_page += dialog_stage('03 / ANIMATION CHOICES', 'Discord', choices, dialog_button('cancel'))
+assignments = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['ChatGPT · ChatGPT', 'Discord · Discord', 'Gemini · Gemini', 'Gemini via Google · Other AI', 'Messenger · Messenger', 'WhatsApp · WhatsApp']) + '</div>'
+dialog_page += dialog_stage('04 / ANIMATION ASSIGNMENTS', 'assign_animations', assignments, dialog_button('close'))
 dialog_page += '''</main><script>
 document.querySelectorAll('button.toggle').forEach(control => control.addEventListener('click', () => {
     const enabled = control.getAttribute('aria-checked') !== 'true';

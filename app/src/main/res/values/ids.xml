@@ -1,3 +1,4 @@
 <resources>
     <item name="gemini_source_help" type="id" />
+    <item name="dialog_heading" type="id" />
 </resources>
