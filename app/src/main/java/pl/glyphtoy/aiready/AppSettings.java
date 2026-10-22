@@ -27,10 +27,19 @@ final class AppSettings {
         if (selected) ids.add(source.id); else ids.remove(source.id);
         data.edit().putStringSet("messaging_sources", ids).apply();
     }
+    Set<String> socialSources() { return new HashSet<>(data.getStringSet("social_sources", Set.of())); }
+    boolean socialSelected(SocialSource source) { return socialSources().contains(source.id); }
+    void selectSocial(SocialSource source, boolean selected) {
+        Set<String> ids = socialSources();
+        if (selected) ids.add(source.id); else ids.remove(source.id);
+        data.edit().putStringSet("social_sources", ids).apply();
+    }
     Set<String> monitoredPackages() {
         Set<String> names = packages();
         for (MessagingApps.Entry entry : MessagingApps.installed(context))
             if (messagingSelected(entry.source())) names.add(entry.packageName());
+        for (SocialApps.Entry entry : SocialApps.installed(context))
+            if (socialSelected(entry.source())) names.add(entry.packageName());
         return names;
     }
     MessagingSource messagingSource(String packageName) {
@@ -38,9 +47,12 @@ final class AppSettings {
     }
     boolean monitors(String packageName) {
         if (packages().contains(packageName)) return true;
+        if (SocialSource.selectedPackages(socialSources()).contains(packageName)) return true;
         return MessagingSource.selectedPackages(messagingSources(), MessagingApps.defaultSmsPackage(context)).contains(packageName);
     }
     AnimationStyle defaultStyle(String packageName) {
+        SocialSource social = SocialSource.fromPackage(packageName);
+        if (social != null) return social.style;
         MessagingSource source = messagingSource(packageName);
         return source == null ? AnimationStyle.fromPackage(packageName) : source.style;
     }
@@ -55,6 +67,8 @@ final class AppSettings {
         else data.edit().putString(assignmentKey(packageName), provider.id).apply();
     }
     private String assignmentKey(String packageName) {
+        SocialSource social = SocialSource.fromPackage(packageName);
+        if (social != null) return "provider:social:" + social.id;
         MessagingSource source = messagingSource(packageName);
         return "provider:" + (source == null ? packageName : "messaging:" + source.id);
     }

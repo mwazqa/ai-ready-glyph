@@ -2,6 +2,14 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.8.0 - 2026-10-22
+
+- Add a separate Social section for the standard Instagram, TikTok, X and Facebook apps. New source switches start disabled.
+- Add four matching monochrome pixel animations, previews and per-app assignments, bringing the total to twelve styles.
+- Include Social in readiness, selected-source counts and first-launch or configured section ordering.
+- Apply existing regular-notification filtering, repost handling and the six-second start delay to enabled social sources.
+- Preserve previous source selections, assignment keys, SMS detection and all eight previous animation sequences.
+
 ## 0.7.4 - 2026-10-22
 
 - Wait six seconds before automatic Glyph playback so the system notification effect has time to finish. This delay is a fixed margin, not measured system timing.

@@ -1,17 +1,19 @@
 # Ready Glyph
 
-An experimental notification companion for **Nothing Phone (3)**. Selected AI apps, Discord, Messenger, WhatsApp and your default SMS app can trigger six-second animations on the rear Glyph Matrix.
+An experimental notification companion for **Nothing Phone (3)**. Selected AI, messaging and social apps can trigger six-second animations on the rear Glyph Matrix.
 
-**Current version: 0.7.4.** Previously AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta or other app providers.
+**Current version: 0.8.0.** Previously AI Ready Glyph. Independent project; not affiliated with or endorsed by Nothing, OpenAI, Anthropic, Google, Discord, Meta, TikTok, X or other app providers.
 
 The app uses Android notification metadata. It does not connect to AI accounts, read notification text or observe an AI app's internal task state. An app that sends no notification provides no signal to detect.
 
 ## Features
 
 - ChatGPT strokes drawn from the inner junctions, a Claude bloom, a Gemini star growing from one pixel, and generic AI lettering.
-- Eight six-second animations, on-screen previews and manual Glyph tests.
+- Twelve six-second animations, on-screen previews and manual Glyph tests.
 - Separate AI apps and Messages sections, with independent opt-in controls for Discord, Messenger, WhatsApp and SMS.
 - Discord halves that join and blink, a Messenger bolt that lights its bubble, a WhatsApp phone with signal waves, and bouncing SMS typing dots.
+- A separate Social section for Instagram, TikTok, X and Facebook, with initially disabled source switches and per-app animation assignments.
+- An Instagram camera with a growing lens and flash, a TikTok note with echoes, traced X strokes and a drawn Facebook f.
 - Per-app animation overrides and an optional Glyph Toy.
 - Automatic animations for regular notifications from selected apps, duplicate suppression and Do Not Disturb handling.
 - A six-second pause before automatic playback, followed by the complete six-second animation. Manual tests start immediately.
@@ -69,12 +71,12 @@ AGP 8.10.1, Gradle 8.11.1, its distribution checksum and the Nothing SDK commit 
 ## First run
 
 1. Install your build, open it and enable Glyph Interface in Nothing OS.
-2. Choose installed AI apps and enable messaging sources under Messages. Fresh installs select none; messaging sources also start disabled after an update.
+2. Choose installed AI apps and enable sources under Messages or Social. Fresh installs select none; newly added sources also start disabled after an update.
 3. Grant Notification access in Android Settings.
 4. If sideloading blocks access, use App info's menu to allow restricted settings, then return to Notification access.
 5. Enable notifications in the selected apps and initially turn Do Not Disturb off.
 6. Run a manual Glyph test.
-7. Send a new message to a selected messaging app, or start an AI task and wait for its notification with that app in the background.
+7. Trigger a new notification from a selected app. Automatic playback waits six seconds, then plays its full six-second animation.
 
 The optional **Gemini via Google** source appears when Gemini is installed and enabled. It covers the Google app as a whole, so other regular Google alerts also trigger animations. Assign the Gemini style manually if desired.
 
@@ -82,25 +84,27 @@ The optional **Gemini via Google** source appears when Gemini is installed and e
 
 Every regular notification from an app you select is eligible for an animation when Automatic animations is enabled. This is the only notification mode: there is no phrase filter, custom-phrase field or Every regular notification switch. Old phrase and detection-mode preferences no longer affect behavior after an update.
 
-Ongoing notifications, active progress and group summaries are skipped using Android metadata. Notification text and language are not analyzed. An ordinary alert unrelated to a completed AI task can also trigger an animation. Existing notifications are not replayed when the listener connects. AI sources retain their existing behavior: a notification key alerts once until removed or new progress appears. Messaging sources also accept a different posting timestamp on the same notification key, so later posts for a conversation can trigger another animation. This detects posts, not unique message content; an app can post an update without a new message. A newer accepted alert replaces the pending or active animation and restarts the six-second pause rather than queueing a backlog.
+Ongoing notifications, active progress and group summaries are skipped using Android metadata. Notification text and language are not analyzed. An ordinary alert unrelated to a completed AI task can also trigger an animation. Existing notifications are not replayed when the listener connects. AI sources retain their existing behavior: a notification key alerts once until removed or new progress appears. Messaging and social sources also accept a different posting timestamp on the same notification key. This detects posts, not unique message content; an app can post an update without a new message. A newer accepted alert replaces the pending or active animation and restarts the six-second pause rather than queueing a backlog.
 
 SMS uses Android's default SMS package API. If that returns no package, the app falls back to the system-resolved SMS composer and checks that it is an enabled SMS handler. A system chooser is rejected; Android can resolve the sole available handler even without an explicit default. Its selection and animation assignment follow the SMS source when the resolved app changes. This covers that app's regular notifications, including RCS or other alerts; it does not inspect SMS messages or distinguish message transport. No SMS permissions are requested and the default SMS app is not changed. [Messaging sources](docs/messaging-sources.md).
 
+Social supports the standard Instagram, TikTok, X and Facebook packages. Enable each app separately; all its regular notifications can trigger, including likes, mentions and direct messages. Lite and other regional editions are outside the initial list. [Social sources and verified identities](docs/social-sources.md).
+
 Details reports whether a notification was ongoing, a group summary or actively progressing. Notification events and Glyph actions have independent timestamps including seconds. A previous manual test's Glyph status does not confirm that a later notification triggered an animation. These diagnostics do not store notification text.
 
-Automatic alerts wait six seconds before starting, allowing time for the system notification effect. This is a fixed margin, not a measured bell duration or a callback from Nothing OS. The animation clock begins only after the wait and SDK connection, preserving its full six seconds including the final fade. Pause, source selection and Do Not Disturb are checked again before playback. Stopping or disconnecting the listener cancels pending playback. Manual tests and Glyph Button tests start immediately and replace a pending alert. Other AI apps use generic AI lettering unless assigned another style. The four messaging sources have their own defaults; any selected source can use an animation override.
+Automatic alerts wait six seconds before starting, allowing time for the system notification effect. This is a fixed margin, not a measured bell duration or a callback from Nothing OS. The animation clock begins only after the wait and SDK connection, preserving its full six seconds including the final fade. Pause, source selection and Do Not Disturb are checked again before playback. Stopping or disconnecting the listener cancels pending playback. Manual tests and Glyph Button tests start immediately and replace a pending alert. Other AI apps use generic AI lettering unless assigned another style. Messaging and social sources have their own defaults; any selected source can use an animation override.
 
 For the optional Toy, use Open Glyph Toys and add Ready Glyph. A short Glyph Button press cycles toys; holding it tests the selected style. Idle shows two dim dots. Automatic alerts also work without selecting the Toy. System effects and higher-priority Toys can override frames. An SDK call is not a physical LED reading.
 
 ## Privacy
 
-No INTERNET permission, backend, analytics or account system. Android grants broad notification access, but unselected packages are rejected and the app does not extract notification titles or message bodies. Flags, progress metadata and messaging post timestamps are used for notification decisions.
+No INTERNET permission, backend, analytics or account system. Android grants broad notification access, but unselected packages are rejected and the app does not extract notification titles or message bodies. Flags, progress metadata and messaging and social post timestamps are used for notification decisions.
 
 Preferences store selected packages, assignments and settings. Older unused phrase and mode values may remain from previous builds but are not read. Diagnostics contain time, an app label and a result. Phone recognition reads public build fields, not unique device identifiers. [Privacy details](PRIVACY.md).
 
 ## Verification and development
 
-Local 0.7.4 verification: **46 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. A local JVM simulation of the actual controller passed 11 timing scenarios using simulated Android and Glyph services; it does not verify real service or LED behavior. Existing AI animation sequences match the 0.6.9 baseline at 50 ms samples. Messaging routing, SMS fallback validation, repost handling and animation phases have unit coverage. Current native UI, SMS resolution, bell timing and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
+Local 0.8.0 verification: **55 unit tests passed**, APK assembly passed, Android Lint had **0 errors and 2 existing warnings**. The warnings concern the pinned Gradle version and exported Glyph Toy service. All eight previous animation sequences match 0.7.4 at 50 ms samples. A local JVM simulation of the actual controller passed 11 timing scenarios using simulated Android and Glyph services; it does not verify real service or LED behavior. Source eligibility, SMS fallback, repost handling and animation phases have unit coverage. Browser UI reconstructions and renderer previews are not phone screenshots. Current native UI, SMS resolution, bell timing and real notification-triggered LED output still need physical-device checks. [Verification record](docs/verification.md).
 
 GitHub Actions checks the catalog, wrapper, tests, build and lint. It retrieves the SDK from Nothing and does not upload APK artifacts.
 

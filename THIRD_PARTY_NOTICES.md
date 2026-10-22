@@ -18,6 +18,8 @@ Provider names and marks belong to their owners. They identify notification sour
 
 The stylized Discord, Messenger and WhatsApp identifiers in MessagingSymbols.java and artwork/messaging-symbols.svg also identify their respective apps. They are project-drawn pixel adaptations; third-party visual expression and marks are excluded from MIT to the extent those rights apply. No brand approval is claimed. The generic SMS bubble and generator control code are original MIT project work.
 
+The Instagram, TikTok, X and Facebook identifiers in SocialSymbols.java and artwork/social-symbols.svg are also project-drawn pixel adaptations. Third-party visual expression and marks are excluded from MIT to the extent those rights apply; no official artwork status or brand approval is claimed. Original generator and animation control code remain MIT project work.
+
 Third-party visual expression is excluded from MIT, including OpenAI-derived coverage in ChatGptSymbol.java, Claude reference-derived data in ClaudeFrames.java, and the provider-identifying Gemini motif to the extent third-party rights apply. Original control code remains MIT. Source inclusion does not establish permission to redistribute the underlying artwork.
 
 The ChatGPT symbol derives from OpenAI's official Blossom SVG. The raw SVG is not committed. [OpenAI's guidelines](https://openai.com/brand/) apply; this project asserts no separate approval for the pixel adaptation.

@@ -7,11 +7,11 @@
     <string name="device_unsupported_title">Device not supported.</string>
     <string name="device_unsupported_detail">%1$s detected. This build supports Glyph Matrix animations on Nothing Phone (3).</string>
     <string name="hero_title">Your notifications.\nMade visible.</string>
-    <string name="hero_description">Six-second Glyph signals for your AI apps and messages.</string>
+    <string name="hero_description">Six-second Glyph signals for your AI, messaging and social apps.</string>
     <string name="status_eyebrow">LIVE STATUS</string>
-    <string name="selected_apps">Selected sources: AI %1$d / Messages %2$d</string>
+    <string name="selected_apps">Selected sources: AI %1$d / Messages %2$d / Social %3$d</string>
     <string name="setup_needed">Let\'s get connected.</string>
-    <string name="setup_choose_apps">Choose AI apps or messaging sources below, then enable notification access.</string>
+    <string name="setup_choose_apps">Choose AI, messaging or social apps below, then enable notification access.</string>
     <string name="access_needed">One more connection.</string>
     <string name="setup_grant_access">Enable notification access to receive signals from your selected apps.</string>
     <string name="paused">Automatic alerts paused.</string>
@@ -49,7 +49,7 @@
     <string name="toy_description">Add Ready Glyph to your Toys carousel. Hold the Glyph Button to test the last selected animation. Automatic alerts also work without selecting this Toy.</string>
     <string name="open_toys">Open Glyph Toys</string>
     <string name="toy_fallback">Open Settings > Glyph Interface > Glyph Toys and add Ready Glyph.</string>
-    <string name="footer">0.7.4</string>
+    <string name="footer">0.8.0</string>
     <string name="search_apps">Search ChatGPT, Claude, Gemini…</string>
     <string name="no_apps">No catalogued AI apps found. Install an official app such as ChatGPT, Claude, Gemini, Kimi or Qwen, then open it at least once.</string>
     <string name="no_matching_apps">No installed AI apps match your search.</string>
@@ -73,4 +73,9 @@
     <string name="not_installed">Not installed or disabled.</string>
     <string name="ai_styles">AI APPS</string>
     <string name="messaging_styles">MESSAGING</string>
+    <string name="social_eyebrow">SOCIAL / YOUR FEED</string>
+    <string name="social_title">Social</string>
+    <string name="social_description">Choose social apps to show on your Glyph Matrix.</string>
+    <string name="social_help">Includes direct messages, likes, mentions and other regular alerts from the apps you enable.</string>
+    <string name="social_styles">SOCIAL</string>
 </resources>

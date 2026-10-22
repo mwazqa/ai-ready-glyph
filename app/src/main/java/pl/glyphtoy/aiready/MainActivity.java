@@ -48,8 +48,9 @@ public final class MainActivity extends Activity {
     private final List<Button> providerButtons = new ArrayList<>();
     private AppSettings settings;
     private TextView readinessTitle, readinessDetail, accessStatus, selectedStatus, eventStatus, matrixStatus;
-    private LinearLayout sections, sourceCard, messagingCard, animationCard;
+    private LinearLayout sections, sourceCard, messagingCard, socialCard, animationCard;
     private List<MessagingApps.Entry> messagingApps = List.of();
+    private List<SocialApps.Entry> socialApps = List.of();
     private MatrixPreview preview;
     private TextView animationDescription;
     private TextView accessHelp;
@@ -86,9 +87,11 @@ public final class MainActivity extends Activity {
         root.addView(sections);
         sourceCard = buildSources();
         messagingCard = buildMessaging();
+        socialCard = buildSocial();
         animationCard = buildAnimations();
         sections.addView(sourceCard);
         sections.addView(messagingCard);
+        sections.addView(socialCard);
         sections.addView(animationCard);
         configuredOrder = false;
         buildToy(sections);
@@ -191,13 +194,34 @@ public final class MainActivity extends Activity {
         spaced(card, accessHelp, 12);
     }
 
+    private LinearLayout buildSocial() {
+        LinearLayout card = card(null, R.string.social_eyebrow, R.string.social_title);
+        spaced(card, text(R.string.social_description, 14, MUTED), 8);
+        socialApps = SocialApps.installed(this);
+        for (SocialSource source : SocialSource.values()) {
+            boolean installed = false;
+            for (SocialApps.Entry entry : socialApps) if (entry.source() == source) installed = true;
+            Switch option = toggle(source.label, installed && settings.socialSelected(source));
+            option.setEnabled(installed);
+            option.setAlpha(installed ? 1 : .4f);
+            spaced(card, option, source == SocialSource.INSTAGRAM ? 12 : 0);
+            if (!installed) spaced(card, text(R.string.not_installed, 12, MUTED), 0);
+            option.setOnCheckedChangeListener((view, checked) -> {
+                settings.selectSocial(source, checked);
+                refreshStatus();
+            });
+        }
+        spaced(card, text(R.string.social_help, 12, MUTED), 12);
+        return card;
+    }
+
     private LinearLayout buildAnimations() {
         LinearLayout card = card(null, R.string.animations_eyebrow, R.string.animations_title);
         spaced(card, text(R.string.animations_description, 14, MUTED), 8);
         AnimationStyle[] providers = AnimationStyle.values();
         for (int row = 0; row < providers.length / 2; row++) {
-            if (row == 0 || row == 2) spaced(card,
-                    caption(row == 0 ? R.string.ai_styles : R.string.messaging_styles), 16);
+            if (row == 0 || row == 2 || row == 4) spaced(card,
+                    caption(row == 0 ? R.string.ai_styles : row == 2 ? R.string.messaging_styles : R.string.social_styles), 16);
             LinearLayout choices = new LinearLayout(this);
             for (int col = 0; col < 2; col++) {
                 AnimationStyle provider = providers[row * 2 + col];
@@ -278,6 +302,10 @@ public final class MainActivity extends Activity {
         sections.removeView(messagingCard);
         messagingCard = buildMessaging();
         sections.addView(messagingCard, index);
+        index = sections.indexOfChild(socialCard);
+        sections.removeView(socialCard);
+        socialCard = buildSocial();
+        sections.addView(socialCard, index);
         configuredOrder = null;
         statusTick.run();
     }
@@ -291,7 +319,9 @@ public final class MainActivity extends Activity {
                 new ComponentName(this, AiNotificationListener.class));
         int messagingCount = 0;
         for (MessagingApps.Entry entry : messagingApps) if (settings.messagingSelected(entry.source())) messagingCount++;
-        boolean hasSources = !settings.packages().isEmpty() || messagingCount > 0;
+        int socialCount = 0;
+        for (SocialApps.Entry entry : socialApps) if (settings.socialSelected(entry.source())) socialCount++;
+        boolean hasSources = !settings.packages().isEmpty() || messagingCount > 0 || socialCount > 0;
         int title, detail;
         if (!device.supportsAnimations()) { title = R.string.device_unsupported_title; detail = R.string.device_unsupported_detail; }
         else if (!hasSources) { title = R.string.setup_needed; detail = R.string.setup_choose_apps; }
@@ -309,7 +339,7 @@ public final class MainActivity extends Activity {
         accessStatus.setText(!granted ? R.string.access_off
                 : LocalStatus.listenerConnected ? R.string.access_on : R.string.access_connecting);
         accessHelp.setVisibility(granted ? View.GONE : View.VISIBLE);
-        selectedStatus.setText(getString(R.string.selected_apps, settings.packages().size(), messagingCount));
+        selectedStatus.setText(getString(R.string.selected_apps, settings.packages().size(), messagingCount, socialCount));
         eventStatus.setText(LocalStatus.lastEvent);
         matrixStatus.setText(device.supportsAnimations() ? LocalStatus.matrix
                 : getString(R.string.device_unsupported_detail, device.displayName));
@@ -317,10 +347,12 @@ public final class MainActivity extends Activity {
         if (configuredOrder == null || configuredOrder != configured) {
             sections.removeView(sourceCard);
             sections.removeView(messagingCard);
+            sections.removeView(socialCard);
             sections.removeView(animationCard);
             sections.addView(configured ? animationCard : sourceCard, 0);
             sections.addView(configured ? sourceCard : messagingCard, 1);
-            sections.addView(configured ? messagingCard : animationCard, 2);
+            sections.addView(configured ? messagingCard : socialCard, 2);
+            sections.addView(configured ? socialCard : animationCard, 3);
             configuredOrder = configured;
         }
     }

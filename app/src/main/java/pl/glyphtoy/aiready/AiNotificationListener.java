@@ -43,8 +43,9 @@ public final class AiNotificationListener extends NotificationListenerService {
             LocalStatus.event(label + " · skipped: " + result.reason + ".");
             return;
         }
-        boolean messaging = settings.messagingSource(item.getPackageName()) != null;
-        if (messaging ? !messagingGate.accept(item.getKey(), item.getPostTime()) : !gate.accept(item.getKey(), true)) return;
+        boolean reposts = SocialSource.fromPackage(item.getPackageName()) != null
+                || settings.messagingSource(item.getPackageName()) != null;
+        if (reposts ? !messagingGate.accept(item.getKey(), item.getPostTime()) : !gate.accept(item.getKey(), true)) return;
         NotificationManager system = getSystemService(NotificationManager.class);
         if (system.getCurrentInterruptionFilter() != NotificationManager.INTERRUPTION_FILTER_ALL) {
             LocalStatus.event(label + " · skipped: Do Not Disturb.");

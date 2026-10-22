@@ -48,6 +48,10 @@
         <package android:name="com.discord" />
         <package android:name="com.facebook.orca" />
         <package android:name="com.whatsapp" />
+        <package android:name="com.instagram.android" />
+        <package android:name="com.zhiliaoapp.musically" />
+        <package android:name="com.twitter.android" />
+        <package android:name="com.facebook.katana" />
         <intent>
             <action android:name="android.provider.Telephony.SMS_DELIVER" />
         </intent>

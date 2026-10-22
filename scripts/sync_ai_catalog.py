@@ -72,7 +72,8 @@ def main():
     queries += "".join(f'        <package android:name="{app["package"]}" />\n' for app in apps)
     queries += f'        <package android:name="{GOOGLE}" />\n'
     queries += f'        <package android:name="{NOTHING}" />\n'
-    for name in ('com.discord', 'com.facebook.orca', 'com.whatsapp'):
+    for name in ('com.discord', 'com.facebook.orca', 'com.whatsapp', 'com.instagram.android',
+                 'com.zhiliaoapp.musically', 'com.twitter.android', 'com.facebook.katana'):
         queries += f'        <package android:name="{name}" />\n'
     queries += '        <intent>\n            <action android:name="android.provider.Telephony.SMS_DELIVER" />\n        </intent>\n'
     queries += '        <intent>\n            <action android:name="android.intent.action.SENDTO" />\n            <data android:scheme="smsto" />\n        </intent>\n    </queries>'

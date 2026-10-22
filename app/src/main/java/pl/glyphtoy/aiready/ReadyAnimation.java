@@ -17,6 +17,7 @@ final class ReadyAnimation {
             case GEMINI -> star(pixels, elapsed, fadeOut);
             case GENERIC -> letters(pixels, elapsed, fade);
             case DISCORD, MESSENGER, WHATSAPP, SMS -> MessagingAnimation.draw(pixels, provider, elapsed, fade);
+            case INSTAGRAM, TIKTOK, X, FACEBOOK -> SocialAnimation.draw(pixels, provider, elapsed, fade);
         }
         return pixels;
     }

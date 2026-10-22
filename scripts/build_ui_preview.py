@@ -49,7 +49,7 @@ wordmark += '<circle cx="342" cy="16" r="4.6" fill="#D71920"/></svg>'
 def status(configured):
     title = 'ready' if configured else 'setup_needed'
     detail = 'ready_detail' if configured else 'setup_choose_apps'
-    selected = text('selected_apps').replace('%1$d', str(1 if configured else 0)).replace('%2$d', str(2 if configured else 0))
+    selected = text('selected_apps').replace('%1$d', str(1 if configured else 0)).replace('%2$d', str(2 if configured else 0)).replace('%3$d', str(2 if configured else 0))
     content = f'<h2>{text(title)}</h2><p>{text(detail)}</p><hr><div class="small bright">{selected}</div>'
     content += f'<div class="small">{text("access_on" if configured else "access_off")}</div>'
     content += '<div class="row">' + button('quick_test', True, 'Test ChatGPT') + button('activity_details') + '</div>'
@@ -75,15 +75,24 @@ def messaging(configured):
 def animations():
     content = f'<p>{text("animations_description")}</p><div class="caption style-group">{text("ai_styles")}</div><div class="providers"><div class="button selected">ChatGPT</div><div class="button">Claude</div><div class="button">Gemini</div><div class="button">Other AI</div></div>'
     content += f'<div class="caption style-group">{text("messaging_styles")}</div><div class="providers"><div class="button">Discord</div><div class="button">Messenger</div><div class="button">WhatsApp</div><div class="button">SMS</div></div>'
+    content += f'<div class="caption style-group">{text("social_styles")}</div><div class="providers"><div class="button">Instagram</div><div class="button">TikTok</div><div class="button">X</div><div class="button">Facebook</div></div>'
     content += f'<div class="matrix">{matrix}</div><p class="small">The knot draws from its inner junctions outwards.</p>'
     content += '<div class="row">' + button('preview') + button('test_on_glyph', True) + '</div>' + button('assign_animations')
     return card('animations_eyebrow', 'animations_title', content)
 
 
+def social(configured):
+    content = f'<p>{text("social_description")}</p><div class="messaging-options">'
+    for label, enabled in [('Instagram', configured), ('TikTok', False), ('X', configured), ('Facebook', False)]:
+        content += f'<div class="toggle-row"><span>{label}</span><span class="toggle {"on" if enabled else ""}"></span></div>'
+    content += f'</div><p class="small help">{text("social_help")}</p>'
+    return card('social_eyebrow', 'social_title', content)
+
+
 def screen(configured):
     content = wordmark + f'<div class="caption device">{text("device_label")}</div><h1>{text("hero_title")}</h1><p class="intro">{text("hero_description")}</p>'
     content += status(configured)
-    content += animations() + sources(True) + messaging(True) if configured else sources(False) + messaging(False) + animations()
+    content += animations() + sources(True) + messaging(True) + social(True) if configured else sources(False) + messaging(False) + social(False) + animations()
     content += card('toy_eyebrow', 'toy_title', f'<p>{text("toy_description")}</p>' + button('open_toys'))
     return content + f'<div class="caption footer">{text("footer")}</div>'
 
@@ -91,7 +100,7 @@ def screen(configured):
 css = '''
 * {box-sizing:border-box} body {margin:0;background:#e8e8e8;color:#151515;font-family:Arial,sans-serif;padding:32px}
 header {max-width:820px;margin:0 auto 24px} header h1 {font-size:24px;letter-spacing:-.6px;margin:0 0 8px}
-header p {font-size:13px;color:#555;line-height:1.5;margin:0}.previews {display:flex;justify-content:center;gap:24px;align-items:flex-start}
+header p {font-size:13px;color:#555;line-height:1.5;margin:0}.previews {display:flex;flex-wrap:wrap;justify-content:center;gap:24px;align-items:flex-start}
 .variant {width:390px;flex:none}.label {font:11px monospace;letter-spacing:1px;margin-bottom:10px}
 .screen {height:1000px;overflow:auto;background:#080808;color:#f5f5f5;padding:24px 20px 32px;border-radius:28px;scrollbar-width:none}
 .wordmark {width:100%;height:32px;display:block}.caption {font:11px/1.45 monospace;color:#aaa;letter-spacing:.8px}.device{margin-top:12px}
@@ -155,9 +164,9 @@ for label, enabled in [('ChatGPT', True), ('Claude', False), ('Gemini', True), (
     picker += f'<div class="toggle-row" data-app="{label.lower()}"><span>{label}</span><button class="toggle {"on" if enabled else ""}" type="button" role="switch" aria-label="{label}" aria-checked="{str(enabled).lower()}"></button></div>'
 picker += f'<p class="hidden" id="picker-empty">{text("no_matching_apps")}</p></div></div>'
 dialog_page += dialog_stage('02 / CHOOSE AI APPS', 'choose_apps', picker, dialog_button('done', True))
-choices = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['Automatic (Discord)', 'ChatGPT', 'Claude', 'Gemini', 'Other AI', 'Discord', 'Messenger', 'WhatsApp', 'SMS']) + '</div>'
+choices = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['Automatic (Discord)', 'ChatGPT', 'Claude', 'Gemini', 'Other AI', 'Discord', 'Messenger', 'WhatsApp', 'SMS', 'Instagram', 'TikTok', 'X', 'Facebook']) + '</div>'
 dialog_page += dialog_stage('03 / ANIMATION CHOICES', 'Discord', choices, dialog_button('cancel'))
-assignments = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['ChatGPT · ChatGPT', 'Discord · Discord', 'Gemini · Gemini', 'Gemini via Google · Other AI', 'Messenger · Messenger', 'WhatsApp · WhatsApp']) + '</div>'
+assignments = '<div class="dialog-choices">' + ''.join(f'<div class="dialog-choice">{label}</div>' for label in ['ChatGPT · ChatGPT', 'Discord · Discord', 'Gemini · Gemini', 'Gemini via Google · Other AI', 'Instagram · Instagram', 'Messenger · Messenger', 'WhatsApp · WhatsApp', 'X · X']) + '</div>'
 dialog_page += dialog_stage('04 / ANIMATION ASSIGNMENTS', 'assign_animations', assignments, dialog_button('close'))
 dialog_page += '''</main><script>
 document.querySelectorAll('button.toggle').forEach(control => control.addEventListener('click', () => {
@@ -183,7 +192,8 @@ print(dialog_destination)
 detail_page = f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ready Glyph {version} - Source sections</title><style>{css}</style>'
 detail_page += f'<header><h1>Ready Glyph / {version}</h1><p>Source-card and animation-card reconstructions. Example selections; not Android screenshots.</p></header><main class="previews">'
 detail_page += '<div class="variant"><div class="label">AI APPS + MESSAGES</div><div class="screen">' + wordmark + sources(True) + messaging(True) + '</div></div>'
-detail_page += '<div class="variant"><div class="label">EIGHT ANIMATION STYLES</div><div class="screen">' + wordmark + animations() + '</div></div></main></html>'
+detail_page += '<div class="variant"><div class="label">SOCIAL</div><div class="screen">' + wordmark + social(True) + '</div></div>'
+detail_page += '<div class="variant"><div class="label">TWELVE ANIMATION STYLES</div><div class="screen">' + wordmark + animations() + '</div></div></main></html>'
 detail_destination = ROOT / f'dist/Ready-Glyph-{version}-sources-design.html'
 detail_destination.write_text(detail_page, encoding='utf-8')
 print(detail_destination)
