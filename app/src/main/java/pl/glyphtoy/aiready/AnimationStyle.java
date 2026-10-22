@@ -1,18 +1,18 @@
 package pl.glyphtoy.aiready;
 
 enum AnimationStyle {
-    CHATGPT("chatgpt", "ChatGPT", "The knot draws from its inner junctions outwards."),
-    CLAUDE("claude", "Claude", "The symbol blooms and folds back in."),
-    GEMINI("gemini", "Gemini", "A single pixel grows into the Gemini star."),
-    GENERIC("generic", "Other AI", "Pixel lettering with a blinking signal dot."),
-    DISCORD("discord", "Discord", "Two halves join, then the Discord eyes blink."),
-    MESSENGER("messenger", "Messenger", "A bolt draws first, then its bubble lights up."),
-    WHATSAPP("whatsapp", "WhatsApp", "The phone draws, its bubble closes and signal waves spread."),
-    SMS("sms", "SMS", "A bubble draws around three bouncing typing dots."),
-    INSTAGRAM("instagram", "Instagram", "Camera corners join, the lens grows and its flash lights up."),
-    TIKTOK("tiktok", "TikTok", "A musical note draws upwards and sends two soft echoes."),
-    X("x", "X", "Diagonal strokes draw from their tips and meet at the centre."),
-    FACEBOOK("facebook", "Facebook", "The f draws upwards, then its crossbar lights up.");
+    CHATGPT("chatgpt", "ChatGPT", "The knot draws outwards, then unwinds back to its inner junctions."),
+    CLAUDE("claude", "Claude", "The symbol blooms, folds in and shrinks to its centre."),
+    GEMINI("gemini", "Gemini", "A single pixel grows into the star, then contracts again."),
+    GENERIC("generic", "Other AI", "Pixel lettering draws in and erases from right to left."),
+    DISCORD("discord", "Discord", "Two halves join and blink, then slide apart."),
+    MESSENGER("messenger", "Messenger", "A bolt draws, its bubble grows and folds back into the bolt."),
+    WHATSAPP("whatsapp", "WhatsApp", "The phone draws with signal waves; its bubble and handset retract at the end."),
+    SMS("sms", "SMS", "The dots bounce in, retreat in reverse order and the bubble closes."),
+    INSTAGRAM("instagram", "Instagram", "The camera draws and flashes, then its lens and corners retract."),
+    TIKTOK("tiktok", "TikTok", "A note draws upwards with echoes, then un-draws to its base."),
+    X("x", "X", "Diagonal strokes meet at the centre, then withdraw to their tips."),
+    FACEBOOK("facebook", "Facebook", "The f draws and its crossbar lights up; both retract in reverse.");
 
     final String id, label, description;
     AnimationStyle(String id, String label, String description) {

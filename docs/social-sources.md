@@ -19,4 +19,6 @@ Automatic playback waits six seconds, then starts the complete six-second animat
 
 Social selections use a separate `social_sources` preference and start empty, including on upgrade. Existing AI and messaging choices are retained. Animation overrides use `provider:social:<source-id>` keys. Missing or disabled apps cannot be enabled; saved choices remain available if an app is reinstalled. The manifest adds four explicit package queries without all-package visibility or new permissions.
 
-These are project-drawn brand-identifying pixel adaptations with the same brightness range, circular 25 x 25 boundary and final fade as the existing styles. All twelve styles are available as overrides. See [artwork provenance](../artwork/README.md) and [third-party notices](../THIRD_PARTY_NOTICES.md).
+These are project-drawn brand-identifying pixel adaptations with the same brightness range, circular 25 x 25 boundary and six-second timing as the existing styles. All twelve styles are available as overrides. See [artwork provenance](../artwork/README.md) and [third-party notices](../THIRD_PARTY_NOTICES.md).
+
+From 0.9.0, the final 1.2 seconds reverse each symbol's drawing order. [Animation motion](animation-motion.md).

@@ -7,14 +7,17 @@ final class ReadyAnimation {
     private static final String[] LETTER_I = {"111", "010", "010", "010", "010", "010", "111"};
 
     static int[] frame(AnimationStyle provider, long elapsed) {
+        if (elapsed < 0 || elapsed >= DURATION_MS) return new int[SIZE * SIZE];
+        return elapsed >= AnimationOutro.START_MS ? AnimationOutro.frame(provider, elapsed) : openingFrame(provider, elapsed);
+    }
+
+    static int[] openingFrame(AnimationStyle provider, long elapsed) {
         int[] pixels = new int[SIZE * SIZE];
-        if (elapsed < 0 || elapsed >= DURATION_MS) return pixels;
-        double fadeOut = Math.min(1, (DURATION_MS - elapsed) / 700.0);
-        double fade = Math.min(1, elapsed / 220.0) * fadeOut;
+        double fade = Math.min(1, elapsed / 220.0);
         switch (provider) {
             case CHATGPT -> knot(pixels, elapsed, fade);
-            case CLAUDE -> claudeReference(pixels, elapsed, fadeOut);
-            case GEMINI -> star(pixels, elapsed, fadeOut);
+            case CLAUDE -> claudeReference(pixels, elapsed, 1);
+            case GEMINI -> star(pixels, elapsed, 1);
             case GENERIC -> letters(pixels, elapsed, fade);
             case DISCORD, MESSENGER, WHATSAPP, SMS -> MessagingAnimation.draw(pixels, provider, elapsed, fade);
             case INSTAGRAM, TIKTOK, X, FACEBOOK -> SocialAnimation.draw(pixels, provider, elapsed, fade);

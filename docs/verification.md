@@ -197,6 +197,18 @@ Implemented the selected original concept A, with 24 staggered white dots around
 - Runtime Java sources, manifest, theme, catalog and all twelve animation implementations remain byte-identical to 0.8.3. Source choices, assignments, notification handling and the six-second wait followed by full six-second playback are retained.
 - Native launcher masks, themed icons and the system Glyph Toys list still require a device-side visual check.
 
+## Matched closing motion 0.9.0
+
+Every style now closes during the final 1200 ms of its existing six-second playback. The initial 4800 ms remain unchanged. Closing paths reuse the symbols' drawing order, with dedicated contraction for Claude, separating Discord halves and staged SMS dot withdrawal.
+
+- All twelve opening/hold sequences match 0.8.4 at every 50 ms sample through 4800 ms.
+- Added eight tests covering non-uniform geometric change for every style, the final central point, ChatGPT's inward retreat, Claude/Gemini contraction, Discord separation, Messenger's bolt, SMS ordering, generic lettering and social drawing order. Total: 63 tests passed, no failures or errors.
+- APK assembly passed. Android Lint reported 0 errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- Inspected renderer snapshots and generated GIFs of the full cycles and closing sections. These are renderer previews, not phone recordings.
+- The local simulation of the unchanged controller passed all eleven timing scenarios with the new renderer. This is not Android instrumentation or part of GitHub Actions.
+- Verified the packaged closing class, version, unchanged permission set and signature matching 0.8.4. Notification handling, source settings, catalog, symbol coverage and Spark artwork remain unchanged.
+- Physical LED motion, native rendering and competition with Nothing OS effects still need a phone-side check.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.

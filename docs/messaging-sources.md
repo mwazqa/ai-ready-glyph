@@ -26,3 +26,5 @@ Messaging sources use [notification posting timestamps](https://developer.androi
 AI notification-key deduplication, the 40-identity AI catalog, source preferences and the four existing AI animations retain their prior behavior. AI, Messages and [Social](social-sources.md) share Automatic animations, Notification access and Do Not Disturb handling. Any selected app can receive an animation override.
 
 The displayed app name is Ready Glyph. The original application ID and service component names remain stable so an APK signed with the same key updates the existing installation and keeps its access grant and preferences.
+
+From 0.9.0, matching closing motion replaces the uniform exit fade: Discord separates, Messenger returns to its bolt, WhatsApp retracts and SMS withdraws its dots before the bubble. [Animation motion](animation-motion.md).

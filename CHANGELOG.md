@@ -2,6 +2,13 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.9.0 - 2026-10-22
+
+- Add matched closing motion during the final 1.2 seconds of every animation instead of relying on whole-symbol dimming.
+- Unwind ChatGPT, contract Claude and Gemini, separate Discord halves and reverse the other symbols' distinctive drawing order.
+- Withdraw SMS dots from right to left before closing its bubble.
+- Preserve all twelve opening/hold sequences through 4.8 seconds, the total six-second playback, automatic start delay, settings and Spark identity artwork.
+
 ## 0.8.4 - 2026-10-22
 
 - Use the selected Spark concept A: staggered white dot clusters around a red centre.
