@@ -19,7 +19,7 @@
     <string name="connecting">Connecting to Android.</string>
     <string name="connecting_detail">Notification access is enabled. Waiting for the listener to connect.</string>
     <string name="ready">Ready to listen.</string>
-    <string name="ready_detail">Listening for notifications from your selected apps.</string>
+    <string name="ready_detail">Listening for notifications. Each alert waits 6 seconds before the full animation.</string>
     <string name="access_off">Notification access: off</string>
     <string name="access_on">Notification access: connected</string>
     <string name="access_connecting">Notification access: waiting for Android</string>
@@ -49,7 +49,7 @@
     <string name="toy_description">Add Ready Glyph to your Toys carousel. Hold the Glyph Button to test the last selected animation. Automatic alerts also work without selecting this Toy.</string>
     <string name="open_toys">Open Glyph Toys</string>
     <string name="toy_fallback">Open Settings > Glyph Interface > Glyph Toys and add Ready Glyph.</string>
-    <string name="footer">0.7.3</string>
+    <string name="footer">0.7.4</string>
     <string name="search_apps">Search ChatGPT, Claude, Gemini…</string>
     <string name="no_apps">No catalogued AI apps found. Install an official app such as ChatGPT, Claude, Gemini, Kimi or Qwen, then open it at least once.</string>
     <string name="no_matching_apps">No installed AI apps match your search.</string>

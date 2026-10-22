@@ -1,6 +1,7 @@
 package pl.glyphtoy.aiready;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.os.SystemClock;
 import com.nothing.ketchum.GlyphMatrixManager;
 
 final class MatrixController {
+    static final long NOTIFICATION_DELAY_MS = 6000;
     @SuppressLint("StaticFieldLeak")
     private static MatrixController instance;
     static MatrixController get(Context context) {
@@ -22,7 +24,8 @@ final class MatrixController {
     private GlyphMatrixManager manager;
     private boolean connected, toyBound, pending, animating;
     private int generation;
-    private long start;
+    private long start, notBefore;
+    private String automaticSource;
     private PowerManager.WakeLock wakeLock;
     private AnimationStyle provider = AnimationStyle.GENERIC;
     private final DeviceProfile device = DeviceProfile.current();
@@ -34,19 +37,66 @@ final class MatrixController {
     }
 
     void play(AnimationStyle provider) {
+        play(provider, 0, null);
+    }
+
+    void playNotification(String packageName, AnimationStyle provider) {
+        play(provider, NOTIFICATION_DELAY_MS, packageName);
+    }
+
+    private void play(AnimationStyle provider, long delay, String packageName) {
         if (!checkDevice()) return;
         this.provider = provider;
+        automaticSource = packageName;
+        notBefore = SystemClock.uptimeMillis() + delay;
         handler.removeCallbacks(timeout);
         handler.removeCallbacks(tick);
+        handler.removeCallbacks(startPending);
         pending = true;
         animating = false;
-        acquireWakeLock();
-        LocalStatus.glyph("Connecting to Glyph Matrix…");
-        if (connected) begin(); else {
-            connect();
-            if (pending && manager != null) handler.postDelayed(timeout, 4000);
+        acquireWakeLock(delay + 11000);
+        if (delay > 0) {
+            if (connected && manager != null && !toyBound) {
+                try { manager.closeAppMatrix(); } catch (Exception ignored) { }
+            }
+            LocalStatus.glyph("Waiting 6 s before the full " + provider.label + " animation.");
+            handler.postDelayed(startPending, delay);
+        } else {
+            LocalStatus.glyph("Connecting to Glyph Matrix…");
+            startPending.run();
         }
     }
+
+    private final Runnable startPending = new Runnable() {
+        @Override public void run() {
+            if (!pending) return;
+            handler.removeCallbacks(this);
+            long remaining = notBefore - SystemClock.uptimeMillis();
+            if (remaining > 0) {
+                handler.postDelayed(this, remaining);
+                return;
+            }
+            if (automaticSource != null) {
+                AppSettings settings = new AppSettings(context);
+                NotificationManager system = context.getSystemService(NotificationManager.class);
+                String reason = !settings.enabled() ? "animations paused"
+                        : !settings.monitors(automaticSource) ? "source disabled"
+                        : system.getCurrentInterruptionFilter() != NotificationManager.INTERRUPTION_FILTER_ALL ? "Do Not Disturb" : null;
+                if (reason != null) {
+                    LocalStatus.glyph("Delayed animation cancelled: " + reason + ".");
+                    stop();
+                    return;
+                }
+            }
+            if (connected) begin(); else {
+                connect();
+                if (pending && manager != null) {
+                    handler.removeCallbacks(timeout);
+                    handler.postDelayed(timeout, 4000);
+                }
+            }
+        }
+    };
 
     void attachToy() {
         toyBound = true;
@@ -62,8 +112,10 @@ final class MatrixController {
     void stop() {
         pending = false;
         animating = false;
+        automaticSource = null;
         handler.removeCallbacks(tick);
         handler.removeCallbacks(timeout);
+        handler.removeCallbacks(startPending);
         releaseWakeLock();
         if (connected && manager != null) {
             try {
@@ -86,7 +138,7 @@ final class MatrixController {
                     try {
                         manager.register(device.matrixTarget());
                         connected = true;
-                        if (pending) begin(); else if (toyBound) idle();
+                        if (pending) startPending.run(); else if (toyBound) idle();
                     } catch (RuntimeException error) { fail("Could not register Glyph. Check your Nothing OS settings."); }
                 }
                 @Override public void onServiceDisconnected(ComponentName name) {
@@ -104,10 +156,11 @@ final class MatrixController {
 
     private void begin() {
         handler.removeCallbacks(timeout);
+        handler.removeCallbacks(startPending);
         pending = false;
         animating = true;
         start = SystemClock.uptimeMillis();
-        acquireWakeLock();
+        acquireWakeLock(11000);
         LocalStatus.glyph(provider.label + " animation sent to Glyph. Check the matrix on the back of your phone.");
         handler.post(tick);
     }
@@ -138,8 +191,10 @@ final class MatrixController {
         LocalStatus.glyph(message);
         pending = false;
         animating = false;
+        automaticSource = null;
         handler.removeCallbacks(tick);
         handler.removeCallbacks(timeout);
+        handler.removeCallbacks(startPending);
         releaseWakeLock();
         disconnect();
     }
@@ -152,11 +207,11 @@ final class MatrixController {
         if (previous != null) try { previous.unInit(); } catch (RuntimeException ignored) { }
     }
 
-    private void acquireWakeLock() {
+    private void acquireWakeLock(long timeoutMs) {
         releaseWakeLock();
         PowerManager power = context.getSystemService(PowerManager.class);
         wakeLock = power.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "aiready:animation");
-        wakeLock.acquire(11000);
+        wakeLock.acquire(timeoutMs);
     }
 
     private void releaseWakeLock() {

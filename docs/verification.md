@@ -131,6 +131,18 @@ Phone screenshots showed Google Messages selected in Android's default SMS setti
 - Existing SMS preferences, animation assignments, notification gates, dialog layout and all eight animation sources are unchanged. No SMS read, receive or send permissions are requested.
 - ADB reported no attached phone. The revised detection path and a real SMS notification still require a Phone (3) check after updating; this is not a confirmed device-side result.
 
+## Delayed automatic playback 0.7.4
+
+The user accepts Nothing OS's bell effect but reported that it masks the beginning of the custom animation. Automatic requests now wait six seconds before starting playback. This is a conservative fixed margin, not a measurement of the system effect or a system completion callback. The animation clock starts only after the delay and SDK connection.
+
+- Manual and Glyph Button tests remain immediate. A newer accepted notification replaces pending or active playback and restarts the wait.
+- Stop, listener disconnect and failure cancel delayed callbacks. Pause, source selection and Do Not Disturb are checked again before starting, including after a late SDK connection.
+- The wake-lock timeout covers the wait and connection phase; playback renews it for the animation. All stop and failure paths release it.
+- Ran the actual controller and renderers in a local JVM simulation with simulated Android clock, Handler, settings, wake locks and Glyph service. Eleven scenarios passed: complete 120-frame playback after the wait, late connection, rapid replacement, immediate manual override, stop, pause, source removal, Do Not Disturb, Toy binding during the wait, replacement during connection and connection timeout. This harness is a local development check, not Android instrumentation or part of GitHub Actions.
+- APK assembly and 46 existing unit tests passed. Android Lint reported 0 errors and the same two existing warnings.
+- Verified the packaged delay/status text and unchanged permission set, with APK signature matching 0.7.3. Animation sources, SMS detection, catalog, assignment keys and notification eligibility are unchanged.
+- ADB reported no attached phone. Confirm that the six-second margin outlasts the bell on the user's Nothing OS build and that the complete animation is visible. New system effects can still override Matrix frames.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.

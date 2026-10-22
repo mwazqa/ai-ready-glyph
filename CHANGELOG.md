@@ -2,6 +2,14 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.7.4 - 2026-10-22
+
+- Wait six seconds before automatic Glyph playback so the system notification effect has time to finish. This delay is a fixed margin, not measured system timing.
+- Start the animation clock after the wait and SDK connection, keeping the full six-second animation.
+- Replace pending alerts with the latest accepted notification; manual tests remain immediate.
+- Cancel delayed work on stop, disconnect or failure, and recheck pause, source selection and Do Not Disturb before starting.
+- Preserve animation frames, source preferences, notification eligibility and SMS detection.
+
 ## 0.7.3 - 2026-10-22
 
 - Fall back to the system-resolved SMS composer when the default SMS package API returns no package.

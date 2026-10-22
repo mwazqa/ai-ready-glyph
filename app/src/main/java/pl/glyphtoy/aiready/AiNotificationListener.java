@@ -52,7 +52,7 @@ public final class AiNotificationListener extends NotificationListenerService {
         }
         AnimationStyle provider = settings.providerFor(item.getPackageName());
         LocalStatus.event(label + " · notification · animation: " + provider.label + ".");
-        MatrixController.get(this).play(provider);
+        MatrixController.get(this).playNotification(item.getPackageName(), provider);
     }
 
     @Override public void onNotificationRemoved(StatusBarNotification item) {
