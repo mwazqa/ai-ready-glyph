@@ -177,6 +177,16 @@ Replaced the N monogram with three white signal arcs spreading from a red source
 - All runtime Java sources, manifest, theme, catalog, selected-source logic and all twelve animation implementations remain byte-identical to 0.8.1. The six-second wait and full six-second automatic playback are unchanged.
 - Native launcher masks, themed icons and the system Glyph Toys list still require a device-side visual check.
 
+## Notification-card icon 0.8.3
+
+Replaced the signal arcs with a rounded notification card, two short content lines and a red unread dot. Adaptive colour and monochrome icons use smooth strokes; the circular Glyph Toys preview uses the same card as a pixel symbol.
+
+- APK assembly and all 55 existing unit tests passed. Android Lint reported 0 errors and the same two existing warnings.
+- Visually inspected generated launcher and Toy previews. Both generators reproduce all five committed Android vector and SVG assets exactly.
+- Verified the actual path data of all three vectors inside the APK, version, labels and unchanged permissions. The APK signature matches 0.8.2 for an in-place update.
+- Runtime Java sources, manifest, theme and catalog remain byte-identical to 0.8.2. Existing settings, source assignments, notification handling and all twelve animation implementations are unchanged.
+- Native launcher masks, themed icons and the system Glyph Toys list still require a device-side visual check.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.

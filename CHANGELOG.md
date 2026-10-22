@@ -2,6 +2,12 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.8.3 - 2026-10-22
+
+- Replace the signal arcs with a notification card, two short content lines and a red unread dot.
+- Update adaptive colour, monochrome and circular Glyph Toys artwork with the same symbol.
+- Preserve the Notify Glyph name, settings, all twelve animation sequences and notification behavior.
+
 ## 0.8.2 - 2026-10-22
 
 - Replace the N monogram with a signal symbol: three white arcs spreading from a red source dot.

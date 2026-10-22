@@ -2,8 +2,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,20 +12,24 @@ import java.util.Locale;
 import javax.imageio.ImageIO;
 
 public final class BuildAppIcon {
-    private static final double SOURCE_X = 43, SOURCE_Y = 54, DOT_RADIUS = 4.25;
-    private static final double ANGLE = 53, STROKE = 4.2;
-    private static final double[] RADII = {11, 20, 29};
+    private static final double SOURCE_X = 73, SOURCE_Y = 37, DOT_RADIUS = 5.25;
+    private static final double STROKE = 3.8;
+    private static final String[] PATHS = {
+            "M63,37H37Q30,37 30,44V64Q30,71 37,71H69Q76,71 76,64V47",
+            "M40,49H59", "M40,59H53"
+    };
 
     private static String circle(double x, double y, double radius) {
         return String.format(Locale.ROOT, "M%.2f,%.2f a%.2f,%.2f 0,1 0,%.2f,0 a%.2f,%.2f 0,1 0,%.2f,0",
                 x - radius, y, radius, radius, radius * 2, radius, radius, -radius * 2);
     }
 
-    private static String arc(double radius) {
-        double angle = Math.toRadians(ANGLE);
-        double x = SOURCE_X + radius * Math.cos(angle), offset = radius * Math.sin(angle);
-        return String.format(Locale.ROOT, "M%.2f,%.2f A%.2f,%.2f 0,0 1,%.2f,%.2f",
-                x, SOURCE_Y - offset, radius, radius, x, SOURCE_Y + offset);
+    private static Path2D card() {
+        Path2D path = new Path2D.Double();
+        path.moveTo(63, 37); path.lineTo(37, 37); path.quadTo(30, 37, 30, 44);
+        path.lineTo(30, 64); path.quadTo(30, 71, 37, 71); path.lineTo(69, 71);
+        path.quadTo(76, 71, 76, 64); path.lineTo(76, 47);
+        return path;
     }
 
     public static void main(String[] arguments) throws Exception {
@@ -44,14 +49,15 @@ public final class BuildAppIcon {
         g.fillRoundRect(0, 0, 108, 108, 52, 52);
         g.setColor(Color.decode("#F5F5F5"));
         g.setStroke(new BasicStroke((float) STROKE, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        for (double radius : RADII) {
-            String path = arc(radius);
-            svg.append("<path d=\"").append(path).append("\" fill=\"none\" stroke=\"#F5F5F5\" stroke-width=\"4.2\" stroke-linecap=\"round\"/>");
-            body.append("    <path android:fillColor=\"#00000000\" android:strokeColor=\"#F5F5F5\" android:strokeWidth=\"4.2\" android:strokeLineCap=\"round\" android:pathData=\"").append(path).append("\" />\n");
-            g.draw(new Arc2D.Double(SOURCE_X - radius, SOURCE_Y - radius, radius * 2, radius * 2, -ANGLE, ANGLE * 2, Arc2D.OPEN));
+        for (String path : PATHS) {
+            svg.append("<path d=\"").append(path).append("\" fill=\"none\" stroke=\"#F5F5F5\" stroke-width=\"3.8\" stroke-linecap=\"round\"/>");
+            body.append("    <path android:fillColor=\"#00000000\" android:strokeColor=\"#F5F5F5\" android:strokeWidth=\"3.8\" android:strokeLineCap=\"round\" android:pathData=\"").append(path).append("\" />\n");
         }
+        g.draw(card());
+        g.draw(new Line2D.Double(40, 49, 59, 49));
+        g.draw(new Line2D.Double(40, 59, 53, 59));
         String dot = "    <path android:fillColor=\"#D71920\" android:pathData=\"" + circle(SOURCE_X, SOURCE_Y, DOT_RADIUS) + "\" />\n";
-        svg.append("<circle cx=\"43\" cy=\"54\" r=\"4.25\" fill=\"#D71920\"/></svg>\n");
+        svg.append("<circle cx=\"73\" cy=\"37\" r=\"5.25\" fill=\"#D71920\"/></svg>\n");
         g.setColor(Color.decode("#D71920"));
         g.fill(new Ellipse2D.Double(SOURCE_X - DOT_RADIUS, SOURCE_Y - DOT_RADIUS, DOT_RADIUS * 2, DOT_RADIUS * 2));
         g.dispose();

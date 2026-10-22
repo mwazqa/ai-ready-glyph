@@ -1,7 +1,11 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
@@ -13,18 +17,22 @@ public final class BuildToyPreview {
     private static final int SIZE = 256;
     private static final double PITCH = 9.12;
     private static final double PIXEL = 6.6;
-    private static final double SOURCE_X = SIZE / 2.0 - 5 * PITCH;
-    private static final double SOURCE_Y = SIZE / 2.0;
-    private static final double DOT_RADIUS = 15.2;
+    private static final double SCALE = 16.0 / 46;
+    private static final double SOURCE_X = SIZE / 2.0 + 19 * SCALE * PITCH;
+    private static final double SOURCE_Y = SIZE / 2.0 - 17 * SCALE * PITCH;
+    private static final double DOT_RADIUS = 5.25 * SCALE * PITCH;
+    private static final Shape SYMBOL = symbol();
 
-    private static boolean lit(int x, int y) {
-        double limit = Math.toRadians(53);
-        double angle = Math.max(-limit, Math.min(limit, Math.atan2(y - 12, x - 7)));
-        for (double radius : new double[]{11, 20, 29}) {
-            double scaled = radius * 11.4 / 29;
-            if (Math.hypot(x - 7 - scaled * Math.cos(angle), y - 12 - scaled * Math.sin(angle)) <= .83) return true;
-        }
-        return false;
+    private static Shape symbol() {
+        Path2D path = new Path2D.Double();
+        path.moveTo(63, 37); path.lineTo(37, 37); path.quadTo(30, 37, 30, 44);
+        path.lineTo(30, 64); path.quadTo(30, 71, 37, 71); path.lineTo(69, 71);
+        path.quadTo(76, 71, 76, 64); path.lineTo(76, 47);
+        path.moveTo(40, 49); path.lineTo(59, 49);
+        path.moveTo(40, 59); path.lineTo(53, 59);
+        AffineTransform transform = new AffineTransform();
+        transform.translate(12, 12); transform.scale(SCALE, SCALE); transform.translate(-54, -54);
+        return transform.createTransformedShape(new BasicStroke(3.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND).createStrokedShape(path));
     }
 
     private static String circle(double radius) {
@@ -67,7 +75,7 @@ public final class BuildToyPreview {
             if (Math.hypot(x - 12, y - 12) > 12.5) continue;
             double left = SIZE / 2.0 + (x - 12) * PITCH - PIXEL / 2;
             double top = SIZE / 2.0 + (y - 12) * PITCH - PIXEL / 2;
-            boolean white = lit(x, y);
+            boolean white = SYMBOL.contains(x, y);
             String color = white ? "#FFFFFF" : "#1C1C1C";
             (white ? bright : dim).append(rectangle(left, top));
             svg.append(String.format(Locale.ROOT, "<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" fill=\"%s\"/>", left, top, PIXEL, PIXEL, color));
