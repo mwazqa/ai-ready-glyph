@@ -2,6 +2,12 @@
 
 These versions describe local experimental builds, not public binary releases.
 
+## 0.8.4 - 2026-10-22
+
+- Use the selected Spark concept A: staggered white dot clusters around a red centre.
+- Add the matching monochrome icon and circular 25 x 25 Glyph Toys preview.
+- Preserve the Notify Glyph name, settings, all twelve animation sequences and notification behavior.
+
 ## 0.8.3 - 2026-10-22
 
 - Replace the signal arcs with a notification card, two short content lines and a red unread dot.

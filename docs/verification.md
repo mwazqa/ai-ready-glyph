@@ -187,6 +187,16 @@ Replaced the signal arcs with a rounded notification card, two short content lin
 - Runtime Java sources, manifest, theme and catalog remain byte-identical to 0.8.2. Existing settings, source assignments, notification handling and all twelve animation implementations are unchanged.
 - Native launcher masks, themed icons and the system Glyph Toys list still require a device-side visual check.
 
+## Spark icon 0.8.4
+
+Implemented the selected original concept A, with 24 staggered white dots around a red centre. The adaptive colour preview matches the selected concept PNG byte for byte. Monochrome artwork retains the same geometry; the circular Glyph Toys preview rasterizes the mark onto its 25 x 25 pixel grid.
+
+- Visually checked launcher and Toy previews. Both generators reproduce all five committed Android vector and SVG assets exactly.
+- APK assembly and all 55 existing unit tests passed. Android Lint reported 0 errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- Verified the actual path data of all three vectors inside the APK, packaged version, labels and unchanged permissions. The APK signature matches 0.8.3 for an in-place update.
+- Runtime Java sources, manifest, theme, catalog and all twelve animation implementations remain byte-identical to 0.8.3. Source choices, assignments, notification handling and the six-second wait followed by full six-second playback are retained.
+- Native launcher masks, themed icons and the system Glyph Toys list still require a device-side visual check.
+
 ## Physical-device boundary
 
 No ADB device was attached for the current verification. Reported Build values, native UI rendering, current Nothing OS binding and physical LEDs have not been checked on a phone for this build. Catalog inclusion does not confirm completion-notification behavior for every AI app.
