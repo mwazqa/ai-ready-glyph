@@ -74,6 +74,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AppsActivity" android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <service android:name=".AiNotificationListener"
             android:label="@string/listener_name"
             android:exported="false"

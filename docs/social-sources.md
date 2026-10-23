@@ -1,8 +1,8 @@
 # Social sources
 
-Ready Glyph 0.8.0 adds a separate Social section with four initially disabled sources. Only installed, enabled standard apps can be selected.
+Ready Glyph 0.8.0 added four initially disabled social sources. In 0.13.0, their switches are in Manage apps under Social. Only installed, enabled standard apps can be selected.
 
-| Source | Android package | Default animation | Official distribution |
+| Source | Android package | Fixed animation | Official distribution |
 | --- | --- | --- | --- |
 | Instagram | `com.instagram.android` | Camera outline, growing lens and flash | [Google Play](https://play.google.com/store/apps/details?id=com.instagram.android) |
 | TikTok | `com.zhiliaoapp.musically` | Musical note drawn upwards with soft echoes | [Google Play](https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically) |
@@ -17,8 +17,8 @@ Social and messaging sources share the bounded posting-timestamp gate: a differe
 
 Automatic playback waits six seconds, then starts the complete six-second animation. A newer accepted alert replaces pending or active playback and restarts the wait. Manual previews and tests remain immediate. Notification access, Automatic animations and Do Not Disturb handling are shared with the other sections.
 
-Social selections use a separate `social_sources` preference and start empty, including on upgrade. Existing AI and messaging choices are retained. Animation overrides use `provider:social:<source-id>` keys. Missing or disabled apps cannot be enabled; saved choices remain available if an app is reinstalled. The manifest adds four explicit package queries without all-package visibility or new permissions.
+Social selections use a separate `social_sources` preference and start empty, including on upgrade. Existing AI and messaging choices are retained. Each source uses its fixed matching symbol; older `provider:social:<source-id>` overrides are ignored. Missing or disabled apps cannot be enabled; saved choices remain available if an app is reinstalled. The manifest adds four explicit package queries without all-package visibility or new permissions.
 
-These are project-drawn brand-identifying pixel adaptations with the same brightness range, circular 25 x 25 boundary and six-second timing as the existing styles. All twelve styles are available as overrides. See [artwork provenance](../artwork/README.md) and [third-party notices](../THIRD_PARTY_NOTICES.md).
+These are project-drawn brand-identifying pixel adaptations with the same brightness range, circular 25 x 25 boundary and six-second timing as the existing styles. All twelve styles remain available for manual previews and tests; notifications use fixed source symbols. See [artwork provenance](../artwork/README.md) and [third-party notices](../THIRD_PARTY_NOTICES.md).
 
 From 0.9.0, the final 1.2 seconds reverse each symbol's drawing order. [Animation motion](animation-motion.md).

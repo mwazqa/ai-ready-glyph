@@ -111,6 +111,6 @@ Search failure is not evidence that an app does not exist. These candidates rema
 
 This is a deliberately broad provider catalog, not a guarantee of worldwide completeness. Listings change, regional stores differ, and closed enterprise distributions may not be searchable. The JSON records the reviewed state and should be checked again before a public release.
 
-Catalog inclusion confirms a package identity, not end-to-end Glyph support. No newly added app was installed or used to send a real completion notification in this review. On-device clients may never post one. Regional wording may need a custom phrase. Existing English / Polish detection, manual animation assignments and all four six-second animations are unchanged.
+Catalog inclusion confirms a package identity, not end-to-end Glyph support. No newly added app was installed or used to send a real completion notification in this review. On-device clients may never post one. The current build accepts regular notifications using metadata, without phrase or language matching. ChatGPT, Claude and Gemini have fixed symbols; other AI providers use generic AI lettering. Gemini via Google uses the Gemini symbol for regular alerts from the Google app.
 
 Only installed, launchable catalog entries appear on the phone. The app does not fetch the catalog or request INTERNET / QUERY_ALL_PACKAGES. Saved selections are not migrated or cleared; this remains a local test build.

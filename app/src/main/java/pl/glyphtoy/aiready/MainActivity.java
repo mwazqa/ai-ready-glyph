@@ -1,21 +1,18 @@
 package pl.glyphtoy.aiready;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,36 +22,34 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
-public final class MainActivity extends Activity {
-    private static final int TEXT = Color.rgb(245, 245, 245);
-    private static final int MUTED = Color.rgb(170, 170, 170);
-    private static final int RED = Color.rgb(215, 25, 32);
-    private static final int SURFACE = Color.rgb(24, 24, 24);
-    private static final int LINE = Color.rgb(51, 51, 51);
+public final class MainActivity extends GlyphActivity {
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final List<Button> providerButtons = new ArrayList<>();
+    private final Map<AnimationStyle, MatrixPreview> previews = new EnumMap<>(AnimationStyle.class);
     private AppSettings settings;
     private TextView readinessTitle, readinessDetail, accessStatus, selectedStatus, eventStatus, matrixStatus;
-    private LinearLayout sections, sourceCard, messagingCard, socialCard, animationCard;
-    private List<MessagingApps.Entry> messagingApps = List.of();
-    private List<SocialApps.Entry> socialApps = List.of();
-    private MatrixPreview preview;
-    private TextView animationDescription;
+    private LinearLayout sections, appsCard, animationCard, statusControls;
+    private List<AppCatalog.Entry> installedApps = List.of();
+    private TextView appsEnabled, appsInstalled;
     private TextView accessHelp;
-    private Button quickTest;
+    private Button alertsButton;
+    private boolean detailsExpanded;
+    private AnimationStyle.Category animationCategory;
+    private String animationQuery = "";
+    private int animationPage;
+    private SwipePager animationPager;
+    private CategoryTabs animationTabs;
+    private TextView animationEmpty, animationPageLabel;
     private Boolean configuredOrder;
     private String announcedReadiness;
     private final DeviceProfile device = DeviceProfile.current();
@@ -62,7 +57,15 @@ public final class MainActivity extends Activity {
     @Override public void onCreate(Bundle saved) {
         super.onCreate(saved);
         settings = new AppSettings(this);
+        detailsExpanded = saved != null && saved.getBoolean("detailsExpanded");
+        if (saved != null) {
+            animationQuery = saved.getString("animationQuery", "");
+            animationPage = saved.getInt("animationPage");
+            try { animationCategory = AnimationStyle.Category.valueOf(saved.getString("animationCategory", "")); }
+            catch (IllegalArgumentException ignored) { animationCategory = null; }
+        }
         ScrollView scroll = new ScrollView(this);
+        scroll.setId(R.id.content_scroll);
         scroll.setFillViewport(true);
         LinearLayout root = column();
         root.setPadding(dp(20), dp(24), dp(20), dp(32));
@@ -85,13 +88,9 @@ public final class MainActivity extends Activity {
         buildStatus(root);
         sections = column();
         root.addView(sections);
-        sourceCard = buildSources();
-        messagingCard = buildMessaging();
-        socialCard = buildSocial();
+        appsCard = buildApps();
         animationCard = buildAnimations();
-        sections.addView(sourceCard);
-        sections.addView(messagingCard);
-        sections.addView(socialCard);
+        sections.addView(appsCard);
         sections.addView(animationCard);
         configuredOrder = false;
         buildToy(sections);
@@ -100,84 +99,68 @@ public final class MainActivity extends Activity {
 
     private void buildStatus(LinearLayout root) {
         LinearLayout card = card(root, R.string.status_eyebrow, 0);
+        alertsButton = button(R.string.enable_glyph_alerts, true);
+        alertsButton.setTextSize(18);
+        alertsButton.setMinHeight(dp(64));
+        alertsButton.setPadding(dp(20), dp(14), dp(20), dp(14));
+        alertsButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_power, 0, 0, 0);
+        alertsButton.setCompoundDrawableTintList(ColorStateList.valueOf(TEXT));
+        alertsButton.setCompoundDrawablePadding(dp(12));
+        alertsButton.setOnClickListener(view -> {
+            boolean enabled = !settings.enabled();
+            settings.setEnabled(enabled);
+            if (!enabled) {
+                MatrixController.get(this).stop();
+                for (MatrixPreview preview : previews.values()) preview.stop();
+            }
+            refreshStatus();
+        });
+        spaced(card, alertsButton, 12);
         readinessTitle = text("", 24, TEXT);
         readinessTitle.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         spaced(card, readinessTitle, 10);
         readinessDetail = text("", 14, MUTED);
         spaced(card, readinessDetail, 6);
-        divider(card, 18);
+        statusControls = column();
+        card.addView(statusControls, new LinearLayout.LayoutParams(-1, -2));
+        divider(statusControls, 18);
         selectedStatus = text("", 13, TEXT);
         accessStatus = text("", 13, MUTED);
-        spaced(card, selectedStatus, 14);
-        spaced(card, accessStatus, 6);
-        LinearLayout actions = new LinearLayout(this);
-        quickTest = button(getString(R.string.quick_test, settings.previewProvider().label), true);
-        actions.addView(quickTest, new LinearLayout.LayoutParams(0, -2, 1));
-        quickTest.setOnClickListener(view -> testGlyph());
-        quickTest.setEnabled(device.supportsAnimations());
-        Button details = button(R.string.activity_details, false);
-        LinearLayout.LayoutParams detailsLayout = new LinearLayout.LayoutParams(0, -2, 1);
-        detailsLayout.leftMargin = dp(8);
-        actions.addView(details, detailsLayout);
-        spaced(card, actions, 16);
+        spaced(statusControls, selectedStatus, 14);
+        spaced(statusControls, accessStatus, 6);
+        Button details = button(detailsExpanded ? R.string.hide_details : R.string.activity_details, false);
+        spaced(statusControls, details, 16);
         LinearLayout activity = column();
-        activity.setVisibility(View.GONE);
+        activity.setVisibility(detailsExpanded ? View.VISIBLE : View.GONE);
         eventStatus = text("", 13, TEXT);
         matrixStatus = text("", 13, MUTED);
         activity.addView(eventStatus);
         spaced(activity, matrixStatus, 8);
-        spaced(card, activity, 12);
+        spaced(statusControls, activity, 12);
         details.setOnClickListener(view -> {
-            boolean showing = activity.getVisibility() == View.VISIBLE;
-            activity.setVisibility(showing ? View.GONE : View.VISIBLE);
-            details.setText(showing ? R.string.activity_details : R.string.hide_details);
-            details.setContentDescription(getString(showing ? R.string.show_activity_description : R.string.hide_activity_description));
+            detailsExpanded = !detailsExpanded;
+            activity.setVisibility(detailsExpanded ? View.VISIBLE : View.GONE);
+            details.setText(detailsExpanded ? R.string.hide_details : R.string.activity_details);
+            details.setContentDescription(getString(detailsExpanded ? R.string.hide_activity_description : R.string.show_activity_description));
         });
-        details.setContentDescription(getString(R.string.show_activity_description));
-        buildNotificationControls(card);
+        details.setContentDescription(getString(detailsExpanded ? R.string.hide_activity_description : R.string.show_activity_description));
+        buildNotificationControls(statusControls);
     }
 
-    private LinearLayout buildSources() {
-        LinearLayout card = card(null, R.string.sources_eyebrow, R.string.sources_title);
-        spaced(card, text(R.string.sources_description, 14, MUTED), 8);
-        Button select = button(R.string.choose_apps, true);
-        spaced(card, select, 16);
-        select.setOnClickListener(view -> showAppPicker());
-        return card;
-    }
-
-    private LinearLayout buildMessaging() {
-        LinearLayout card = card(null, R.string.messaging_eyebrow, R.string.messaging_title);
-        spaced(card, text(R.string.messaging_description, 14, MUTED), 8);
-        messagingApps = MessagingApps.installed(this);
-        for (MessagingSource source : MessagingSource.values()) {
-            MessagingApps.Entry installed = null;
-            for (MessagingApps.Entry entry : messagingApps) if (entry.source() == source) installed = entry;
-            String label = source == MessagingSource.SMS && installed != null
-                    ? getString(R.string.sms_source, installed.label()) : source.label;
-            Switch option = toggle(label, installed != null && settings.messagingSelected(source));
-            option.setEnabled(installed != null);
-            option.setAlpha(installed == null ? .4f : 1);
-            spaced(card, option, source == MessagingSource.DISCORD ? 12 : 0);
-            if (installed == null) spaced(card, text(source == MessagingSource.SMS
-                    ? R.string.no_default_sms : R.string.not_installed, 12, MUTED), 0);
-            option.setOnCheckedChangeListener((view, checked) -> {
-                settings.selectMessaging(source, checked);
-                refreshStatus();
-            });
-        }
-        spaced(card, text(R.string.messaging_help, 12, MUTED), 12);
+    private LinearLayout buildApps() {
+        LinearLayout card = card(null, R.string.apps_eyebrow, R.string.apps_title);
+        appsEnabled = text("", 24, TEXT);
+        appsEnabled.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        spaced(card, appsEnabled, 12);
+        appsInstalled = text("", 13, MUTED);
+        spaced(card, appsInstalled, 6);
+        Button manage = button(R.string.manage_apps, true);
+        spaced(card, manage, 16);
+        manage.setOnClickListener(view -> startActivity(new Intent(this, AppsActivity.class)));
         return card;
     }
 
     private void buildNotificationControls(LinearLayout card) {
-        Switch enabled = toggle(R.string.automatic_animations, settings.enabled());
-        spaced(card, enabled, 14);
-        enabled.setOnCheckedChangeListener((view, checked) -> {
-            settings.setEnabled(checked);
-            if (!checked) MatrixController.get(this).stop();
-            refreshStatus();
-        });
         Button grant = button(R.string.notification_access, false);
         spaced(card, grant, 10);
         grant.setOnClickListener(view -> showDialog(dialog(R.string.notification_access)
@@ -194,88 +177,119 @@ public final class MainActivity extends Activity {
         spaced(card, accessHelp, 12);
     }
 
-    private LinearLayout buildSocial() {
-        LinearLayout card = card(null, R.string.social_eyebrow, R.string.social_title);
-        spaced(card, text(R.string.social_description, 14, MUTED), 8);
-        socialApps = SocialApps.installed(this);
-        for (SocialSource source : SocialSource.values()) {
-            boolean installed = false;
-            for (SocialApps.Entry entry : socialApps) if (entry.source() == source) installed = true;
-            Switch option = toggle(source.label, installed && settings.socialSelected(source));
-            option.setEnabled(installed);
-            option.setAlpha(installed ? 1 : .4f);
-            spaced(card, option, source == SocialSource.INSTAGRAM ? 12 : 0);
-            if (!installed) spaced(card, text(R.string.not_installed, 12, MUTED), 0);
-            option.setOnCheckedChangeListener((view, checked) -> {
-                settings.selectSocial(source, checked);
-                refreshStatus();
-            });
-        }
-        spaced(card, text(R.string.social_help, 12, MUTED), 12);
-        return card;
-    }
-
     private LinearLayout buildAnimations() {
         LinearLayout card = card(null, R.string.animations_eyebrow, R.string.animations_title);
-        spaced(card, text(R.string.animations_description, 14, MUTED), 8);
-        AnimationStyle[] providers = AnimationStyle.values();
-        for (int row = 0; row < providers.length / 2; row++) {
-            if (row == 0 || row == 2 || row == 4) spaced(card,
-                    caption(row == 0 ? R.string.ai_styles : row == 2 ? R.string.messaging_styles : R.string.social_styles), 16);
-            LinearLayout choices = new LinearLayout(this);
-            for (int col = 0; col < 2; col++) {
-                AnimationStyle provider = providers[row * 2 + col];
-                Button choice = button(provider.label, false);
-                LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(0, -2, 1);
-                if (col > 0) layout.leftMargin = dp(8);
-                choices.addView(choice, layout);
-                providerButtons.add(choice);
-                choice.setOnClickListener(view -> selectProvider(provider, true));
+        spaced(card, text(device.supportsAnimations() ? R.string.animations_description
+                : R.string.animations_preview_only, 14, MUTED), 8);
+        EditText search = new EditText(this);
+        search.setSingleLine(true);
+        search.setHint(R.string.search_animations);
+        search.setContentDescription(getString(R.string.search_animations));
+        search.setTextSize(15);
+        search.setTextColor(TEXT);
+        search.setHintTextColor(MUTED);
+        search.setMinHeight(dp(52));
+        search.setPadding(dp(16), dp(12), dp(16), dp(12));
+        search.setBackgroundTintList(null);
+        search.setBackground(shape(Color.rgb(34, 34, 34), LINE, 18));
+        search.setText(animationQuery);
+        spaced(card, search, 16);
+        animationTabs = new CategoryTabs(this);
+        animationTabs.setListener(category -> {
+            animationCategory = category;
+            animationPage = 0;
+            renderAnimations();
+        });
+        spaced(card, animationTabs, 8);
+        animationPager = new SwipePager(this, delta -> {
+            animationPage += delta;
+            renderAnimations();
+        });
+        spaced(card, animationPager, 12);
+        animationEmpty = text(R.string.no_matching_animations, 14, MUTED);
+        spaced(card, animationEmpty, 8);
+        animationPageLabel = text("", 12, MUTED);
+        animationPageLabel.setGravity(Gravity.CENTER);
+        animationPageLabel.setMinHeight(dp(36));
+        animationPageLabel.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        spaced(card, animationPageLabel, 8);
+        renderAnimations();
+        search.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                animationQuery = s.toString();
+                animationPage = 0;
+                renderAnimations();
             }
-            spaced(card, choices, 8);
-        }
-        preview = new MatrixPreview(this);
-        preview.setBackground(shape(Color.BLACK, LINE, 24));
-        preview.setProvider(settings.previewProvider());
-        spaced(card, preview, 16, dp(224));
-        animationDescription = text(settings.previewProvider().description, 13, MUTED);
-        spaced(card, animationDescription, 10);
-        LinearLayout actions = new LinearLayout(this);
-        Button previewButton = button(R.string.preview, false);
-        Button testButton = button(R.string.test_on_glyph, true);
-        actions.addView(previewButton, new LinearLayout.LayoutParams(0, -2, 1));
-        LinearLayout.LayoutParams testLayout = new LinearLayout.LayoutParams(0, -2, 1);
-        testLayout.leftMargin = dp(8);
-        actions.addView(testButton, testLayout);
-        spaced(card, actions, 16);
-        previewButton.setOnClickListener(view -> preview.play());
-        testButton.setOnClickListener(view -> testGlyph());
-        testButton.setEnabled(device.supportsAnimations());
-        Button assignments = button(R.string.assign_animations, false);
-        spaced(card, assignments, 10);
-        assignments.setOnClickListener(view -> showAnimationAssignments());
-        selectProvider(settings.previewProvider(), false);
+            @Override public void afterTextChanged(Editable value) { }
+        });
         return card;
     }
 
-    private void selectProvider(AnimationStyle provider, boolean play) {
-        settings.setPreviewProvider(provider);
-        quickTest.setText(getString(R.string.quick_test, provider.label));
-        preview.setProvider(provider);
-        animationDescription.setText(provider.description);
-        for (AnimationStyle item : AnimationStyle.values()) {
-            Button button = providerButtons.get(item.ordinal());
-            boolean selected = item == provider;
-            styleButton(button, false, selected);
-            button.setSelected(selected);
-            button.setContentDescription(getString(selected ? R.string.animation_selected : R.string.animation_select, item.label));
+    private void renderAnimations() {
+        for (MatrixPreview preview : previews.values()) preview.stop();
+        previews.clear();
+        LinearLayout animationGrid = column();
+        int columns = getResources().getConfiguration().screenWidthDp < 360
+                || getResources().getConfiguration().fontScale > 1.3f ? 1 : 2;
+        AnimationCatalog.Page page = AnimationCatalog.page(List.of(AnimationStyle.values()),
+                animationCategory, animationQuery, animationPage, columns * 2);
+        animationPage = page.index();
+        animationTabs.setCategory(animationCategory);
+        animationEmpty.setVisibility(page.total() == 0 ? View.VISIBLE : View.GONE);
+        animationPager.setVisibility(page.total() == 0 ? View.GONE : View.VISIBLE);
+        for (int row = 0; row < page.styles().size(); row += columns) {
+            LinearLayout choices = new LinearLayout(this);
+            for (int col = 0; col < columns; col++) {
+                LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(0, -2, 1);
+                if (col > 0) layout.leftMargin = dp(8);
+                if (row + col < page.styles().size()) choices.addView(animationTile(page.styles().get(row + col), columns), layout);
+                else choices.addView(new View(this), layout);
+            }
+            spaced(animationGrid, choices, row == 0 ? 0 : 8);
         }
-        if (play) preview.play();
+        animationPager.setContent(animationGrid, page.index(), page.pages());
+        animationPageLabel.setVisibility(page.pages() > 1 ? View.VISIBLE : View.GONE);
+        animationPageLabel.setText(getString(R.string.animation_swipe_page, page.index() + 1, page.pages()));
+        animationPageLabel.setContentDescription(getString(R.string.animation_page_description, page.index() + 1, page.pages()));
     }
 
-    private void testGlyph() {
-        preview.play();
-        MatrixController.get(this).play(settings.previewProvider());
+    private View animationTile(AnimationStyle provider, int columns) {
+        LinearLayout tile = column();
+        tile.setPadding(dp(6), 0, dp(6), 0);
+        tile.setGravity(Gravity.CENTER);
+        MatrixPreview preview = new MatrixPreview(this);
+        preview.setProvider(provider);
+        preview.setThumbnail(true);
+        preview.setCircular(true);
+        preview.setRestoreSymbol(true);
+        preview.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        tile.addView(preview, new LinearLayout.LayoutParams(-1, dp(columns == 1 ? 192 : 124)));
+        TextView label = text(provider.label, 15, TEXT);
+        label.setGravity(Gravity.CENTER);
+        label.setMinHeight(dp(36));
+        label.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        spaced(tile, label, 8);
+        previews.put(provider, preview);
+        tile.setFocusable(true);
+        tile.setContentDescription(getString(device.supportsAnimations() ? R.string.play_style : R.string.preview_style, provider.label));
+        tile.setOnClickListener(view -> playPreview(provider));
+        tile.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setClassName(Button.class.getName());
+            }
+        });
+        return tile;
+    }
+
+    private void playPreview(AnimationStyle provider) {
+        if (!settings.enabled()) return;
+        for (MatrixPreview preview : previews.values()) preview.stop();
+        settings.setPreviewProvider(provider);
+        MatrixPreview preview = previews.get(provider);
+        if (preview != null) preview.play();
+        if (device.supportsAnimations()) MatrixController.get(this).play(provider);
         refreshStatus();
     }
 
@@ -298,171 +312,113 @@ public final class MainActivity extends Activity {
 
     @Override public void onResume() {
         super.onResume();
-        int index = sections.indexOfChild(messagingCard);
-        sections.removeView(messagingCard);
-        messagingCard = buildMessaging();
-        sections.addView(messagingCard, index);
-        index = sections.indexOfChild(socialCard);
-        sections.removeView(socialCard);
-        socialCard = buildSocial();
-        sections.addView(socialCard, index);
+        installedApps = InstalledApps.load(this, settings);
         configuredOrder = null;
         statusTick.run();
     }
-    @Override public void onPause() { handler.removeCallbacks(statusTick); super.onPause(); }
+    @Override public void onPause() {
+        handler.removeCallbacks(statusTick);
+        for (MatrixPreview preview : previews.values()) preview.stop();
+        super.onPause();
+    }
+    @Override public void onSaveInstanceState(Bundle saved) {
+        saved.putBoolean("detailsExpanded", detailsExpanded);
+        saved.putString("animationQuery", animationQuery);
+        saved.putString("animationCategory", animationCategory == null ? "" : animationCategory.name());
+        saved.putInt("animationPage", animationPage);
+        super.onSaveInstanceState(saved);
+    }
     private final Runnable statusTick = new Runnable() {
-        @Override public void run() { refreshStatus(); handler.postDelayed(this, 1000); }
+        @Override public void run() { refreshStatus(); handler.postDelayed(this, 500); }
     };
 
     private void refreshStatus() {
+        boolean automatic = settings.enabled();
+        String alertState = getString(automatic ? R.string.glyph_alerts_on : R.string.glyph_alerts_off);
+        if (!alertState.contentEquals(alertsButton.getStateDescription() == null ? "" : alertsButton.getStateDescription())) {
+            int fill = automatic ? RED : Color.rgb(58, 58, 60);
+            alertsButton.setBackground(shape(fill, fill, 26));
+            alertsButton.setStateDescription(alertState);
+            statusControls.setAlpha(automatic ? 1f : .4f);
+            sections.setAlpha(automatic ? 1f : .4f);
+            setControlsEnabled(statusControls, automatic);
+            setControlsEnabled(sections, automatic);
+        }
         boolean granted = getSystemService(NotificationManager.class).isNotificationListenerAccessGranted(
                 new ComponentName(this, AiNotificationListener.class));
-        int messagingCount = 0;
-        for (MessagingApps.Entry entry : messagingApps) if (settings.messagingSelected(entry.source())) messagingCount++;
-        int socialCount = 0;
-        for (SocialApps.Entry entry : socialApps) if (settings.socialSelected(entry.source())) socialCount++;
-        boolean hasSources = !settings.packages().isEmpty() || messagingCount > 0 || socialCount > 0;
+        int aiCount = 0, messagingCount = 0, socialCount = 0;
+        for (AppCatalog.Entry app : installedApps) if (app.enabled()) {
+            switch (app.category()) {
+                case AI -> aiCount++;
+                case MESSAGES -> messagingCount++;
+                case SOCIAL -> socialCount++;
+            }
+        }
+        int enabledCount = aiCount + messagingCount + socialCount;
+        boolean hasSources = enabledCount > 0;
+        appsEnabled.setText(getResources().getQuantityString(R.plurals.enabled_app_count, enabledCount, enabledCount));
+        appsInstalled.setText(installedApps.isEmpty() ? getString(R.string.no_supported_apps)
+                : getResources().getQuantityString(R.plurals.installed_app_count, installedApps.size(), installedApps.size()));
         int title, detail;
-        if (!device.supportsAnimations()) { title = R.string.device_unsupported_title; detail = R.string.device_unsupported_detail; }
+        if (!automatic) { title = R.string.paused; detail = R.string.paused_detail; }
+        else if (!device.supportsAnimations()) { title = R.string.device_unsupported_title; detail = R.string.device_unsupported_detail; }
         else if (!hasSources) { title = R.string.setup_needed; detail = R.string.setup_choose_apps; }
         else if (!granted) { title = R.string.access_needed; detail = R.string.setup_grant_access; }
-        else if (!settings.enabled()) { title = R.string.paused; detail = R.string.paused_detail; }
         else if (!LocalStatus.listenerConnected) { title = R.string.connecting; detail = R.string.connecting_detail; }
         else { title = R.string.ready; detail = R.string.ready_detail; }
+        PlaybackStatus playback = LocalStatus.playback;
+        if (automatic && device.supportsAnimations() && (playback.active() || playback.phase() == PlaybackStatus.Phase.ERROR)) {
+            title = switch (playback.phase()) {
+                case WAITING -> R.string.playback_waiting;
+                case CONNECTING -> R.string.playback_connecting;
+                case PLAYING -> R.string.playback_playing;
+                case ERROR -> R.string.playback_error;
+                case IDLE -> title;
+            };
+        }
         String readiness = getString(title);
         if (!readiness.equals(announcedReadiness)) {
             readinessTitle.setText(readiness);
             announcedReadiness = readiness;
         }
-        readinessDetail.setText(detail == R.string.device_unsupported_detail
+        readinessDetail.setText(automatic && device.supportsAnimations()
+                && (playback.active() || playback.phase() == PlaybackStatus.Phase.ERROR) ? playbackDetail(playback)
+                : detail == R.string.device_unsupported_detail
                 ? getString(R.string.device_unsupported_detail, device.displayName) : getString(detail));
         accessStatus.setText(!granted ? R.string.access_off
                 : LocalStatus.listenerConnected ? R.string.access_on : R.string.access_connecting);
         accessHelp.setVisibility(granted ? View.GONE : View.VISIBLE);
-        selectedStatus.setText(getString(R.string.selected_apps, settings.packages().size(), messagingCount, socialCount));
+        selectedStatus.setText(getString(R.string.selected_apps, aiCount, messagingCount, socialCount));
         eventStatus.setText(LocalStatus.lastEvent);
         matrixStatus.setText(device.supportsAnimations() ? LocalStatus.matrix
                 : getString(R.string.device_unsupported_detail, device.displayName));
         boolean configured = granted && hasSources;
         if (configuredOrder == null || configuredOrder != configured) {
-            sections.removeView(sourceCard);
-            sections.removeView(messagingCard);
-            sections.removeView(socialCard);
+            sections.removeView(appsCard);
             sections.removeView(animationCard);
-            sections.addView(configured ? animationCard : sourceCard, 0);
-            sections.addView(configured ? sourceCard : messagingCard, 1);
-            sections.addView(configured ? messagingCard : socialCard, 2);
-            sections.addView(configured ? socialCard : animationCard, 3);
+            sections.addView(configured ? animationCard : appsCard, 0);
+            sections.addView(configured ? appsCard : animationCard, 1);
             configuredOrder = configured;
         }
     }
 
-    private void showAppPicker() {
-        boolean geminiInstalled;
-        try { geminiInstalled = getPackageManager().getApplicationInfo(AiAppCatalog.GEMINI, 0).enabled; }
-        catch (android.content.pm.PackageManager.NameNotFoundException ignored) { geminiInstalled = false; }
-        List<ResolveInfo> applications = getPackageManager().queryIntentActivities(
-                new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER), 0);
-        applications.sort(Comparator.comparing(info -> applicationLabel(info.activityInfo.packageName), String.CASE_INSENSITIVE_ORDER));
-        List<ResolveInfo> unique = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
-        for (ResolveInfo info : applications) {
-            String name = info.activityInfo.packageName;
-            if (AiAppCatalog.supports(name, geminiInstalled) && seen.add(name)) unique.add(info);
+    private void setControlsEnabled(View view, boolean enabled) {
+        view.setEnabled(enabled);
+        if (view instanceof ViewGroup group) {
+            for (int i = 0; i < group.getChildCount(); i++) setControlsEnabled(group.getChildAt(i), enabled);
         }
-        LinearLayout container = column();
-        container.setPadding(dp(24), 0, dp(24), dp(8));
-        container.addView(text(R.string.ai_picker_help, 13, MUTED));
-        EditText search = new EditText(this);
-        search.setSingleLine(true);
-        search.setHint(R.string.search_apps);
-        search.setTextSize(15);
-        search.setTextColor(TEXT);
-        search.setHintTextColor(MUTED);
-        search.setMinHeight(dp(52));
-        search.setPadding(dp(16), dp(12), dp(16), dp(12));
-        search.setBackgroundTintList(null);
-        search.setBackground(shape(Color.rgb(34, 34, 34), LINE, 18));
-        spaced(container, search, 16);
-        ScrollView scroll = new ScrollView(this);
-        LinearLayout list = column();
-        scroll.addView(list);
-        spaced(container, scroll, 8, Math.min(dp(350), getWindowManager()
-                .getCurrentWindowMetrics().getBounds().height() / 3));
-        List<Switch> switches = new ArrayList<>();
-        for (ResolveInfo info : unique) {
-            String name = info.activityInfo.packageName;
-            String label = applicationLabel(name);
-            Switch option = toggle(label, settings.packages().contains(name));
-            option.setTag((label + " " + name).toLowerCase(java.util.Locale.ROOT));
-            option.setOnCheckedChangeListener((view, checked) -> settings.select(name, checked));
-            list.addView(option);
-            switches.add(option);
-            if (AiAppCatalog.GOOGLE.equals(name)) {
-                TextView help = text(R.string.gemini_google_help, 12, MUTED);
-                list.addView(help);
-                option.setTag(R.id.gemini_source_help, help);
-            }
-        }
-        TextView empty = text(unique.isEmpty() ? R.string.no_apps : R.string.no_matching_apps, 14, MUTED);
-        empty.setVisibility(unique.isEmpty() ? View.VISIBLE : View.GONE);
-        list.addView(empty);
-        search.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = s.toString().toLowerCase(java.util.Locale.ROOT);
-                int visible = 0;
-                for (Switch option : switches) {
-                    boolean matches = option.getTag().toString().contains(query);
-                    option.setVisibility(matches ? View.VISIBLE : View.GONE);
-                    View help = (View) option.getTag(R.id.gemini_source_help);
-                    if (help != null) help.setVisibility(matches ? View.VISIBLE : View.GONE);
-                    if (matches) visible++;
-                }
-                empty.setText(unique.isEmpty() ? R.string.no_apps : R.string.no_matching_apps);
-                empty.setVisibility(visible == 0 ? View.VISIBLE : View.GONE);
-            }
-            @Override public void afterTextChanged(Editable value) { }
-        });
-        showDialog(dialog(R.string.choose_apps)
-                .setView(container).setPositiveButton(R.string.done, (dialog, which) -> refreshStatus())
-                .setOnDismissListener(dialog -> refreshStatus()));
     }
 
-    private void showAnimationAssignments() {
-        List<String> packages = new ArrayList<>(settings.monitoredPackages());
-        packages.sort(Comparator.comparing(this::applicationLabel, String.CASE_INSENSITIVE_ORDER));
-        if (packages.isEmpty()) {
-            showDialog(dialog(R.string.assign_animations).setMessage(R.string.select_apps_first)
-                    .setPositiveButton(R.string.ok, null));
-            return;
-        }
-        String[] labels = new String[packages.size()];
-        for (int i = 0; i < packages.size(); i++) {
-            String name = packages.get(i);
-            labels[i] = applicationLabel(name) + " · " + settings.providerFor(name).label;
-        }
-        showDialog(dialog(R.string.assign_animations)
-                .setItems(labels, (dialog, which) -> {
-                    String packageName = packages.get(which);
-                    String[] choices = new String[AnimationStyle.values().length + 1];
-                    choices[0] = getString(R.string.automatic_assignment, settings.defaultStyle(packageName).label);
-                    for (AnimationStyle provider : AnimationStyle.values()) choices[provider.ordinal() + 1] = provider.label;
-                    showDialog(dialog(applicationLabel(packageName))
-                            .setItems(choices, (picker, selection) -> {
-                                settings.setProvider(packageName, selection == 0 ? null : AnimationStyle.values()[selection - 1]);
-                                LocalStatus.event(getString(R.string.assignment_saved, settings.providerFor(packageName).label,
-                                        applicationLabel(packageName)));
-                                refreshStatus();
-                            }).setNegativeButton(R.string.cancel, null));
-                }).setNegativeButton(R.string.close, null));
-    }
-
-    private String applicationLabel(String packageName) {
-        if (AiAppCatalog.GOOGLE.equals(packageName)) return getString(R.string.gemini_google_source);
-        try { return getPackageManager().getApplicationLabel(
-                getPackageManager().getApplicationInfo(packageName, 0)).toString(); }
-        catch (android.content.pm.PackageManager.NameNotFoundException ignored) { return packageName; }
+    private String playbackDetail(PlaybackStatus playback) {
+        return switch (playback.phase()) {
+            case WAITING -> getString(R.string.playback_waiting_detail, playback.style().label,
+                    playback.secondsRemaining(SystemClock.uptimeMillis()));
+            case CONNECTING -> getString(R.string.playback_connecting_detail, playback.style().label);
+            case PLAYING -> getString(R.string.playback_playing_detail, playback.style().label,
+                    playback.secondsRemaining(SystemClock.uptimeMillis()));
+            case ERROR -> playback.error();
+            case IDLE -> "";
+        };
     }
 
     private AlertDialog.Builder dialog(int title) { return dialog(getString(title)); }
@@ -537,6 +493,29 @@ public final class MainActivity extends Activity {
             actionBar.setPadding(dp(12), dp(8), dp(12), dp(12));
             View footer = actionBar.getParent() instanceof View parent ? parent : actionBar;
             int footerWidth = dialogWidth - footer.getPaddingLeft() - footer.getPaddingRight();
+            int neededWidth = actionBar.getPaddingLeft() + actionBar.getPaddingRight();
+            for (int i = 0; i < actionBar.getChildCount(); i++) {
+                View child = actionBar.getChildAt(i);
+                if (!(child instanceof Button) || child.getVisibility() != View.VISIBLE) continue;
+                child.measure(View.MeasureSpec.makeMeasureSpec(Math.max(1, footerWidth), View.MeasureSpec.AT_MOST),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                neededWidth += child.getMeasuredWidth();
+                if (child.getLayoutParams() instanceof ViewGroup.MarginLayoutParams margin)
+                    neededWidth += margin.getMarginStart() + margin.getMarginEnd();
+            }
+            if (neededWidth > footerWidth && actionBar instanceof LinearLayout bar) {
+                bar.setOrientation(LinearLayout.VERTICAL);
+                bar.setGravity(Gravity.END);
+                for (int i = 0; i < bar.getChildCount(); i++) {
+                    View child = bar.getChildAt(i);
+                    if (!(child instanceof Button)) { child.setVisibility(View.GONE); continue; }
+                    LinearLayout.LayoutParams layout = (LinearLayout.LayoutParams) child.getLayoutParams();
+                    layout.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    layout.weight = 0;
+                    layout.topMargin = dp(4);
+                    child.setLayoutParams(layout);
+                }
+            }
             actionBar.measure(View.MeasureSpec.makeMeasureSpec(Math.max(1, footerWidth), View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
             footerHeight = actionBar.getMeasuredHeight();
@@ -557,125 +536,4 @@ public final class MainActivity extends Activity {
         }
     }
 
-    private LinearLayout column() {
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        return layout;
-    }
-
-    private LinearLayout card(LinearLayout parent, int eyebrow, int heading) {
-        LinearLayout card = column();
-        card.setPadding(dp(18), dp(20), dp(18), dp(20));
-        card.setBackground(shape(SURFACE, LINE, 28));
-        LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(-1, -2);
-        layout.topMargin = dp(16);
-        card.setLayoutParams(layout);
-        if (parent != null) parent.addView(card);
-        card.addView(caption(eyebrow));
-        if (heading != 0) {
-            TextView title = text(heading, 23, TEXT);
-            title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-            title.setAccessibilityHeading(true);
-            spaced(card, title, 10);
-        }
-        return card;
-    }
-
-    private TextView caption(int resource) {
-        return caption(getString(resource));
-    }
-
-    private TextView caption(String content) {
-        TextView view = text(content, 11, MUTED);
-        view.setTypeface(Typeface.MONOSPACE);
-        view.setLetterSpacing(.08f);
-        return view;
-    }
-
-    private TextView text(int resource, int size, int color) { return text(getString(resource), size, color); }
-    private TextView text(String content, int size, int color) {
-        TextView view = new TextView(this);
-        view.setText(content);
-        view.setTextSize(size);
-        view.setTextColor(color);
-        view.setLineSpacing(dp(3), 1);
-        return view;
-    }
-
-    private Switch toggle(int resource, boolean checked) { return toggle(getString(resource), checked); }
-    private Switch toggle(String title, boolean checked) {
-        Switch control = new Switch(this);
-        control.setText(title);
-        control.setTextColor(TEXT);
-        control.setTextSize(15);
-        control.setChecked(checked);
-        control.setMinHeight(dp(56));
-        control.setGravity(Gravity.CENTER_VERTICAL);
-        control.setSwitchPadding(dp(14));
-        control.setSwitchMinWidth(dp(54));
-        control.setShowText(false);
-        control.setSplitTrack(false);
-        control.setThumbTintList(null);
-        control.setTrackTintList(null);
-        GradientDrawable track = new GradientDrawable();
-        track.setSize(dp(54), dp(32));
-        track.setCornerRadius(dp(16));
-        track.setPadding(dp(5), dp(2), dp(5), dp(2));
-        track.setColor(new ColorStateList(new int[][]{{android.R.attr.state_checked}, {}},
-                new int[]{RED, Color.rgb(58, 58, 60)}));
-        control.setTrackDrawable(track);
-        GradientDrawable thumb = new GradientDrawable();
-        thumb.setSize(dp(28), dp(28));
-        thumb.setCornerRadius(dp(14));
-        thumb.setColor(TEXT);
-        thumb.setPadding(dp(3), 0, dp(3), 0);
-        control.setThumbDrawable(new InsetDrawable(thumb, 0, dp(2), 0, dp(2)));
-        return control;
-    }
-
-    private Button button(int resource, boolean primary) { return button(getString(resource), primary); }
-    private Button button(String title, boolean primary) {
-        Button control = new Button(this);
-        control.setText(title);
-        control.setAllCaps(false);
-        control.setTextSize(14);
-        control.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        control.setMinHeight(dp(52));
-        control.setMinimumWidth(0);
-        control.setPadding(dp(12), dp(10), dp(12), dp(10));
-        control.setGravity(Gravity.CENTER);
-        control.setStateListAnimator(null);
-        styleButton(control, primary, false);
-        return control;
-    }
-
-    private void styleButton(Button control, boolean primary, boolean selected) {
-        int fill = primary ? RED : selected ? TEXT : Color.TRANSPARENT;
-        control.setBackgroundTintList(null);
-        control.setBackground(new RippleDrawable(ColorStateList.valueOf(selected ? 0x22000000 : 0x33ffffff),
-                shape(fill, primary || selected ? fill : LINE, 26), null));
-        control.setTextColor(selected ? Color.BLACK : TEXT);
-    }
-
-    private GradientDrawable shape(int fill, int stroke, int radius) {
-        GradientDrawable background = new GradientDrawable();
-        background.setColor(fill);
-        background.setCornerRadius(dp(radius));
-        background.setStroke(dp(1), stroke);
-        return background;
-    }
-
-    private void divider(LinearLayout parent, int margin) {
-        View line = new View(this);
-        line.setBackgroundColor(LINE);
-        spaced(parent, line, margin, dp(1));
-    }
-
-    private void spaced(LinearLayout parent, View child, int margin) { spaced(parent, child, margin, -2); }
-    private void spaced(LinearLayout parent, View child, int margin, int height) {
-        LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(-1, height);
-        layout.topMargin = dp(margin);
-        parent.addView(child, layout);
-    }
-    private int dp(int value) { return Math.round(value * getResources().getDisplayMetrics().density); }
 }

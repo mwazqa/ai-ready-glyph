@@ -1,4 +1,6 @@
 <resources>
-    <item name="gemini_source_help" type="id" />
     <item name="dialog_heading" type="id" />
+    <item name="content_scroll" type="id" />
+    <item name="apps_search" type="id" />
+    <item name="apps_list" type="id" />
 </resources>

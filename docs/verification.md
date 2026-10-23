@@ -1,6 +1,6 @@
 # Verification record
 
-Latest verified app build: 0.7.0, versionCode 16.
+Latest verified app build: 0.13.4, versionCode 35.
 
 ## Clean public-source build 0.6.4
 
@@ -208,6 +208,140 @@ Every style now closes during the final 1200 ms of its existing six-second playb
 - The local simulation of the unchanged controller passed all eleven timing scenarios with the new renderer. This is not Android instrumentation or part of GitHub Actions.
 - Verified the packaged closing class, version, unchanged permission set and signature matching 0.8.4. Notification handling, source settings, catalog, symbol coverage and Spark artwork remain unchanged.
 - Physical LED motion, native rendering and competition with Nothing OS effects still need a phone-side check.
+
+## Home-screen UX and animation gallery 0.10.0
+
+The home screen now keeps AI apps, Messages and Social in a fixed order. Each installed app has an opt-in switch and an inline animation choice. A separate gallery provides style selection, previews and manual Glyph tests. Contextual setup actions replace the always-prominent manual test during setup. Diagnostics and the optional Toy follow the source categories.
+
+- APK assembly and 65 unit tests passed with no failures or errors. Android Lint: 0 errors, the same two existing warnings AndroidGradlePluginVersion and ExportedService.
+- Two new unit tests cover countdown rounding, phase deadlines, nonnegative remaining time and availability of Stop animation.
+- Eleven controller timing simulations passed using the actual controller with simulated Android and Glyph services. The simulations also check waiting, connecting, playing, completion, cancellation and timeout states.
+- Nine preference regression checks passed with the actual AppSettings class and simulated Android preferences: existing selections, old source keys, SMS role changes, explicit/default choices, assignment without enabling a source and gallery choices independent from app assignments.
+- The generated layout reconstruction was checked at 390 px and at 320 px with text at 200%. Its visible content had no horizontal overflow; the animation dialog kept its footer inside its bounds while the choices scrolled.
+- The reconstruction confirmed separate app assignment and gallery selection flows. This checks the design preview, not the Android event handlers or native rendering.
+- Source checks confirm that notification eligibility, existing preference keys, animation sequences, identity artwork and requested permissions are unchanged. The additional gallery Activity is not exported.
+- Phone-side native rendering, large-font behavior, TalkBack focus and physical Glyph output remain unverified for this build.
+
+## Graphic previews and fixed symbols 0.11.0
+
+The home screen now uses large source-preview tiles and an independent notification switch per installed app. Tools contains physical tests, diagnostics and the optional Toy. The gallery shows all twelve symbols as large tiles; tapping a symbol opens a preview-only dialog.
+
+- Removed notification-animation assignment APIs, controls and reads of older stored overrides. Existing source selections and the original preference store remain.
+- ChatGPT, Claude, Gemini, each supported messaging source and each supported social source use their fixed matching symbols. Other AI providers use generic AI lettering. Gemini via Google now uses Gemini.
+- APK assembly and 65 unit tests passed with no failures or errors. Android Lint has zero errors and the same two existing warnings.
+- Nineteen checks with actual AppSettings and simulated Android preferences verify fixed symbols despite old overrides, retained source selections, SMS package changes and independent manual previews.
+- Eleven controller simulations passed with simulated Android and Glyph services. Automatic delay, full animation timing, cancellation and replacement retain their behavior.
+- The generated layout reconstruction uses complete sequences from the actual renderer at 50 ms intervals. Home and gallery were checked at 390 px and at 320 px with text at 200%. The large-text gallery has no horizontal overflow; its preview scrolls while full-width Close and Test on Glyph actions remain inside the dialog.
+- Native action buttons stack when measured widths exceed available space. The preview scroll height reserves the measured title and footer. These source changes are not a native-device layout test.
+- Dialog previews finish their matched closing motion and remain cleared until replayed. Source thumbnails restore the static symbol after an additional 250 ms blank pause. Physical playback is unchanged.
+- Catalog, notification eligibility, requested permissions, physical animation frames and Spark identity artwork remain unchanged.
+- Native rendering, TalkBack and physical Glyph output require phone-side confirmation.
+
+## Restored design and direct previews 0.11.1
+
+The visual shell, source controls and configured/setup section order come from 0.9.0. The Animations card now contains twelve direct previews. Tapping plays on screen; holding a symbol tests it on a supported Glyph Matrix. The separate gallery, preview dialogs, assignment controls and redundant playback buttons have been removed.
+
+- APK assembly and 65 unit tests passed with no failures or errors. Android Lint: zero errors and the two existing AndroidGradlePluginVersion and ExportedService warnings.
+- Nineteen checks with the actual AppSettings and simulated Android preferences passed, including fixed mappings, ignored old overrides, retained source selections and independent manual previews.
+- Eleven controller simulations passed. The automatic six-second wait, full six-second playback, replacement and cancellation behavior are unchanged.
+- The notification policy, physical frame renderer, catalog and Spark artwork remain unchanged from the preceding build.
+- The browser reconstruction contains actual renderer sequences at 50 ms intervals. It provides configured/setup screens and a 320 px large-text variant. These are design previews, not Android instrumentation.
+
+- Exercised all twelve direct preview tiles in the browser reconstruction: each advanced through actual renderer frames without opening a dialog. The completed preview restored its static symbol.
+- At 320 px with text at 200%, the reconstruction uses one preview column and has no horizontal overflow. This does not verify native Android large-font rendering.
+- Verified the APK version, original app identity and signature matching 0.11.0. The manifest is identical to 0.9.0, with no additional Activity or permission.
+- ADB reported no attached device. Native gestures, accessibility interaction and physical LEDs remain unverified.
+
+## Tap-to-play and paged library 0.12.0
+
+Tapping a symbol now starts its on-screen preview and requests an immediate physical Glyph test on supported hardware. The 0.9.0 visual shell is retained. The Animations card uses search, explicit categories and bounded pages in place of the long grid.
+
+- APK assembly and 71 unit tests passed with no failures or errors. Android Lint: zero errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- Six new catalog tests cover complete page traversal, combined category/search filtering, locale-independent queries, stale page indices, empty results, immutable pages and invalid capacities.
+- Nineteen existing fixed-symbol/settings checks and eleven controller timing scenarios passed with simulated Android services.
+- The browser reconstruction was exercised through all three pages, category changes, combined search, empty results and page navigation after filtering. Renderer frames advance directly after a tile click, without opening a dialog.
+- At 320 px with text at 200%, the reconstruction shows two symbols per page in one column and has no horizontal overflow. These results are not native Android layout tests.
+- The native tap handler uses the existing immediate-play path. Automatic notification timing and fixed source-to-symbol mappings are retained.
+- The renderer, notification policy, permission set and Spark artwork are unchanged. Category metadata replaces enum-position assumptions.
+- The actual renderer exports match 0.11.1 for all twelve styles at every 50 ms sample from 0 to 6000 ms.
+- Verified packaged version 0.12.0 / code 30 and signature matching 0.11.1. The manifest remains identical to 0.9.0, with no additional permission or Activity.
+- ADB reported no attached device. Native layout, keyboard, state restoration, TalkBack and physical LEDs remain phone-side checks.
+
+## Circular previews and unified Apps 0.13.0
+
+The home screen retains its visual shell while animation tiles use circular faces and underline tabs. Swipe paging replaces arrow buttons. A compact Apps card opens a private source-management screen with native installed app icons, search, categories, Enabled only and recycled source-switch rows.
+
+- 80 unit tests passed. Five new app-catalog tests cover combined filters, locale-independent search, immutable enabled-state changes, empty results and logical SMS identity.
+- Four gesture-intent tests cover taps, vertical and diagonal movement, reading direction and distance thresholds. They do not simulate Android MotionEvent routing.
+- The browser reconstruction was exercised with an actual horizontal drag: the page changed and no tile started playback. A subsequent tile tap advanced renderer frames.
+- Enabled-only filtering, source changes, combined search/category empty results and counts after returning home were exercised in the reconstruction.
+- At 320 px with text at 200%, page content has no horizontal overflow, category labels remain single-line in their own horizontal strip, and Apps retains a scrollable list below its header.
+- APK assembly passed. Android Lint: zero errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- Nineteen existing settings/fixed-symbol checks and eleven controller timing scenarios passed with simulated Android services.
+- All twelve actual renderer sequences match 0.12.0 at every 50 ms sample from 0 through 6000 ms.
+- AppSettings, notification handling, the physical controller and Spark artwork match 0.12.0. Requested permissions and visibility queries are unchanged; AppsActivity is not exported.
+- Verified packaged 0.13.0 / code 31 and signature matching 0.12.0. ADB reported no attached device.
+- Native gesture routing, layout, state restoration, actual app icons, row recycling, keyboard, TalkBack and physical Glyph output remain phone-side checks.
+
+## Category sizing and touch feedback 0.13.1
+
+Phone screenshots of 0.13.0 showed All stretching across the full strip and hiding the other categories. They also showed a gray pressed background around an animation symbol. The browser reconstruction did not expose the native sizing issue.
+
+- Both screens now use individual wrap-content TextViews for category tabs, with 48 dp minimum touch targets and a selected underline drawn within each tab.
+- All remains the combined view; AI, Messages and Social narrow the results. Large-text tab strips can scroll horizontally.
+- Animation tiles and category tabs have no ripple or pressed background.
+- The tap playback path is unchanged, including the on-screen preview and physical Glyph request.
+- All 80 existing unit tests passed with no failures, errors or skips. APK assembly passed. Lint reported zero errors and the same two existing warnings.
+- All other Java sources, physical renderers, notification timing, preferences, artwork and manifest are byte-identical to the 0.13.0 source archive.
+- Packaged version 0.13.1 / code 32 and the unchanged signing certificate were verified.
+- No ADB device was attached. Native measurement, appearance and physical output of this correction still require a phone-side check. No browser reconstruction is presented as native verification.
+
+## Alert controls and filter feedback 0.13.2
+
+- A prominent red power button at the top of the status card replaces the Automatic animations switch. Its action changes between Pause Glyph alerts and Enable Glyph alerts, while its accessible state reports on/off.
+- The control keeps the original enabled preference. Pausing still stops the controller; manual previews remain available.
+- Enable all selects disabled sources in the current filtered results. Hidden source choices are preserved. The action is disabled for empty or fully enabled results.
+- Enabled only keeps a plain label without a checkmark and turns red while active.
+- Category underlines now use a selected-state background, independent of TextView content drawing. Tab widths remain intrinsic and strips can scroll at large text sizes.
+- The animation-count label and extra row were removed. App counts and page indicators remain.
+- Action buttons retain their static shape without ripple feedback. Animation tiles remain free of pressed backgrounds.
+- All 80 existing unit tests passed with no failures, errors or skips. APK assembly passed. Lint reported zero errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- The browser reconstruction exercised pause/resume and filtered Enable all. Enabling five AI results increased the overall selected count from four to eight without enabling hidden sources.
+- Active filter text and tab lines were verified as rgb(215,25,32) in the reconstruction. No animation-count element remains.
+- At 320 px and 200% text, the reconstruction had no page-level horizontal overflow. The action labels fit their columns and the Apps list retained 233 px of height. Empty results disabled Enable all.
+- The generated renderer sequences match 0.13.0 at every 50 ms sample. Notification handling, controller, settings, source resolution, existing artwork and manifest are unchanged.
+- Packaged 0.13.2 / code 33, permissions and the unchanged signing certificate were verified.
+- ADB reported no attached device. Browser checks do not verify native button drawing, underline placement, bulk-save UI routing or physical LEDs. These remain phone-side checks.
+
+## Two-way bulk selection and fixed power label 0.13.3
+
+- Enable all changes to Disable all when every current result is selected. Mixed results offer Enable all; empty results disable the action.
+- Both directions use the original source preferences, preserve hidden choices and refresh the current filters and counts.
+- With Enabled only active, Disable all removes the affected rows. The empty-result action is disabled until matching rows are visible again.
+- The power button label remains Enable Glyph alerts in both states. Its fill is red rgb(215,25,32) while enabled and gray rgb(58,58,60) while paused. The button stays clickable in either state and retains the accessible on/off description.
+- All 80 existing unit tests passed with no failures, errors or skips. APK assembly passed. Lint reported zero errors and the same two existing warnings.
+- The browser reconstruction verified mixed-result enabling, fully selected-result disabling, empty results and the Enabled only interaction. Selecting the five AI results raised the total from four to eight; disabling them reduced the total to three, preserving the three hidden enabled sources.
+- The fixed power label and both fill colors were read from the reconstruction. The saved screenshot shows the gray paused state and the Disable all action.
+- Actual renderer exports match 0.13.2. Java sources outside MainActivity and AppsActivity, including settings and notification handling, match the prior source archive.
+- Packaged 0.13.3 / code 34, permissions and the signing certificate matching 0.13.2 were verified.
+- ADB reported no attached device. Browser checks do not confirm native UI routing, drawing, preference persistence through process death or physical Glyph output.
+
+## Paused controls and one app-state filter 0.13.4
+
+- Secondary home status controls and the Apps, Animations and Toy cards remain visible at 40% opacity while alerts are paused. Their child controls are disabled.
+- The power button and pause explanation remain fully readable. Resuming restores controls without clearing source choices, searches, detail expansion or page state.
+- Pausing stops on-screen previews as well as the controller. Manual home playback is guarded while paused. The custom pager respects its disabled state for touch, keyboard and accessibility scrolling.
+- One app-state control cycles All apps, Enabled only and Disabled only. Active filtered modes are red and combine with search, categories and the existing bulk action.
+- The current filter is saved in Activity state. Accessibility descriptions identify the current and next mode.
+- 81 unit tests passed with no failures, errors or skips. The additional regression covers disabled results combined with categories, search and changed source selections.
+- APK assembly passed. Lint reported zero errors and the same AndroidGradlePluginVersion and ExportedService warnings.
+- In the browser reconstruction, both paused groups had opacity 0.4 and zero enabled child controls. The power button and pause heading remained at opacity 1.
+- Resuming restored opacity 1 and enabled controls while preserving the search value and expanded details.
+- The app filter cycled through all three modes. The fixture showed four enabled and nine disabled apps. Enabling four disabled AI results left no disabled AI results, raised the total to eight and preserved hidden choices.
+- At 320 px and 200% text, Disabled only wrapped within its 135 px column. No page-level horizontal overflow was present; the app list retained 233 px of height.
+- Actual renderer exports, source preferences, controller, notification handling, fixed source mappings, manifest and artwork match 0.13.3.
+- Packaged 0.13.4 / code 35, permissions and signing certificate matching 0.13.3 were verified.
+- No ADB device was attached. Native disabled-input routing, Activity restoration, dimmed rendering, TalkBack and physical LEDs remain phone-side checks. Browser inert regions are an approximation of disabled native view groups, not an accessibility-equivalence test.
 
 ## Physical-device boundary
 
