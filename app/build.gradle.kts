@@ -7,8 +7,8 @@ android {
         applicationId = "pl.glyphtoy.aiready"
         minSdk = 35
         targetSdk = 35
-        versionCode = 26
-        versionName = "0.9.0"
+        versionCode = 35
+        versionName = "0.13.4"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

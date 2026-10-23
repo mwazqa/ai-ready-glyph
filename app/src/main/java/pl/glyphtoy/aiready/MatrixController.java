@@ -56,12 +56,14 @@ final class MatrixController {
         animating = false;
         acquireWakeLock(delay + 11000);
         if (delay > 0) {
+            LocalStatus.playback = PlaybackStatus.waiting(provider, notBefore);
             if (connected && manager != null && !toyBound) {
                 try { manager.closeAppMatrix(); } catch (Exception ignored) { }
             }
             LocalStatus.glyph("Waiting 6 s before the full " + provider.label + " animation.");
             handler.postDelayed(startPending, delay);
         } else {
+            LocalStatus.playback = PlaybackStatus.connecting(provider);
             LocalStatus.glyph("Connecting to Glyph Matrix…");
             startPending.run();
         }
@@ -89,6 +91,7 @@ final class MatrixController {
                 }
             }
             if (connected) begin(); else {
+                LocalStatus.playback = PlaybackStatus.connecting(provider);
                 connect();
                 if (pending && manager != null) {
                     handler.removeCallbacks(timeout);
@@ -110,6 +113,7 @@ final class MatrixController {
     }
 
     void stop() {
+        LocalStatus.playback = PlaybackStatus.idle();
         pending = false;
         animating = false;
         automaticSource = null;
@@ -160,6 +164,7 @@ final class MatrixController {
         pending = false;
         animating = true;
         start = SystemClock.uptimeMillis();
+        LocalStatus.playback = PlaybackStatus.playing(provider, start + ReadyAnimation.DURATION_MS);
         acquireWakeLock(11000);
         LocalStatus.glyph(provider.label + " animation sent to Glyph. Check the matrix on the back of your phone.");
         handler.post(tick);
@@ -188,6 +193,7 @@ final class MatrixController {
     }
 
     private void fail(String message) {
+        LocalStatus.playback = PlaybackStatus.failed(provider, message);
         LocalStatus.glyph(message);
         pending = false;
         animating = false;

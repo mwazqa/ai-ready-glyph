@@ -4,7 +4,7 @@
 
 The SDK belongs to Nothing Technology Limited and its licensors. The AAR is excluded from Git. The setup script downloads a pinned original and verifies its SHA-256.
 
-The [SDK licence](app/libs/NOTHING-SDK-LICENSE.md) restricts redistribution and prohibits commercial use without prior written permission. Project MIT terms do not override it. No SDK binary or APK is published by this initial repository publication.
+The [SDK licence](app/libs/NOTHING-SDK-LICENSE.md) restricts redistribution and prohibits commercial use without prior written permission. Project MIT terms do not override it. The standalone SDK AAR is excluded from Git and the source archive. The experimental APK includes SDK runtime components under these separate terms and grants no additional rights to them.
 
 [Original licence at the pinned commit](https://github.com/Nothing-Developer-Programme/GlyphMatrix-Developer-Kit/blob/999b1143a6bff0dd79db11d21b92c15c56a346b1/LICENSE.md).
 
